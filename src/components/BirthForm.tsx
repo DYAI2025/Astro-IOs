@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import { ExternalLink } from "lucide-react";
 
 interface BirthFormProps {
   onSubmit: (data: {
@@ -15,17 +16,27 @@ export function BirthForm({ onSubmit, isLoading }: BirthFormProps) {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState("1990-01-01");
   const [time, setTime] = useState("12:00");
-  const [lat, setLat] = useState("52.52");
-  const [lon, setLon] = useState("13.405");
+  const [timeUnknown, setTimeUnknown] = useState(false);
+  const [coordinates, setCoordinates] = useState("52.520000, 13.405000");
   const [tz, setTz] = useState("Europe/Berlin");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const [latStr, lonStr] = coordinates.split(',').map(s => s.trim());
+    const parsedLat = parseFloat(latStr);
+    const parsedLon = parseFloat(lonStr);
+
+    if (isNaN(parsedLat) || isNaN(parsedLon)) {
+      alert("Bitte gib gültige Koordinaten im Format 'Breitengrad, Längengrad' ein (z.B. 52.399553, 13.061038).");
+      return;
+    }
+
     onSubmit({
       date: `${date}T${time}:00`,
       tz,
-      lat: parseFloat(lat),
-      lon: parseFloat(lon),
+      lat: parsedLat,
+      lon: parsedLon,
     });
   };
 
@@ -71,19 +82,49 @@ export function BirthForm({ onSubmit, isLoading }: BirthFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[8px] uppercase tracking-widest text-white/40">Zeitpunkt (Lokal)</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-[8px] uppercase tracking-widest text-white/40">Zeitpunkt (Lokal)</label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={timeUnknown}
+                      onChange={(e) => {
+                        setTimeUnknown(e.target.checked);
+                        if (e.target.checked) setTime("12:00");
+                      }}
+                      className="accent-gold w-3 h-3"
+                    />
+                    <span className="text-[8px] uppercase tracking-widest text-white/40">Unbekannt (12:00)</span>
+                  </label>
+                </div>
                 <input
                   type="time"
-                  required
+                  required={!timeUnknown}
+                  disabled={timeUnknown}
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full bg-ash/40 border border-gold/10 p-4 rounded focus:outline-none focus:border-gold/40 text-sm text-white/80"
+                  className="w-full bg-ash/40 border border-gold/10 p-4 rounded focus:outline-none focus:border-gold/40 text-sm text-white/80 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
             <button
               type="button"
-              onClick={() => setStep(2)}
+              onClick={() => {
+                if (!date) {
+                  alert("Bitte gib ein gültiges Datum ein.");
+                  return;
+                }
+                if (!time && !timeUnknown) {
+                  const useDefault = window.confirm("Du hast keine Uhrzeit angegeben. Sollen wir 12:00 Uhr als Standard verwenden?");
+                  if (useDefault) {
+                    setTime("12:00");
+                    setTimeUnknown(true);
+                    setStep(2);
+                  }
+                  return;
+                }
+                setStep(2);
+              }}
               className="w-full md:w-auto px-12 py-4 border border-gold/30 text-gold text-[10px] uppercase tracking-[0.3em] hover:bg-gold/5 transition-colors"
             >
               Weiter
@@ -100,43 +141,42 @@ export function BirthForm({ onSubmit, isLoading }: BirthFormProps) {
           >
             <h2 className="font-serif text-3xl leading-snug">Unter welchen Koordinaten begann deine Reise?</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[8px] uppercase tracking-widest text-white/40">Breitengrad (Latitude)</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-[8px] uppercase tracking-widest text-white/40">Koordinaten (Lat, Lon)</label>
+                  <a 
+                    href="https://www.google.com/maps" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[8px] uppercase tracking-widest text-gold/60 hover:text-gold transition-colors flex items-center gap-1"
+                  >
+                    Auf Google Maps finden <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
                 <input
-                  type="number"
-                  step="any"
+                  type="text"
                   required
-                  value={lat}
-                  onChange={(e) => setLat(e.target.value)}
+                  value={coordinates}
+                  onChange={(e) => setCoordinates(e.target.value)}
                   className="w-full bg-ash/40 border border-gold/10 p-4 rounded focus:outline-none focus:border-gold/40 text-sm text-white/80"
-                  placeholder="52.52"
+                  placeholder="52.399553, 13.061038"
+                  pattern="^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$"
+                  title="Format: Breitengrad, Längengrad (z.B. 52.399553, 13.061038)"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[8px] uppercase tracking-widest text-white/40">Längengrad (Longitude)</label>
-                <input
-                  type="number"
-                  step="any"
-                  required
-                  value={lon}
-                  onChange={(e) => setLon(e.target.value)}
-                  className="w-full bg-ash/40 border border-gold/10 p-4 rounded focus:outline-none focus:border-gold/40 text-sm text-white/80"
-                  placeholder="13.405"
-                />
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-[8px] uppercase tracking-widest text-white/40">Zeitzone</label>
-              <input
-                type="text"
-                required
-                value={tz}
-                onChange={(e) => setTz(e.target.value)}
-                className="w-full bg-ash/40 border border-gold/10 p-4 rounded focus:outline-none focus:border-gold/40 text-sm text-white/80"
-                placeholder="Europe/Berlin"
-              />
+              <div className="space-y-2">
+                <label className="text-[8px] uppercase tracking-widest text-white/40">Zeitzone</label>
+                <input
+                  type="text"
+                  required
+                  value={tz}
+                  onChange={(e) => setTz(e.target.value)}
+                  className="w-full bg-ash/40 border border-gold/10 p-4 rounded focus:outline-none focus:border-gold/40 text-sm text-white/80"
+                  placeholder="Europe/Berlin"
+                />
+              </div>
             </div>
 
             <div className="flex gap-4">

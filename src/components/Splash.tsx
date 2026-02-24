@@ -70,7 +70,7 @@ export function Splash({ onEnter }: SplashProps) {
           transition={{ duration: 2 }}
           className="font-serif text-3xl tracking-[0.3em] mb-4"
         >
-          NOCTURNE ATLAS
+          Coniunctio Caelorum Occidentalis et Orientalis
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -78,7 +78,7 @@ export function Splash({ onEnter }: SplashProps) {
           transition={{ duration: 2, delay: 0.5 }}
           className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold/80"
         >
-          Präzise berechnet. Sanft erzählt.
+          Bazodiac
         </motion.p>
       </div>
 

@@ -44,13 +44,27 @@ export default function App() {
     setError(null);
     try {
       const results = await calculateAll(data);
+      
+      // Check for specific API errors
+      const errors = [];
+      if (results.bazi?.error) errors.push(`BaZi: ${results.bazi.error}`);
+      if (results.western?.error) errors.push(`Western: ${results.western.error}`);
+      if (results.fusion?.error) errors.push(`Fusion: ${results.fusion.error}`);
+      if (results.wuxing?.error) errors.push(`WuXing: ${results.wuxing.error}`);
+      if (results.tst?.error) errors.push(`TST: ${results.tst.error}`);
+
+      if (errors.length > 0) {
+        throw new Error(`Calculation failed:\n${errors.join('\n')}`);
+      }
+
       setApiData(results);
 
       const aiInterpretation = await generateInterpretation(results);
       setInterpretation(aiInterpretation);
     } catch (err: any) {
+      console.error("API Error:", err);
       setError(
-        err.message || "An error occurred while calculating your chart.",
+        err.message || "An error occurred while calculating your chart. Please check your inputs and try again."
       );
     } finally {
       setIsLoading(false);
@@ -65,8 +79,9 @@ export default function App() {
       const aiInterpretation = await generateInterpretation(apiData);
       setInterpretation(aiInterpretation);
     } catch (err: any) {
+      console.error("AI Generation Error:", err);
       setError(
-        err.message || "An error occurred while regenerating your interpretation.",
+        err.message || "An error occurred while regenerating your interpretation. Please try again later."
       );
     } finally {
       setIsLoading(false);
@@ -87,7 +102,7 @@ export default function App() {
     <div className="min-h-screen bg-obsidian text-white/90 font-sans selection:bg-gold/30 flex flex-col">
       {/* Top Nav (Desktop) */}
       <header className="hidden md:flex fixed top-0 w-full h-20 items-center justify-between px-12 z-50 bg-obsidian/40 backdrop-blur-xl border-b border-gold/5">
-        <div className="font-serif text-xl tracking-widest text-gold cursor-pointer" onClick={handleReset}>NOCTURNE</div>
+        <div className="font-serif text-xl tracking-widest text-gold cursor-pointer" onClick={handleReset}>Bazodiac</div>
         <nav className="flex space-x-12 text-[10px] uppercase tracking-[0.3em]">
           <a href="#" className="nav-link hover:text-gold transition-colors active">Atlas</a>
         </nav>
