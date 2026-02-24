@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { BirthForm } from "./components/BirthForm";
 import { Dashboard } from "./components/Dashboard";
 import { Splash } from "./components/Splash";
-import { calculateAll, BirthData } from "./services/api";
+import { calculateAll, BirthData, ApiIssue } from "./services/api";
 import { generateInterpretation } from "./services/gemini";
+import { persistReading } from "./services/supabase";
 import { Volume2, VolumeX, User, Compass, LayoutGrid, Archive } from "lucide-react";
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiData, setApiData] = useState<any>(null);
+  const [apiIssues, setApiIssues] = useState<ApiIssue[]>([]);
   const [interpretation, setInterpretation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,9 +47,19 @@ export default function App() {
     try {
       const results = await calculateAll(data);
       setApiData(results);
+      setApiIssues(results.issues);
 
       const aiInterpretation = await generateInterpretation(results);
       setInterpretation(aiInterpretation);
+
+      await persistReading({
+        birth_input: data,
+        api_data: results,
+        interpretation: aiInterpretation,
+        api_issues: results.issues,
+      }).catch((persistError) => {
+        console.warn("Supabase persist failed:", persistError);
+      });
     } catch (err: any) {
       console.error("API Error:", err);
       setError(
@@ -79,6 +91,7 @@ export default function App() {
     setApiData(null);
     setInterpretation(null);
     setError(null);
+    setApiIssues([]);
   };
 
   if (showSplash) {
@@ -121,6 +134,7 @@ export default function App() {
             onReset={handleReset}
             onRegenerate={handleRegenerate}
             isLoading={isLoading}
+            apiIssues={apiIssues}
           />
         )}
       </main>
