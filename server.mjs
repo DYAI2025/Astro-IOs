@@ -46,6 +46,50 @@ async function proxyToBafe(targetUrl, req, res) {
   }
 }
 
+async function proxyToBafeWithFallback(targetUrls, req, res) {
+  let lastResponse = null;
+
+  for (const targetUrl of targetUrls) {
+    console.log(`[proxy] trying ${req.method} ${targetUrl}`);
+    try {
+      const upstream = await fetch(targetUrl, {
+        method: req.method,
+        headers: { "Content-Type": "application/json" },
+        body: req.method === "GET" ? undefined : JSON.stringify(req.body),
+      });
+
+      const contentType = upstream.headers.get("content-type") || "application/json";
+      const body = await upstream.text();
+
+      if (upstream.ok) {
+        // Successful response: return immediately and do not try further fallbacks
+        return res.status(upstream.status).set("Content-Type", contentType).send(body);
+      }
+
+      if (upstream.status === 404) {
+        console.warn(`[proxy] 404 at ${targetUrl}: ${body.slice(0, 200)}`);
+      } else {
+        console.error(`[proxy] → ${upstream.status}  body: ${body.slice(0, 300)}`);
+      }
+
+      // Record the last non-ok response and try the next fallback URL
+      lastResponse = { status: upstream.status, body, contentType };
+      continue;
+    } catch (err) {
+      console.error(`[proxy] network error on ${targetUrl}:`, err.message);
+    }
+  }
+
+  if (lastResponse) {
+    return res.status(lastResponse.status).set("Content-Type", lastResponse.contentType).send(lastResponse.body);
+  }
+
+  res.status(502).json({
+    error: "BAFE API unreachable",
+    details: "All fallback endpoints failed",
+  });
+}
+
 // ── /calculate/:endpoint  (bazi, western, fusion, wuxing, tst) ──────
 const CALC_ENDPOINTS = ["bazi", "western", "fusion", "wuxing", "tst"];
 
@@ -54,7 +98,14 @@ app.post("/api/calculate/:endpoint", express.json(), (req, res) => {
   if (!CALC_ENDPOINTS.includes(endpoint)) {
     return res.status(400).json({ error: `Unknown endpoint: ${endpoint}` });
   }
-  proxyToBafe(`${BAFE_BASE_URL}/calculate/${endpoint}`, req, res);
+  proxyToBafeWithFallback(
+    [
+      `${BAFE_BASE_URL}/api/calculate/${endpoint}`,
+      `${BAFE_BASE_URL}/calculate/${endpoint}`,
+    ],
+    req,
+    res,
+  );
 });
 
 // ── /chart ──────────────────────────────────────────────────────────
@@ -82,6 +133,7 @@ app.get("/api/debug-bafe", async (_req, res) => {
     { label: "/health", method: "GET", url: `${BAFE_BASE_URL}/health` },
     { label: "/chart", method: "GET", url: `${BAFE_BASE_URL}/chart` },
     { label: "/api/webhook/chart", method: "GET", url: `${BAFE_BASE_URL}/api/webhook/chart` },
+    { label: "POST /api/calculate/western", method: "POST", url: `${BAFE_BASE_URL}/api/calculate/western` },
     { label: "POST /calculate/western", method: "POST", url: `${BAFE_BASE_URL}/calculate/western` },
   ];
 
