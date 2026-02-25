@@ -22,6 +22,7 @@ This project intentionally avoids native Node build dependencies during install,
 ## Railway Deployment
 
 This repo is prepared for Railway with:
+- `nixpacks.toml` to pin Nixpacks runtime to Node 20 and avoid engine drift
 - `railway.json` build/deploy commands
 - production server (`server.mjs`) to serve `dist/`
 - startup command `npm run start`
