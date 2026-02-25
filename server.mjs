@@ -58,21 +58,23 @@ async function proxyToBafeWithFallback(targetUrls, req, res) {
         body: req.method === "GET" ? undefined : JSON.stringify(req.body),
       });
 
-      if (upstream.status === 404) {
-        const body = await upstream.text();
-        console.warn(`[proxy] 404 at ${targetUrl}: ${body.slice(0, 200)}`);
-        lastResponse = { status: upstream.status, body, contentType: upstream.headers.get("content-type") || "application/json" };
-        continue;
-      }
-
       const contentType = upstream.headers.get("content-type") || "application/json";
       const body = await upstream.text();
 
-      if (!upstream.ok) {
+      if (upstream.ok) {
+        // Successful response: return immediately and do not try further fallbacks
+        return res.status(upstream.status).set("Content-Type", contentType).send(body);
+      }
+
+      if (upstream.status === 404) {
+        console.warn(`[proxy] 404 at ${targetUrl}: ${body.slice(0, 200)}`);
+      } else {
         console.error(`[proxy] → ${upstream.status}  body: ${body.slice(0, 300)}`);
       }
 
-      return res.status(upstream.status).set("Content-Type", contentType).send(body);
+      // Record the last non-ok response and try the next fallback URL
+      lastResponse = { status: upstream.status, body, contentType };
+      continue;
     } catch (err) {
       console.error(`[proxy] network error on ${targetUrl}:`, err.message);
     }
