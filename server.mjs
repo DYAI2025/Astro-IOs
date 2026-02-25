@@ -8,13 +8,16 @@ const app = express();
 
 const distPath = path.join(__dirname, "dist");
 
-// Railway private networking (same project): http://<service>.railway.internal:<port>
-// Falls back to public URL if BAFE_INTERNAL_URL is not set.
+// BAFE API URL priority:
+// 1. BAFE_INTERNAL_URL  – Railway private networking (fastest)
+// 2. BAFE_BASE_URL      – explicit override
+// 3. VITE_BAFE_BASE_URL – shared with frontend config
+// 4. Vercel fallback    – works reliably from any host
 const BAFE_BASE_URL =
   process.env.BAFE_INTERNAL_URL ||
   process.env.BAFE_BASE_URL ||
   process.env.VITE_BAFE_BASE_URL ||
-  "https://bafe-production.up.railway.app";
+  "https://bafe.vercel.app";
 
 // ── Generic proxy helper ────────────────────────────────────────────
 async function proxyToBafe(targetUrl, req, res) {
