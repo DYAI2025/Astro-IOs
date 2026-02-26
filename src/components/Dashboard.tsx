@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sun, Moon, Zap, ArrowLeft, RefreshCw, ArrowUp, Phone, PhoneOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { BirthChartOrrery } from "./BirthChartOrrery";
+import type { BirthData } from "../services/api";
 
 interface DashboardProps {
   interpretation: string;
@@ -12,6 +14,7 @@ interface DashboardProps {
   apiIssues: { endpoint: string; message: string }[];
   onStopAudio: () => void;
   userId?: string;
+  birthInput?: BirthData | null;
 }
 
 export function Dashboard({
@@ -23,6 +26,7 @@ export function Dashboard({
   apiIssues,
   onStopAudio,
   userId,
+  birthInput,
 }: DashboardProps) {
   const [leviActive, setLeviActive] = useState(false);
   const leviSectionRef = useRef<HTMLDivElement>(null);
@@ -113,6 +117,14 @@ export function Dashboard({
   const elevenLabsAgentId = import.meta.env.VITE_ELEVENLABS_AGENT_ID || "agent_9001kdhah7vrfh3rd05pakg8vppk";
   const elementTrait = wuXingTraits[dominantElement] || "Deine elementare Natur formt deine Herangehensweise an das Leben.";
 
+  // Parse birth date for the 3D orrery
+  const birthDateObj = useMemo(() => {
+    if (birthInput?.date) {
+      return new Date(birthInput.date);
+    }
+    return new Date();
+  }, [birthInput]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -157,6 +169,11 @@ export function Dashboard({
           </button>
         </div>
       </header>
+
+      {/* 3D Solar System — Birth Chart Orrery */}
+      <div className="mb-20">
+        <BirthChartOrrery birthDate={birthDateObj} height="420px" />
+      </div>
 
       {/* Western Astrology Section */}
       <div className="mb-20">

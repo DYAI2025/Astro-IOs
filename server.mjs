@@ -256,6 +256,36 @@ app.post("/api/agent/session", express.json(), async (req, res) => {
   });
 });
 
+// ── POST /api/auth/signup — Server-side signup with auto-confirm ─────
+// Uses the service role key to create a user with email_confirm: true,
+// so no email verification is needed (useful for MVP / testing).
+app.post("/api/auth/signup", express.json(), async (req, res) => {
+  if (!supabaseAdmin) {
+    return res.status(503).json({ error: "Supabase not configured on server" });
+  }
+
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: "email and password required" });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters" });
+  }
+
+  const { data, error } = await supabaseAdmin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
+
+  if (error) {
+    console.error("[auth/signup] error:", error.message);
+    return res.status(400).json({ error: error.message });
+  }
+
+  res.json({ user_id: data.user.id, email: data.user.email });
+});
+
 // ── Static files ────────────────────────────────────────────────────
 app.use(express.static(distPath, { index: "index.html" }));
 

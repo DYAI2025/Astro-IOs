@@ -1,0 +1,119 @@
+============================================================
+ElevenLabs Custom Tool Setup — Agent "Levi"
+============================================================
+
+1. Geh zu: https://elevenlabs.io/app/conversational-ai
+2. Öffne Agent "Levi" (oder den Agent mit ID agent_9001kdhah7vrfh3rd05pakg8vppk)
+3. Geh zu: Tools → Add Tool → Custom Tool
+
+------------------------------------------------------------
+TOOL CONFIG
+------------------------------------------------------------
+
+Name:           get_user_astro_profile
+
+Description:    Retrieves the user's complete astrology profile including
+                sun sign, moon sign, ascendant sign, birth data, and full
+                chart calculation. Call this at the start of every
+                conversation to personalize your advice.
+
+Method:         GET
+
+URL:            https://DEINE-DEPLOYED-URL/api/profile/{user_id}
+
+                Ersetze DEINE-DEPLOYED-URL mit der echten URL, z.B.:
+                https://astro-noctum-production.up.railway.app/api/profile/{user_id}
+
+------------------------------------------------------------
+HEADERS
+------------------------------------------------------------
+
+Key:            Authorization
+Value:          Bearer DEIN_ELEVENLABS_TOOL_SECRET
+
+                Den Wert findest du in .env unter ELEVENLABS_TOOL_SECRET
+                (aktuell beginnt er mit wsec_679...)
+
+------------------------------------------------------------
+PATH PARAMETERS
+------------------------------------------------------------
+
+Name:           user_id
+Type:           string
+Description:    The user's unique Supabase auth ID (UUID)
+Source:         Dynamic variable (wird vom Frontend übergeben)
+
+------------------------------------------------------------
+RESPONSE SCHEMA (JSON)
+------------------------------------------------------------
+
+{
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Supabase user UUID"
+    },
+    "sun_sign": {
+      "type": "string",
+      "description": "Western zodiac sun sign (e.g. Aquarius, Leo)"
+    },
+    "moon_sign": {
+      "type": "string",
+      "description": "Moon sign"
+    },
+    "asc_sign": {
+      "type": "string",
+      "description": "Ascendant/rising sign"
+    },
+    "birth_date": {
+      "type": "string",
+      "description": "Birth date in YYYY-MM-DD format"
+    },
+    "birth_time": {
+      "type": "string",
+      "description": "Birth time in HH:MM format"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "IANA timezone (e.g. Europe/Berlin)"
+    },
+    "astro_json": {
+      "type": "object",
+      "description": "Full chart data with bazi, western, fusion, wuxing, tst calculations and AI interpretation"
+    },
+    "computed_at": {
+      "type": "string",
+      "description": "ISO timestamp of when the chart was computed"
+    }
+  }
+}
+
+------------------------------------------------------------
+AGENT SYSTEM PROMPT ERGAENZUNG (optional)
+------------------------------------------------------------
+
+Füge folgendes zum System-Prompt des Agents hinzu:
+
+    At the start of every conversation, call get_user_astro_profile
+    with the user_id from the dynamic variables. Use the returned
+    sun_sign, moon_sign, and asc_sign to personalize your reading.
+    Reference the astro_json for detailed planetary positions when
+    the user asks specific questions.
+
+------------------------------------------------------------
+ZUSAMMENFASSUNG: DIE KETTE
+------------------------------------------------------------
+
+Frontend (Dashboard.tsx)
+  → übergibt user_id als dynamic-variable an <elevenlabs-convai>
+  → Levi startet Gespräch
+  → Levi ruft GET /api/profile/{user_id} mit Bearer-Token auf
+  → server.mjs liest astro_profiles via Supabase Service Role Key
+  → Levi bekommt: sun_sign, moon_sign, asc_sign, volles astro_json
+  → Levi personalisiert das Gespräch
+
+============================================================
+HINWEIS: Die Supabase-Tabellen müssen ZUERST angelegt werden!
+Führe supabase-schema.sql im Supabase SQL-Editor aus.
+============================================================

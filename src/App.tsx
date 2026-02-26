@@ -242,6 +242,7 @@ export default function App() {
                   isLoading={isLoading}
                   apiIssues={apiIssues}
                   userId={user!.id}
+                  birthInput={lastBirthInput}
                   onStopAudio={() => {
                     if (audioRef.current && audioPlaying) {
                       audioRef.current.pause();

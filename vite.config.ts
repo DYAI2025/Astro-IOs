@@ -23,6 +23,19 @@ export default defineConfig(({mode}) => {
           target: env.VITE_BAFE_BASE_URL || 'https://bafe.vercel.app',
           changeOrigin: true,
         },
+        // Server-side routes → local Express server (run: PORT=3001 node server.mjs)
+        '/api/auth': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+        },
+        '/api/profile': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+        },
+        '/api/agent': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+        },
       },
     },
   };

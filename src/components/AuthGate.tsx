@@ -16,17 +16,21 @@ export function AuthGate() {
     setError(null);
     setLoading(true);
 
-    const { error: authError } =
-      mode === "login"
-        ? await signIn(email, password)
-        : await signUp(email, password);
-
-    setLoading(false);
-
-    if (authError) {
-      setError(authError);
-    } else if (mode === "signup") {
-      setSignupSuccess(true);
+    if (mode === "login") {
+      const { error: authError } = await signIn(email, password);
+      setLoading(false);
+      if (authError) setError(authError);
+    } else {
+      const { error: authError, needsConfirmation } = await signUp(email, password);
+      setLoading(false);
+      if (authError) {
+        setError(authError);
+      } else if (needsConfirmation) {
+        // Email confirmation required — show info screen
+        setSignupSuccess(true);
+      }
+      // If !needsConfirmation, the onAuthStateChange listener in AuthContext
+      // will automatically set the user, and App.tsx re-renders to BirthForm.
     }
   };
 

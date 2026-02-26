@@ -135,7 +135,7 @@ export function Splash({ onEnter }: SplashProps) {
           onEnded={handleVideoEnded}
           onError={handleVideoError}
         >
-          <source src="/bazodiac-intro.mp4" type="video/mp4" />
+          <source src="/bazodiac_intro_fem_ENG.mp4" type="video/mp4" />
         </video>
       )}
 

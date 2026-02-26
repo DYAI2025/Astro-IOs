@@ -13,7 +13,7 @@ interface AuthState {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string) => Promise<{ error: string | null; needsConfirmation: boolean }>;
   signOut: () => Promise<void>;
 }
 
@@ -53,8 +53,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    return { error: error?.message ?? null };
+    try {
+      // Use server-side signup endpoint (creates user with email auto-confirmed)
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const body = await res.json();
+
+      if (!res.ok) {
+        return { error: body.error || "Registrierung fehlgeschlagen", needsConfirmation: false };
+      }
+
+      // Server created the user with confirmed email — now sign in immediately
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        return { error: signInError.message, needsConfirmation: false };
+      }
+
+      // Session is now active, onAuthStateChange will update the state
+      return { error: null, needsConfirmation: false };
+    } catch (err: any) {
+      // Server unreachable — fall back to client-side signup
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      const needsConfirmation = !data.session;
+      return { error: error?.message ?? null, needsConfirmation };
+    }
   };
 
   const signOut = async () => {
