@@ -173,15 +173,21 @@ const PROFILE_SELECT_FIELDS = [
 app.get("/api/profile/:userId", async (req, res) => {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.replace("Bearer ", "");
-
   if (!token || token !== ELEVENLABS_TOOL_SECRET) {
     console.warn("[elevenlabs] unauthorized profile access", req.params.userId);
     return res.status(401).json({ error: "Unauthorized" });
   }
-
   if (!supabaseAdmin) {
-    return res.status(503).json({ error: "Supabase not configured on server" });
+    res.status(503).json({ error: "Supabase not configured on server" });
+    return false;
   }
+  return true;
+}
+
+// ── GET /api/profile/:userId — ElevenLabs Custom Tool endpoint ──────
+// Returns astro profile + display_name + last 10 conversation summaries
+app.get("/api/profile/:userId", async (req, res) => {
+  if (!requireToolAuth(req, res)) return;
 
   const { userId } = req.params;
   const { data, error } = await supabaseAdmin
