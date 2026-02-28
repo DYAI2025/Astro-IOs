@@ -11,11 +11,9 @@
         "description": "Supabase auth UUID of the user"
       }
     },
-    "query_params_schema": {},
-    "request_body_schema": null,
     "request_headers": {
       "Authorization": {
-        "secret_id": "ELEVENLABS_TOOL_SECRET"
+        "secret_id": "wsec_6799ace1ef60109af06c4f51592a371b2a1fa96ed4e8bea794f5a7cd0e8aa1af"
       }
     }
   },
@@ -27,9 +25,5 @@
   },
   "assignments": [],
   "disable_interruptions": true,
-  "force_pre_tool_speech": "auto",
-  "tool_call_sound": null,
-  "tool_call_sound_behavior": "auto",
-  "execution_mode": "immediate",
-  "tool_error_handling_mode": "auto"
+  "execution_mode": "immediate"
 }

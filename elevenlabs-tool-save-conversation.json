@@ -6,8 +6,6 @@
     "url": "https://astro-noctum-production.up.railway.app/api/agent/conversation",
     "method": "POST",
     "content_type": "application/json",
-    "path_params_schema": {},
-    "query_params_schema": {},
     "request_body_schema": {
       "type": "object",
       "required": ["user_id", "summary"],
@@ -29,7 +27,7 @@
     },
     "request_headers": {
       "Authorization": {
-        "secret_id": "ELEVENLABS_TOOL_SECRET"
+        "secret_id": "wsec_6799ace1ef60109af06c4f51592a371b2a1fa96ed4e8bea794f5a7cd0e8aa1af"
       },
       "Content-Type": "application/json"
     }
@@ -42,9 +40,5 @@
   },
   "assignments": [],
   "disable_interruptions": false,
-  "force_pre_tool_speech": "auto",
-  "tool_call_sound": null,
-  "tool_call_sound_behavior": "auto",
-  "execution_mode": "immediate",
-  "tool_error_handling_mode": "auto"
+  "execution_mode": "immediate"
 }
