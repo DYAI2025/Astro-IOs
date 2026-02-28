@@ -204,22 +204,23 @@ app.get("/api/profile/:userId", async (req, res) => {
   // Auth: require Bearer token (ElevenLabs tool secret)
   const authHeader = req.headers.authorization || "";
   const token = authHeader.replace("Bearer ", "");
-
   if (!token || token !== ELEVENLABS_TOOL_SECRET) {
     console.warn(`[elevenlabs] unauthorized profile access for user ${req.params.userId}`);
     return res.status(401).json({ error: "Unauthorized" });
   }
-
   if (!supabaseAdmin) {
-    return res.status(503).json({ error: "Supabase not configured on server" });
+    res.status(503).json({ error: "Supabase not configured on server" });
+    return false;
   }
+  return true;
+}
+
+// ── GET /api/profile/:userId — ElevenLabs Custom Tool endpoint ──────
+// Returns astro profile + display_name + last 10 conversation summaries
+app.get("/api/profile/:userId", async (req, res) => {
+  if (!requireToolAuth(req, res)) return;
 
   const { userId } = req.params;
-  const { data, error } = await supabaseAdmin
-    .from("astro_profiles")
-    .select("user_id, birth_date, birth_time, iana_time_zone, birth_lat, birth_lng, birth_place_name, sun_sign, moon_sign, asc_sign, astro_json, astro_computed_at")
-    .eq("user_id", userId)
-    .single();
 
   if (error || !data) {
     console.warn(`[elevenlabs] profile not found for user ${userId}`);
@@ -228,16 +229,45 @@ app.get("/api/profile/:userId", async (req, res) => {
 
   console.log(`[elevenlabs] profile delivered for user ${userId}`);
   res.json({
-    user_id: data.user_id,
-    sun_sign: data.sun_sign,
-    moon_sign: data.moon_sign,
-    asc_sign: data.asc_sign,
-    birth_date: data.birth_date,
-    birth_time: data.birth_time,
-    timezone: data.iana_time_zone,
-    astro_json: data.astro_json,
-    computed_at: data.astro_computed_at,
+    user_id: profile.user_id,
+    display_name: displayName,
+    sun_sign: profile.sun_sign,
+    moon_sign: profile.moon_sign,
+    asc_sign: profile.asc_sign,
+    birth_date: profile.birth_date,
+    birth_time: profile.birth_time,
+    timezone: profile.iana_time_zone,
+    astro_json: profile.astro_json,
+    computed_at: profile.astro_computed_at,
+    past_conversations: pastConversations,
   });
+});
+
+// ── POST /api/agent/conversation — Save conversation summary ─────────
+app.post("/api/agent/conversation", express.json(), async (req, res) => {
+  if (!requireToolAuth(req, res)) return;
+
+  const { user_id, summary, topics } = req.body;
+  if (!user_id || !summary) {
+    return res.status(400).json({ error: "user_id and summary required" });
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from("agent_conversations")
+    .insert({
+      user_id,
+      summary,
+      topics: Array.isArray(topics) ? topics : [],
+    })
+    .select("id, created_at")
+    .single();
+
+  if (error) {
+    console.error("[agent/conversation] insert error:", error.message);
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json({ saved: true, id: data.id, created_at: data.created_at });
 });
 
 // ── POST /api/agent/session — Create session token for ElevenLabs ───

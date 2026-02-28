@@ -1,0 +1,44 @@
+{
+  "type": "webhook",
+  "name": "save_conversation_summary",
+  "description": "Saves a summary of the current conversation so you can remember it next time. Call this BEFORE ending every conversation with a 2-3 sentence summary of key topics and insights.",
+  "api_schema": {
+    "url": "https://astro-noctum-production.up.railway.app/api/agent/conversation",
+    "method": "POST",
+    "content_type": "application/json",
+    "request_body_schema": {
+      "type": "object",
+      "required": ["user_id", "summary"],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "Supabase auth UUID of the user"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Concise 2-3 sentence summary of this conversation"
+        },
+        "topics": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Key topic tags like sun-sign, career, relationships, bazi-pillars"
+        }
+      }
+    },
+    "request_headers": {
+      "Authorization": {
+        "secret_id": "wsec_6799ace1ef60109af06c4f51592a371b2a1fa96ed4e8bea794f5a7cd0e8aa1af"
+      },
+      "Content-Type": "application/json"
+    }
+  },
+  "response_timeout_secs": 10,
+  "dynamic_variables": {
+    "dynamic_variable_placeholders": {
+      "user_id": "user_id"
+    }
+  },
+  "assignments": [],
+  "disable_interruptions": false,
+  "execution_mode": "immediate"
+}
