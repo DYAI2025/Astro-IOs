@@ -1,0 +1,29 @@
+{
+  "type": "webhook",
+  "name": "get_user_astro_profile",
+  "description": "Retrieves the user astrology profile including name, signs, birth data, chart calculations, and past conversation summaries. Call this IMMEDIATELY at conversation start to personalize advice.",
+  "api_schema": {
+    "url": "https://astro-noctum-production.up.railway.app/api/profile/{user_id}",
+    "method": "GET",
+    "path_params_schema": {
+      "user_id": {
+        "type": "string",
+        "description": "Supabase auth UUID of the user"
+      }
+    },
+    "request_headers": {
+      "Authorization": {
+        "secret_id": "wsec_6799ace1ef60109af06c4f51592a371b2a1fa96ed4e8bea794f5a7cd0e8aa1af"
+      }
+    }
+  },
+  "response_timeout_secs": 10,
+  "dynamic_variables": {
+    "dynamic_variable_placeholders": {
+      "user_id": "user_id"
+    }
+  },
+  "assignments": [],
+  "disable_interruptions": true,
+  "execution_mode": "immediate"
+}

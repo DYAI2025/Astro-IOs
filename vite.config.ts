@@ -7,6 +7,7 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
+    publicDir: 'media',
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
@@ -21,7 +22,19 @@ export default defineConfig(({mode}) => {
         '/api/calculate': {
           target: env.VITE_BAFE_BASE_URL || 'https://bafe.vercel.app',
           changeOrigin: true,
-          rewrite: (p: string) => p.replace(/^\/api/, ''),
+        },
+        // Server-side routes → local Express server (run: PORT=3001 node server.mjs)
+        '/api/auth': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+        },
+        '/api/profile': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+        },
+        '/api/agent': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
         },
       },
     },
