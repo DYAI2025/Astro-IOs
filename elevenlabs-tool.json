@@ -1,31 +1,21 @@
 {
   "type": "webhook",
   "name": "get_user_astro_profile",
-  "description": "Retrieves the user's complete astrology profile including sun sign, moon sign, ascendant sign, birth data, and full chart calculation. Call this tool at the start of every conversation to personalize your astrological advice based on the user's natal chart.",
+  "description": "Retrieves the user astrology profile including name, signs, birth data, chart calculations, and past conversation summaries. Call this IMMEDIATELY at conversation start to personalize advice.",
   "api_schema": {
     "url": "https://astro-noctum-production.up.railway.app/api/profile/{user_id}",
     "method": "GET",
-    "path_params_schema": [
-      {
-        "id": "user_id",
+    "path_params_schema": {
+      "user_id": {
         "type": "string",
-        "description": "The Supabase auth UUID of the user whose astrology profile to retrieve",
-        "dynamic_variable": "user_id",
-        "constant_value": "",
-        "is_system_provided": false,
-        "required": true,
-        "value_type": "dynamic_variable"
+        "description": "Supabase auth UUID of the user"
       }
-    ],
-    "query_params_schema": [],
-    "request_body_schema": null,
-    "request_headers": [
-      {
-        "key": "Authorization",
-        "value": "Bearer wsec_6799ace1ef60109af06c4f51592a371b2a1fa96ed4e8bea794f5a7cd0e8aa1af"
+    },
+    "request_headers": {
+      "Authorization": {
+        "secret_id": "wsec_6799ace1ef60109af06c4f51592a371b2a1fa96ed4e8bea794f5a7cd0e8aa1af"
       }
-    ],
-    "auth_connection": null
+    }
   },
   "response_timeout_secs": 10,
   "dynamic_variables": {
@@ -35,9 +25,5 @@
   },
   "assignments": [],
   "disable_interruptions": true,
-  "force_pre_tool_speech": "auto",
-  "tool_call_sound": null,
-  "tool_call_sound_behavior": "auto",
-  "execution_mode": "immediate",
-  "tool_error_handling_mode": "auto"
+  "execution_mode": "immediate"
 }
