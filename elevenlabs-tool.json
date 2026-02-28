@@ -1,7 +1,7 @@
 {
   "type": "webhook",
   "name": "get_user_astro_profile",
-  "description": "Retrieves the user's complete astrology profile including sun sign, moon sign, ascendant sign, birth data, and full chart calculation. Call this tool at the start of every conversation to personalize your astrological advice based on the user's natal chart.",
+  "description": "Retrieves the user's complete astrology profile including their name, sun sign, moon sign, ascendant sign, birth data, full chart calculation, and summaries of all past conversations. Call this tool IMMEDIATELY at the start of every conversation to personalize your astrological advice. Use the past_conversations field to continue where you left off.",
   "api_schema": {
     "url": "https://astro-noctum-production.up.railway.app/api/profile/{user_id}",
     "method": "GET",
@@ -22,7 +22,7 @@
     "request_headers": [
       {
         "key": "Authorization",
-        "value": "Bearer wsec_6799ace1ef60109af06c4f51592a371b2a1fa96ed4e8bea794f5a7cd0e8aa1af"
+        "value": "Bearer {{ELEVENLABS_TOOL_SECRET}}"
       }
     ],
     "auth_connection": null
