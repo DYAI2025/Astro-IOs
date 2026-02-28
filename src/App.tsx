@@ -32,6 +32,14 @@ export default function App() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [hasStoredProfile, setHasStoredProfile] = useState(false);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = document.getElementById(
+      "cosmic-audio",
+    ) as HTMLAudioElement;
+  }, []);
+
   // Load existing astro profile for returning users
   useEffect(() => {
     if (!user || apiData) return;
@@ -152,7 +160,7 @@ export default function App() {
 
   // Determine what to show
   const isLoggedIn = !!user;
-  const hasDashboard = !!apiData;
+  const hasDashboard = !!apiData && (!isLoading || !!interpretation);
 
   return (
     <>

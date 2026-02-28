@@ -199,14 +199,14 @@ const supabaseAdmin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
     })
   : null;
 
-// ── Auth helper for ElevenLabs tool endpoints ────────────────────────
-function requireToolAuth(req, res) {
+// ── GET /api/profile/:userId — ElevenLabs Custom Tool endpoint ──────
+app.get("/api/profile/:userId", async (req, res) => {
+  // Auth: require Bearer token (ElevenLabs tool secret)
   const authHeader = req.headers.authorization || "";
   const token = authHeader.replace("Bearer ", "");
   if (!token || token !== ELEVENLABS_TOOL_SECRET) {
-    console.warn(`[elevenlabs] unauthorized access`);
-    res.status(401).json({ error: "Unauthorized" });
-    return false;
+    console.warn(`[elevenlabs] unauthorized profile access for user ${req.params.userId}`);
+    return res.status(401).json({ error: "Unauthorized" });
   }
   if (!supabaseAdmin) {
     res.status(503).json({ error: "Supabase not configured on server" });
@@ -222,34 +222,10 @@ app.get("/api/profile/:userId", async (req, res) => {
 
   const { userId } = req.params;
 
-  // Fetch profile, display_name, and recent conversations in parallel
-  const [profileResult, nameResult, convResult] = await Promise.all([
-    supabaseAdmin
-      .from("astro_profiles")
-      .select("user_id, birth_date, birth_time, iana_time_zone, birth_lat, birth_lng, birth_place_name, sun_sign, moon_sign, asc_sign, astro_json, astro_computed_at")
-      .eq("user_id", userId)
-      .single(),
-    supabaseAdmin
-      .from("profiles")
-      .select("display_name, email")
-      .eq("id", userId)
-      .single(),
-    supabaseAdmin
-      .from("agent_conversations")
-      .select("summary, topics, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(10),
-  ]);
-
-  if (profileResult.error || !profileResult.data) {
+  if (error || !data) {
     console.warn(`[elevenlabs] profile not found for user ${userId}`);
     return res.status(404).json({ error: "Profile not found" });
   }
-
-  const profile = profileResult.data;
-  const displayName = nameResult.data?.display_name || nameResult.data?.email?.split("@")[0] || null;
-  const pastConversations = convResult.data || [];
 
   console.log(`[elevenlabs] profile delivered for user ${userId}`);
   res.json({
