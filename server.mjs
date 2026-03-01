@@ -201,16 +201,52 @@ app.get("/api/profile/:userId", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
+  // Build a concise summary for Levi instead of dumping raw BAFE data.
+  // ElevenLabs agents have limited context — send only what's interpretable.
+  const raw = data.astro_json || {};
+  const bafe = raw.bafe || raw;
+
+  const bazi = bafe.bazi || {};
+  const western = bafe.western || {};
+  const wuxing = bafe.wuxing || {};
+  const fusion = bafe.fusion || {};
+
+  // Extract BaZi pillars in readable form
+  const pillars = bazi.pillars
+    ? Object.fromEntries(
+        Object.entries(bazi.pillars).map(([k, v]) => [
+          k,
+          `${v.stem || "?"} / ${v.branch || "?"}${v.animal ? ` (${v.animal})` : ""}`,
+        ])
+      )
+    : null;
+
   res.json({
     user_id: data.user_id,
-    sun_sign: data.sun_sign,
-    moon_sign: data.moon_sign,
-    asc_sign: data.asc_sign,
     birth_date: data.birth_date,
     birth_time: data.birth_time,
     timezone: data.iana_time_zone,
-    astro_json: data.astro_json,
     computed_at: data.astro_computed_at,
+
+    // Western astrology
+    sun_sign: data.sun_sign,
+    moon_sign: data.moon_sign,
+    ascendant: data.asc_sign,
+
+    // BaZi (Chinese)
+    day_master: bazi.day_master || null,
+    zodiac_animal: bazi.zodiac_sign || null,
+    pillars: pillars,
+
+    // Wu-Xing (Five Elements)
+    dominant_element: wuxing.dominant_element || null,
+    element_balance: wuxing.element_percentages || wuxing.balance || null,
+
+    // Fusion insights (if available)
+    fusion_theme: fusion.theme || fusion.summary || null,
+
+    // AI interpretation (the Gemini text the user already saw)
+    interpretation: bafe.interpretation || raw.interpretation || null,
   });
 });
 
