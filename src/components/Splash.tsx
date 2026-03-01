@@ -9,7 +9,7 @@ const CROSSFADE_DURATION = 3; // seconds before video end to start crossfade
 const SEEN_KEY = "bazodiac_intro_seen";
 
 const VIDEOS: Record<string, string> = {
-  de: "/Bazodiac_male_intro_GER.mp4",
+  de: "/bazodiac_male_intro_GER.mp4",
   en: "/bazodiac_fem_intro_ENG.mp4",
 };
 
@@ -152,7 +152,7 @@ export function Splash({ onEnter }: SplashProps) {
 
       video.load();
       video.muted = false;
-      video.volume = 1;
+      video.volume = 0.8;
       video.play().catch((err) => {
         console.warn("Video play failed after interaction:", err);
         startAnimation();
