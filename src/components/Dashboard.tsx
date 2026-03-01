@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sun, Moon, Zap, ArrowLeft, RefreshCw, ArrowUp, Phone, PhoneOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { BirthChartOrrery } from "./BirthChartOrrery";
 
 interface DashboardProps {
   interpretation: string;
   apiData: any;
   userId: string;
+  birthDate: string | null;
   onReset: () => void;
   onRegenerate: () => void;
   isLoading: boolean;
@@ -19,6 +21,7 @@ export function Dashboard({
   interpretation,
   apiData,
   userId,
+  birthDate,
   onReset,
   onRegenerate,
   isLoading,
@@ -115,6 +118,13 @@ export function Dashboard({
   const dominantElement = apiData.wuxing?.dominant_element || "—";
   const elevenLabsAgentId = import.meta.env.VITE_ELEVENLABS_AGENT_ID || "agent_1801kje0zqc8e4b89swbt7wekawv";
   const elementTrait = wuXingTraits[dominantElement] || "Deine elementare Natur formt deine Herangehensweise an das Leben.";
+
+  // Parse birth date for Orrery (fallback to now if missing)
+  const orreryDate = useMemo(() => {
+    if (!birthDate) return new Date();
+    const d = new Date(birthDate);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }, [birthDate]);
 
   return (
     <motion.div
@@ -236,6 +246,11 @@ export function Dashboard({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 3D Solar System Orrery */}
+      <div className="mb-20">
+        <BirthChartOrrery birthDate={orreryDate} height="480px" />
       </div>
 
       <div className="chart-grid">

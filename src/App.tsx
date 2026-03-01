@@ -28,6 +28,7 @@ export default function App() {
   const [interpretation, setInterpretation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasPersistedProfile, setHasPersistedProfile] = useState(false);
+  const [birthDateStr, setBirthDateStr] = useState<string | null>(null);
 
   // Track which user we already fetched the profile for (prevents re-fetch loops)
   const profileFetchedForRef = useRef<string | null>(null);
@@ -55,6 +56,11 @@ export default function App() {
           });
           setInterpretation(json.bafe?.interpretation ?? json.interpretation ?? null);
           setHasPersistedProfile(true);
+          // Extract birth date for Orrery
+          if (profile.birth_date) {
+            const time = profile.birth_time || "12:00";
+            setBirthDateStr(`${profile.birth_date}T${time}:00`);
+          }
         }
       })
       .catch((err) => console.warn("Profile load failed:", err))
@@ -76,6 +82,7 @@ export default function App() {
       const results = await calculateAll(data);
       setApiData(results);
       setApiIssues(results.issues);
+      setBirthDateStr(data.date);
 
       const aiInterpretation = await generateInterpretation(results);
       setInterpretation(aiInterpretation);
@@ -226,6 +233,7 @@ export default function App() {
             interpretation={interpretation}
             apiData={apiData}
             userId={user.id}
+            birthDate={birthDateStr}
             onReset={handleReset}
             onRegenerate={handleRegenerate}
             isLoading={isLoading}
