@@ -213,7 +213,7 @@ export default function App() {
           <button
             onClick={ambiente.toggle}
             className="text-[#1E2A3A]/40 hover:text-[#8B6914] transition-colors"
-            title={ambiente.playing ? "Pause audio" : "Play ambient audio"}
+            title={ambiente.playing ? t("nav.pauseAudioTitle") : t("nav.playAudioTitle")}
           >
             {ambiente.playing ? (
               <Volume2 className="w-4 h-4 text-[#8B6914]" />
