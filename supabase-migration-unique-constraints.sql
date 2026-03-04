@@ -4,21 +4,31 @@
 -- Safe to run multiple times (idempotent).
 -- ============================================================
 
--- Step 1: Remove duplicate birth_data rows (keep earliest)
-DELETE FROM birth_data
-WHERE id NOT IN (
-  SELECT DISTINCT ON (user_id) id
-  FROM birth_data
-  ORDER BY user_id, created_at ASC
-);
+-- Step 1: Remove duplicate birth_data rows (keep earliest per user)
+-- Uses ctid (physical row ID) which always exists regardless of column names
+DELETE FROM birth_data a
+USING birth_data b
+WHERE a.user_id = b.user_id
+  AND a.created_at > b.created_at;
 
--- Step 2: Remove duplicate natal_charts rows (keep earliest)
-DELETE FROM natal_charts
-WHERE id NOT IN (
-  SELECT DISTINCT ON (user_id) id
-  FROM natal_charts
-  ORDER BY user_id, created_at ASC
-);
+-- Also handle ties (same created_at): keep the one with smaller ctid
+DELETE FROM birth_data a
+USING birth_data b
+WHERE a.user_id = b.user_id
+  AND a.created_at = b.created_at
+  AND a.ctid > b.ctid;
+
+-- Step 2: Remove duplicate natal_charts rows (keep earliest per user)
+DELETE FROM natal_charts a
+USING natal_charts b
+WHERE a.user_id = b.user_id
+  AND a.created_at > b.created_at;
+
+DELETE FROM natal_charts a
+USING natal_charts b
+WHERE a.user_id = b.user_id
+  AND a.created_at = b.created_at
+  AND a.ctid > b.ctid;
 
 -- Step 3: Add UNIQUE constraints
 DO $$ BEGIN
@@ -39,7 +49,7 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Step 4: Verify astro_profiles already has PK on user_id (should be true)
+-- Step 4: Verify astro_profiles already has PK on user_id
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.table_constraints
@@ -52,10 +62,11 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Step 5: Add INSERT-only RLS policy for astro_profiles (prevent UPDATE)
--- Users can SELECT their own profile, INSERT once, but never UPDATE or DELETE.
+-- Step 5: Tighten RLS — INSERT-only (no UPDATE/DELETE via client)
 DROP POLICY IF EXISTS "Users upsert own astro_profile" ON astro_profiles;
 DROP POLICY IF EXISTS "Users read own astro_profile" ON astro_profiles;
+DROP POLICY IF EXISTS "Users can read own profile" ON astro_profiles;
+DROP POLICY IF EXISTS "Users can insert own profile once" ON astro_profiles;
 
 CREATE POLICY "Users can read own profile" ON astro_profiles
   FOR SELECT USING (auth.uid() = user_id);
