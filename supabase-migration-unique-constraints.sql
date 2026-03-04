@@ -4,30 +4,16 @@
 -- Safe to run multiple times (idempotent).
 -- ============================================================
 
--- Step 1: Remove duplicate birth_data rows (keep earliest per user)
--- Uses ctid (physical row ID) which always exists regardless of column names
+-- Step 1: Remove duplicate birth_data rows (keep one per user)
 DELETE FROM birth_data a
 USING birth_data b
 WHERE a.user_id = b.user_id
-  AND a.created_at > b.created_at;
-
--- Also handle ties (same created_at): keep the one with smaller ctid
-DELETE FROM birth_data a
-USING birth_data b
-WHERE a.user_id = b.user_id
-  AND a.created_at = b.created_at
   AND a.ctid > b.ctid;
 
--- Step 2: Remove duplicate natal_charts rows (keep earliest per user)
+-- Step 2: Remove duplicate natal_charts rows (keep one per user)
 DELETE FROM natal_charts a
 USING natal_charts b
 WHERE a.user_id = b.user_id
-  AND a.created_at > b.created_at;
-
-DELETE FROM natal_charts a
-USING natal_charts b
-WHERE a.user_id = b.user_id
-  AND a.created_at = b.created_at
   AND a.ctid > b.ctid;
 
 -- Step 3: Add UNIQUE constraints
@@ -49,7 +35,7 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Step 4: Verify astro_profiles already has PK on user_id
+-- Step 4: Verify astro_profiles PK
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.table_constraints
@@ -73,5 +59,3 @@ CREATE POLICY "Users can read own profile" ON astro_profiles
 
 CREATE POLICY "Users can insert own profile once" ON astro_profiles
   FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- No UPDATE or DELETE policy → profile is immutable via client
