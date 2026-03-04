@@ -45,18 +45,14 @@ CREATE TABLE IF NOT EXISTS birth_data (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Migration: add unique constraint if table already exists
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'birth_data_user_id_key') THEN
-    ALTER TABLE birth_data ADD CONSTRAINT birth_data_user_id_key UNIQUE (user_id);
-  END IF;
-END $$;
-
 ALTER TABLE birth_data ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users manage own birth_data" ON birth_data
   FOR ALL USING (auth.uid() = user_id);
 
--- ── astro_profiles (main profile for ElevenLabs) ──────────────────
+-- ── astro_profiles (ONE per user — immutable after creation) ──────
+-- This is the main profile row read by ElevenLabs and the Dashboard.
+-- user_id is PRIMARY KEY → exactly one row per user.
+-- All columns are nullable except user_id (graceful partial inserts).
 CREATE TABLE IF NOT EXISTS astro_profiles (
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   birth_date DATE,
@@ -80,6 +76,8 @@ CREATE POLICY "Users read own astro_profile" ON astro_profiles
 CREATE POLICY "Users upsert own astro_profile" ON astro_profiles
   FOR ALL USING (auth.uid() = user_id);
 
+GRANT ALL ON astro_profiles TO authenticated;
+
 -- ── natal_charts (ONE per user — immutable birth chart) ───────────
 CREATE TABLE IF NOT EXISTS natal_charts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -90,13 +88,6 @@ CREATE TABLE IF NOT EXISTS natal_charts (
   house_system TEXT DEFAULT 'placidus',
   created_at TIMESTAMPTZ DEFAULT now()
 );
-
--- Migration: add unique constraint if table already exists
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'natal_charts_user_id_key') THEN
-    ALTER TABLE natal_charts ADD CONSTRAINT natal_charts_user_id_key UNIQUE (user_id);
-  END IF;
-END $$;
 
 ALTER TABLE natal_charts ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users manage own charts" ON natal_charts
@@ -112,7 +103,5 @@ CREATE TABLE IF NOT EXISTS agent_conversations (
 );
 
 ALTER TABLE agent_conversations ENABLE ROW LEVEL SECURITY;
--- Server uses service_role key, so no RLS policy needed for inserts.
--- Users can read their own conversations (for potential future UI display).
 CREATE POLICY "Users read own conversations" ON agent_conversations
   FOR SELECT USING (auth.uid() = user_id);
