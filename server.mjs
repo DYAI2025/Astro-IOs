@@ -177,6 +177,8 @@ app.get("/api/profile/:userId", async (req, res) => {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.replace("Bearer ", "").trim();
 
+  console.log(`[profile] auth check — received: "${token.slice(0, 12)}…" expected: "${(ELEVENLABS_TOOL_SECRET || "").slice(0, 12)}…" match: ${token === ELEVENLABS_TOOL_SECRET}`);
+
   if (!ELEVENLABS_TOOL_SECRET || token !== ELEVENLABS_TOOL_SECRET) {
     return res.status(401).json({ error: "Unauthorized" });
   }
