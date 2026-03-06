@@ -15,6 +15,7 @@ import {
   fetchAstroProfile,
 } from "./services/supabase";
 import { useAmbientePlayer } from "./hooks/useAmbientePlayer";
+import { trackEvent } from "./lib/analytics";
 import { usePlanetarium } from "./contexts/PlanetariumContext";
 import { Volume2, VolumeX, LogOut, LayoutGrid, Telescope } from "lucide-react";
 
@@ -51,6 +52,7 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("upgrade") === "success") {
       // Clean the URL so it doesn't persist on refresh
+      trackEvent('payment_completed');
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
@@ -143,6 +145,7 @@ export default function App() {
 
     setIsLoading(true);
     setError(null);
+    trackEvent('reading_started');
     try {
       const results = await calculateAll(data);
       setApiData(results);
@@ -151,6 +154,7 @@ export default function App() {
 
       const aiInterpretation = await generateInterpretation(results, lang);
       setInterpretation(aiInterpretation);
+      trackEvent('reading_completed');
 
       // Persist to Supabase (all three functions check for duplicates internally)
       try {

@@ -481,6 +481,17 @@ app.get("/share/:hash", async (_req, res) => {
   res.send(html);
 });
 
+// ── Landing page for unauthenticated visitors ───────────────────────
+app.get("/", (req, res, next) => {
+  // If the visitor has a Supabase session cookie, skip to the SPA
+  const hasSession = req.headers.cookie?.includes("sb-");
+  if (hasSession) return next();
+  res.sendFile(path.join(__dirname, "landing", "index.html"));
+});
+
+// Serve landing assets (style.css etc.)
+app.use("/landing", express.static(path.join(__dirname, "landing")));
+
 // ── Static files ────────────────────────────────────────────────────
 app.use(express.static(distPath, { index: "index.html" }));
 

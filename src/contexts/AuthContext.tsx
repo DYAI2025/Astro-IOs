@@ -7,6 +7,7 @@ import {
 } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import { trackEvent } from "../lib/analytics";
 
 interface AuthState {
   user: User | null;
@@ -52,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
     });
     if (signInErr) return signInErr.message;
+    trackEvent('signup');
     return null;
   };
 
@@ -60,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
     });
+    if (!error) trackEvent('login');
     return error?.message ?? null;
   };
 

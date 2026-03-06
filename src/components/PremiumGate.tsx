@@ -2,6 +2,7 @@ import { useState } from "react";
 import { usePremium } from "@/src/hooks/usePremium";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useLanguage } from "@/src/contexts/LanguageContext";
+import { trackEvent } from "@/src/lib/analytics";
 
 interface Props {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export function PremiumGate({ children, teaser, ctaLabel }: Props) {
   if (isPremium) return <>{children}</>;
 
   const handleUpgrade = async () => {
+    trackEvent('upgrade_clicked');
     setIsRedirecting(true);
     try {
       const res = await fetch("/api/checkout", {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/src/contexts/AuthContext';
+import { trackEvent } from '@/src/lib/analytics';
 import {
   getShareUrl,
   shareToWhatsApp,
@@ -28,6 +29,7 @@ export function ShareCard({ sunSign, moonSign }: { sunSign: string; moonSign: st
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={async () => {
+            trackEvent('share_clicked', { platform: 'whatsapp' });
             const u = await handleShare();
             u && shareToWhatsApp(u, shareText);
           }}
@@ -37,6 +39,7 @@ export function ShareCard({ sunSign, moonSign }: { sunSign: string; moonSign: st
         </button>
         <button
           onClick={async () => {
+            trackEvent('share_clicked', { platform: 'twitter' });
             const u = await handleShare();
             u && shareToTwitter(u, shareText);
           }}
@@ -46,6 +49,7 @@ export function ShareCard({ sunSign, moonSign }: { sunSign: string; moonSign: st
         </button>
         <button
           onClick={async () => {
+            trackEvent('share_clicked', { platform: 'linkedin' });
             const u = await handleShare();
             u && shareToLinkedIn(u);
           }}
@@ -55,6 +59,7 @@ export function ShareCard({ sunSign, moonSign }: { sunSign: string; moonSign: st
         </button>
         <button
           onClick={async () => {
+            trackEvent('share_clicked', { platform: 'copy_link' });
             const u = await handleShare();
             if (u) {
               const ok = await copyToClipboard(u);
