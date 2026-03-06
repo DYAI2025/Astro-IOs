@@ -486,6 +486,8 @@ app.get("/", (req, res, next) => {
   // If the visitor has a Supabase session cookie, skip to the SPA
   const hasSession = req.headers.cookie?.includes("sb-");
   if (hasSession) return next();
+  // If ?action= param present (e.g. from CTA), let through to SPA
+  if (req.query.action) return next();
   res.sendFile(path.join(__dirname, "landing", "index.html"));
 });
 
