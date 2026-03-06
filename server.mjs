@@ -26,38 +26,103 @@ const BAFE_INTERNAL_URL = stripTrailingSlash(process.env.BAFE_INTERNAL_URL) || n
 // Primary URL for logging
 const BAFE_BASE_URL = BAFE_INTERNAL_URL || BAFE_PUBLIC_URL;
 
-// ── Proxy with fallback chain ────────────────────────────────────────
+// ── BAFE Response Cache (24h TTL) ────────────────────────────────────
+const bafeCache = new Map(); // key → { body, contentType, status, timestamp }
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+function cacheKey(method, url, reqBody) {
+  const raw = `${method}:${url}:${JSON.stringify(reqBody || {})}`;
+  let h = 0;
+  for (let i = 0; i < raw.length; i++) {
+    h = ((h << 5) - h + raw.charCodeAt(i)) | 0;
+  }
+  return String(h);
+}
+
+// Evict expired entries every hour
+setInterval(() => {
+  const now = Date.now();
+  let evicted = 0;
+  for (const [key, entry] of bafeCache) {
+    if (now - entry.timestamp > CACHE_TTL) {
+      bafeCache.delete(key);
+      evicted++;
+    }
+  }
+  if (evicted > 0) console.log(`[cache] evicted ${evicted} expired entries, ${bafeCache.size} remaining`);
+}, 60 * 60 * 1000);
+
+// ── Retry + Timeout constants ────────────────────────────────────────
+const RETRY_ATTEMPTS = 3;
+const RETRY_BASE_MS = 200;
+const FETCH_TIMEOUT_MS = 10_000;
+
+// ── Proxy with fallback chain + cache + retry + timeout ──────────────
 async function proxyToBafeWithFallback(targetUrls, req, res) {
+  const reqBody = req.method === "GET" ? undefined : req.body;
+  // Use first URL as canonical key (same request body → same result regardless of URL)
+  const key = cacheKey(req.method, targetUrls[0], reqBody);
+
+  // Check cache
+  const cached = bafeCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    console.log(`[cache] HIT for ${req.method} ${targetUrls[0]}`);
+    return res.status(cached.status).set("Content-Type", cached.contentType).send(cached.body);
+  }
+  console.log(`[cache] MISS for ${req.method} ${targetUrls[0]}`);
+
   let lastResponse = null;
 
   for (const targetUrl of targetUrls) {
-    console.log(`[proxy] trying ${req.method} ${targetUrl}`);
-    try {
-      const upstream = await fetch(targetUrl, {
-        method: req.method,
-        headers: { "Content-Type": "application/json" },
-        body: req.method === "GET" ? undefined : JSON.stringify(req.body),
-      });
+    for (let attempt = 1; attempt <= RETRY_ATTEMPTS; attempt++) {
+      console.log(`[proxy] trying ${req.method} ${targetUrl} (attempt ${attempt}/${RETRY_ATTEMPTS})`);
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-      const contentType = upstream.headers.get("content-type") || "application/json";
-      const body = await upstream.text();
+        const upstream = await fetch(targetUrl, {
+          method: req.method,
+          headers: { "Content-Type": "application/json" },
+          body: reqBody != null ? JSON.stringify(reqBody) : undefined,
+          signal: controller.signal,
+        });
 
-      if (upstream.ok) {
-        // Successful response: return immediately and do not try further fallbacks
-        return res.status(upstream.status).set("Content-Type", contentType).send(body);
+        clearTimeout(timeout);
+
+        const contentType = upstream.headers.get("content-type") || "application/json";
+        const body = await upstream.text();
+
+        if (upstream.ok) {
+          // Cache successful response
+          bafeCache.set(key, { body, contentType, status: upstream.status, timestamp: Date.now() });
+          console.log(`[cache] STORED for ${req.method} ${targetUrls[0]} (cache size: ${bafeCache.size})`);
+          return res.status(upstream.status).set("Content-Type", contentType).send(body);
+        }
+
+        // Don't retry 4xx (client errors) — break to next URL
+        if (upstream.status >= 400 && upstream.status < 500) {
+          if (upstream.status === 404) {
+            console.warn(`[proxy] 404 at ${targetUrl}: ${body.slice(0, 200)}`);
+          } else {
+            console.error(`[proxy] → ${upstream.status}  body: ${body.slice(0, 300)}`);
+          }
+          lastResponse = { status: upstream.status, body, contentType };
+          break; // skip retries for 4xx, try next URL
+        }
+
+        // 5xx — retry with backoff
+        console.warn(`[proxy] ${upstream.status} at ${targetUrl}, retrying...`);
+        lastResponse = { status: upstream.status, body, contentType };
+        if (attempt < RETRY_ATTEMPTS) {
+          await new Promise((r) => setTimeout(r, RETRY_BASE_MS * Math.pow(2, attempt - 1)));
+        }
+      } catch (err) {
+        const isTimeout = err.name === "AbortError";
+        console.error(`[proxy] ${isTimeout ? "timeout" : "network error"} on ${targetUrl}:`, err.message);
+        if (attempt < RETRY_ATTEMPTS) {
+          await new Promise((r) => setTimeout(r, RETRY_BASE_MS * Math.pow(2, attempt - 1)));
+        }
       }
-
-      if (upstream.status === 404) {
-        console.warn(`[proxy] 404 at ${targetUrl}: ${body.slice(0, 200)}`);
-      } else {
-        console.error(`[proxy] → ${upstream.status}  body: ${body.slice(0, 300)}`);
-      }
-
-      // Record the last non-ok response and try the next fallback URL
-      lastResponse = { status: upstream.status, body, contentType };
-      continue;
-    } catch (err) {
-      console.error(`[proxy] network error on ${targetUrl}:`, err.message);
     }
   }
 
@@ -157,6 +222,10 @@ app.get("/api/debug-bafe", async (_req, res) => {
     bafe_public_url: BAFE_PUBLIC_URL,
     bafe_internal_url: BAFE_INTERNAL_URL,
     bafe_active: BAFE_BASE_URL,
+    cache: {
+      size: bafeCache.size,
+      ttl_hours: CACHE_TTL / (60 * 60 * 1000),
+    },
     probes: results,
   });
 });
