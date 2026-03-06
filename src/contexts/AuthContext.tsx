@@ -45,9 +45,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return error.message;
-    // Email confirmation is disabled — auto-sign-in immediately
+
+    // Supabase returns empty identities when the email is already registered
+    // (no error to prevent email enumeration). Detect and redirect to login.
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (signInErr) return "Diese E-Mail ist bereits registriert. Bitte melde dich an.";
+      trackEvent('login');
+      return null;
+    }
+
+    // New user — auto-sign-in immediately (email confirmation disabled)
     const { error: signInErr } = await supabase.auth.signInWithPassword({
       email,
       password,

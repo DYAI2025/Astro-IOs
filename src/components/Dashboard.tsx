@@ -146,6 +146,7 @@ interface DashboardProps {
   apiIssues: { endpoint: string; message: string }[];
   onStopAudio: () => void;
   onResumeAudio: () => void;
+  isFirstReading?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -163,6 +164,7 @@ export function Dashboard({
   apiIssues,
   onStopAudio,
   onResumeAudio,
+  isFirstReading = false,
 }: DashboardProps) {
   const { lang, t } = useLanguage();
   const { isPremium } = usePremium();
@@ -171,22 +173,19 @@ export function Dashboard({
   const leviSectionRef = useRef<HTMLDivElement>(null);
 
   // ── First-visit Birth Sky welcome ────────────────────────────────
-  const FIRST_VISIT_KEY = "bazodiac-first-visit-done";
+  // Only show for genuinely new profiles (just completed onboarding),
+  // not for returning users loading their profile from Supabase.
   const [showBirthSkyWelcome, setShowBirthSkyWelcome] = useState(false);
 
   useEffect(() => {
-    const done = localStorage.getItem(FIRST_VISIT_KEY);
-    if (!done) {
-      // First visit: activate Planetarium, show welcome
+    if (isFirstReading) {
       setPlanetariumMode(true);
       setShowBirthSkyWelcome(true);
-      localStorage.setItem(FIRST_VISIT_KEY, "true");
-      // Auto-dismiss after 12 seconds
       const timer = setTimeout(() => setShowBirthSkyWelcome(false), 12000);
       return () => clearTimeout(timer);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isFirstReading]);
 
   // Load ElevenLabs widget
   useEffect(() => {

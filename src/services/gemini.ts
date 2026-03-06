@@ -1,25 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
+import { generateTemplateInterpretation } from "./interpretation-templates";
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
-
-// ── Fallback texts (shown when API is unavailable) ─────────────────────────
-
-const FALLBACK_EN = `
-## Your Bazodiac Fusion Blueprint
-
-Your cosmic profile unites three ancient systems into a picture that only Bazodiac can paint. Western astrology reveals your solar essence, Chinese BaZi unveils the pillars of your destiny, and Wu-Xing shows the elemental balance connecting it all.
-
-This fusion is more than the sum of its parts — it reveals patterns no single system can see alone. Your complete reading is being prepared and will be available soon.
-`.trim();
-
-const FALLBACK_DE = `
-## Dein Bazodiac Fusion-Blueprint
-
-Dein kosmisches Profil vereint drei uralte Systeme zu einem Bild, das so nur Bazodiac zeichnen kann. Westliche Astrologie zeigt deine Sonnenessenz, chinesisches BaZi enthüllt die Säulen deines Schicksals, und Wu-Xing offenbart das elementare Gleichgewicht, das alles verbindet.
-
-Diese Fusion ist mehr als die Summe ihrer Teile — sie zeigt Muster, die kein einzelnes System allein erkennen kann. Dein vollständiges Reading wird gerade vorbereitet und bald verfügbar sein.
-`.trim();
 
 // ── Prompt builder ─────────────────────────────────────────────────────────
 
@@ -55,29 +38,35 @@ TONE: Warm, precise, mystical but grounded. Never generic. Every sentence must f
  * @param lang   The user's current language preference ("en" | "de")
  */
 export async function generateInterpretation(data: unknown, lang: string = "en") {
-  const isGerman = lang === "de";
-  const fallback = isGerman ? FALLBACK_DE : FALLBACK_EN;
+  // Template-based interpretation from actual BAFE data (always available)
+  const templateText = generateTemplateInterpretation(data, lang);
 
-  if (!ai) {
-    console.warn("Missing VITE_GEMINI_API_KEY. Using fallback interpretation.");
-    return fallback;
+  // If Gemini API key is configured, try AI-generated interpretation first
+  if (ai) {
+    try {
+      const response = (await Promise.race([
+        ai.models.generateContent({
+          model: "gemini-2.0-flash",
+          contents: buildPrompt(data, lang),
+          config: { temperature: 0.75 },
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Gemini API timeout")), 20000),
+        ),
+      ])) as { text?: string };
+
+      const aiText = response.text?.trim();
+      if (aiText) return aiText;
+    } catch (error) {
+      console.warn("Gemini API failed or timed out, using template fallback:", error);
+    }
   }
 
-  try {
-    const response = (await Promise.race([
-      ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: buildPrompt(data, lang),
-        config: { temperature: 0.75 },
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Gemini API timeout")), 20000),
-      ),
-    ])) as { text?: string };
+  // Use personalized template interpretation built from BAFE data
+  if (templateText) return templateText;
 
-    return response.text?.trim() ?? fallback;
-  } catch (error) {
-    console.warn("Gemini API failed or timed out, using fallback:", error);
-    return fallback;
-  }
+  // Last resort: generic text (should rarely happen — only if BAFE returned no data)
+  return lang === "de"
+    ? "## Dein Bazodiac Fusion-Blueprint\n\nDein kosmisches Profil wird berechnet. Die vollständige Interpretation basierend auf deinen Geburtsdaten wird in Kürze verfügbar sein."
+    : "## Your Bazodiac Fusion Blueprint\n\nYour cosmic profile is being calculated. The full interpretation based on your birth data will be available shortly.";
 }

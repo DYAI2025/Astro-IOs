@@ -43,6 +43,7 @@ export default function App() {
   const [interpretation, setInterpretation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [birthDateStr, setBirthDateStr] = useState<string | null>(null);
+  const [isFirstReading, setIsFirstReading] = useState(false);
 
   const profileFetchedForRef = useRef<string | null>(null);
   const ambiente = useAmbientePlayer();
@@ -69,6 +70,7 @@ export default function App() {
       setBirthDateStr(null);
       setApiIssues([]);
       setError(null);
+      setIsFirstReading(false);
       profileFetchedForRef.current = null;
       return;
     }
@@ -168,6 +170,7 @@ export default function App() {
         // Non-fatal: user can still see their Dashboard
       }
 
+      setIsFirstReading(true);
       setProfileState("found");
     } catch (err: unknown) {
       console.error("API Error:", err);
@@ -375,6 +378,7 @@ export default function App() {
             apiIssues={apiIssues}
             onStopAudio={ambiente.pause}
             onResumeAudio={ambiente.resume}
+            isFirstReading={isFirstReading}
           />
         )}
       </main>
