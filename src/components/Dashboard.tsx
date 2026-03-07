@@ -921,23 +921,36 @@ export function Dashboard({
 
       {/* ═══ FUSION RING (BAZAHUAWA) ═══════════════════════════════ */}
       {fusionSignal && (
-        <motion.div className="mb-16 flex flex-col items-center gap-4 py-8" {...fadeIn(0.5)}>
-          <h2 className="font-serif text-xl text-[#D4AF37]">
-            {lang === "de" ? "Dein Bazahuawa" : "Your Bazahuawa"}
-          </h2>
-          <FusionRing
-            signal={fusionSignal}
-            size={360}
-            showLabels={true}
-            animated={true}
-          />
-          {fusionSignal.resolution < 100 && (
-            <p className="text-sm text-[#D4AF37]/50">
-              {lang === "de"
-                ? `Auflösung: ${fusionSignal.resolution}% — Absolviere weitere Tests`
-                : `Resolution: ${fusionSignal.resolution}% — Complete more tests`}
-            </p>
-          )}
+        <motion.div className="mb-16" {...fadeIn(0.5)}>
+          <div
+            className="mx-auto flex flex-col items-center gap-4 rounded-2xl px-6 py-8"
+            style={{
+              background: 'radial-gradient(ellipse at center, #0a0f1a 0%, #00050A 70%)',
+              border: '1px solid rgba(212, 175, 55, 0.12)',
+              boxShadow: '0 0 60px rgba(0,5,10,0.5), inset 0 0 30px rgba(0,0,0,0.3)',
+              maxWidth: '520px',
+            }}
+          >
+            <h2
+              className="font-serif text-xl tracking-wide"
+              style={{ color: '#D4AF37' }}
+            >
+              {lang === "de" ? "Dein Bazahuawa" : "Your Bazahuawa"}
+            </h2>
+            <FusionRing
+              signal={fusionSignal}
+              size={360}
+              showLabels={true}
+              animated={true}
+            />
+            {fusionSignal.resolution < 100 && (
+              <p className="text-sm" style={{ color: 'rgba(212, 175, 55, 0.45)' }}>
+                {lang === "de"
+                  ? `Auflösung: ${fusionSignal.resolution}% — Absolviere weitere Tests`
+                  : `Resolution: ${fusionSignal.resolution}% — Complete more tests`}
+              </p>
+            )}
+          </div>
         </motion.div>
       )}
 

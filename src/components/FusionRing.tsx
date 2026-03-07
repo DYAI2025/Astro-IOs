@@ -367,6 +367,9 @@ export function FusionRing({
     const container = containerRef.current;
     if (!container) return;
 
+    // Ensure canvas is configured (may be first render after mount retry)
+    configureCanvas();
+
     const rect = container.getBoundingClientRect();
     let cssSize = Math.max(MIN_SIZE, Math.floor(rect.width));
     if (size != null) cssSize = Math.max(MIN_SIZE, Math.min(size, cssSize));
@@ -381,7 +384,7 @@ export function FusionRing({
     } else {
       renderStatic();
     }
-  }, [signal, animated, size, getBaseRadius, renderStatic, startAnimationLoop]);
+  }, [signal, animated, size, getBaseRadius, renderStatic, startAnimationLoop, configureCanvas]);
 
   // ResizeObserver for responsive sizing
   useEffect(() => {
@@ -389,17 +392,20 @@ export function FusionRing({
     if (!container) return;
 
     const observer = new ResizeObserver(() => {
-      if (animated) {
-        // Recompute targets for new size, restart animation
-        const rect = container.getBoundingClientRect();
-        let cssSize = Math.max(MIN_SIZE, Math.floor(rect.width));
-        if (size != null) cssSize = Math.max(MIN_SIZE, Math.min(size, cssSize));
-        cssSize = Math.min(cssSize, MAX_SIZE);
+      // CRITICAL: always reconfigure canvas on resize
+      configureCanvas();
 
-        const baseRadius = getBaseRadius(cssSize);
-        targetRadii.current = computeTargetRadii(signalRef.current.sectors, baseRadius);
-        // Reset animated radii to force re-lerp from current visual state
-        animatedRadii.current = computeTargetRadii(signalRef.current.sectors, baseRadius);
+      const rect = container.getBoundingClientRect();
+      let cssSize = Math.max(MIN_SIZE, Math.floor(rect.width));
+      if (size != null) cssSize = Math.max(MIN_SIZE, Math.min(size, cssSize));
+      cssSize = Math.min(cssSize, MAX_SIZE);
+
+      const baseRadius = getBaseRadius(cssSize);
+      targetRadii.current = computeTargetRadii(signalRef.current.sectors, baseRadius);
+
+      if (animated) {
+        // Snap animated radii to new targets (resize = instant, no lerp)
+        animatedRadii.current = [...targetRadii.current];
         startAnimationLoop();
       } else {
         renderStatic();
@@ -408,7 +414,7 @@ export function FusionRing({
 
     observer.observe(container);
     return () => observer.disconnect();
-  }, [animated, size, getBaseRadius, renderStatic, startAnimationLoop]);
+  }, [animated, size, getBaseRadius, renderStatic, startAnimationLoop, configureCanvas]);
 
   // Cleanup rAF on unmount
   useEffect(() => {
@@ -422,16 +428,33 @@ export function FusionRing({
 
   // Initial render
   useEffect(() => {
-    // Initialize animated radii on mount
     const container = containerRef.current;
     if (!container) return;
 
-    const rect = container.getBoundingClientRect();
-    let cssSize = Math.max(MIN_SIZE, Math.floor(rect.width));
-    if (size != null) cssSize = Math.max(MIN_SIZE, Math.min(size, cssSize));
-    cssSize = Math.min(cssSize, MAX_SIZE);
+    // CRITICAL: configureCanvas MUST run before any drawing/animation
+    const { width } = configureCanvas();
 
-    const baseRadius = getBaseRadius(cssSize);
+    // If container has no width yet (layout not ready), retry after a frame
+    if (width === 0) {
+      const retryId = requestAnimationFrame(() => {
+        const retried = configureCanvas();
+        if (retried.width === 0) return; // still no layout, ResizeObserver will catch it
+
+        const baseRadius = getBaseRadius(retried.width);
+        const initial = computeTargetRadii(signalRef.current.sectors, baseRadius);
+        animatedRadii.current = [...initial];
+        targetRadii.current = [...initial];
+
+        if (animated) {
+          startAnimationLoop();
+        } else {
+          renderStatic();
+        }
+      });
+      return () => cancelAnimationFrame(retryId);
+    }
+
+    const baseRadius = getBaseRadius(width);
     const initial = computeTargetRadii(signal.sectors, baseRadius);
     animatedRadii.current = [...initial];
     targetRadii.current = [...initial];
