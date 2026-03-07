@@ -23,6 +23,12 @@ on public.contribution_events for insert
 to authenticated
 with check (user_id = auth.uid());
 
+-- Delete own events (for quiz retake replacement)
+create policy "users_delete_own_events"
+on public.contribution_events for delete
+to authenticated
+using (user_id = auth.uid());
+
 -- Anon-Insert für User die noch nicht eingeloggt sind
 create policy "anon_insert_events"
 on public.contribution_events for insert

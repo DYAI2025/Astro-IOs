@@ -68,6 +68,16 @@ const KRAFTTIER_MARKERS: Record<string, Marker[]> = {
     { id: 'marker.social.diplomacy',          weight: 0.75, evidence: { confidence: 0.75 } },
     { id: 'marker.instinct.gut_feeling',      weight: 0.70, evidence: { confidence: 0.75 } },
   ],
+  owl: [
+    { id: 'marker.cognition.analytical',      weight: 0.85, evidence: { confidence: 0.75 } },
+    { id: 'marker.values.achievement',        weight: 0.75, evidence: { confidence: 0.75 } },
+    { id: 'marker.instinct.gut_feeling',      weight: 0.65, evidence: { confidence: 0.75 } },
+  ],
+  dolphin: [
+    { id: 'marker.social.extroversion',       weight: 0.85, evidence: { confidence: 0.75 } },
+    { id: 'marker.eq.empathy',               weight: 0.80, evidence: { confidence: 0.75 } },
+    { id: 'marker.social.openness',           weight: 0.75, evidence: { confidence: 0.75 } },
+  ],
 };
 
 export function krafttierToEvent(animalId: string): ContributionEvent {

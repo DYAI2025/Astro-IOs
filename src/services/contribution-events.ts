@@ -10,6 +10,15 @@ export async function saveContributionEvent(
   userId?: string,
 ): Promise<void> {
   try {
+    // Delete any previous event for the same module (quiz retake)
+    if (userId) {
+      await supabase
+        .from('contribution_events')
+        .delete()
+        .eq('user_id', userId)
+        .eq('module_id', event.source.moduleId);
+    }
+
     const { error } = await supabase
       .from('contribution_events')
       .insert({
