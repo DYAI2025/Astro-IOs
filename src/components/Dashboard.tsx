@@ -19,7 +19,8 @@ import { usePlanetarium } from "../contexts/PlanetariumContext";
 import { Tooltip } from "./Tooltip";
 import QuizOverlay from "./QuizOverlay";
 import { ClusterEnergySystem } from "./ClusterEnergySystem";
-import FusionRingTimeline from "./FusionRingTimeline";
+import { RingTeaserCard } from "./RingTeaserCard";
+import { DailyEnergyTeaser } from "./DailyEnergyTeaser";
 import { LegalFooter } from "./LegalFooter";
 import type { ContributionEvent } from "@/src/lib/lme/types";
 import type { FusionRingSignal } from "@/src/lib/fusion-ring";
@@ -1119,20 +1120,17 @@ export function Dashboard({
         </motion.div>
       )}
 
-      {/* ═══ TAGESENERGIE — Transit Timeline ════════════════════════════ */}
+      {/* ═══ RING TEASER — replaces inline timeline ════════════════════ */}
       {fusionSignal && (
-        <motion.div className="mb-16 px-4" {...fadeIn(0.4)}>
-          <div className="mb-4">
-            <p className="text-xs font-medium uppercase tracking-widest text-gold/60 mb-1">
-              {lang === "de" ? "Tagesenergie" : "Daily Energy"}
-            </p>
-            <h2 className="text-xl font-light text-white/80">
-              {lang === "de" ? "Planetare Transitenergie" : "Planetary Transit Energy"}
-            </h2>
-          </div>
-          <div className="flex justify-center">
-            <FusionRingTimeline signal={fusionSignal} size={420} />
-          </div>
+        <motion.div className="mb-16" {...fadeIn(0.4)}>
+          <RingTeaserCard signal={fusionSignal} lang={lang} />
+        </motion.div>
+      )}
+
+      {/* ═══ DAILY ENERGY TEASER ════════════════════════════════════════ */}
+      {fusionSignal && (
+        <motion.div className="mb-16" {...fadeIn(0.45)}>
+          <DailyEnergyTeaser signal={fusionSignal} lang={lang} isPremium={isPremium} />
         </motion.div>
       )}
 

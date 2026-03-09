@@ -650,6 +650,18 @@ app.post("/api/interpret", express.json({ limit: "50kb" }), async (req, res) => 
 // ── Static files ────────────────────────────────────────────────────
 app.use(express.static(distPath, { index: "index.html" }));
 
+app.get("/fu-ring", (_req, res) => {
+  const html = fs.readFileSync(path.join(distPath, "index.html"), "utf8");
+  const ogHtml = html.replace(
+    "<head>",
+    `<head>
+    <meta property="og:title" content="Mein Fu-Ring — Bazodiac" />
+    <meta property="og:description" content="Dein persönliches Energieprofil als Fusionsring" />
+    <meta property="og:type" content="website" />`
+  );
+  res.send(ogHtml);
+});
+
 app.get("*", (_req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { BrowserRouter, Link, useLocation } from "react-router-dom";
 import { BirthForm } from "./components/BirthForm";
-import { Dashboard } from "./components/Dashboard";
 import { Splash } from "./components/Splash";
 import { AuthGate } from "./components/AuthGate";
 import { useAuth } from "./contexts/AuthContext";
@@ -15,10 +15,12 @@ import {
   fetchAstroProfile,
 } from "./services/supabase";
 import { useAmbientePlayer } from "./hooks/useAmbientePlayer";
-import { useFusionRing } from "./hooks/useFusionRing";
 import { trackEvent } from "./lib/analytics";
 import { usePlanetarium } from "./contexts/PlanetariumContext";
-import { Volume2, VolumeX, LogOut, LayoutGrid, Telescope } from "lucide-react";
+import { FusionRingProvider } from "./contexts/FusionRingContext";
+import { AppLayoutProvider } from "./contexts/AppLayoutContext";
+import { AppRoutes } from "./router";
+import { Volume2, VolumeX, LogOut, LayoutGrid, Telescope, CircleDot } from "lucide-react";
 
 // ─── Profile loading states ──────────────────────────────────────────
 type ProfileState =
@@ -48,9 +50,6 @@ export default function App() {
 
   const profileFetchedForRef = useRef<string | null>(null);
   const ambiente = useAmbientePlayer();
-
-  // Fusion Ring — runs parallel to existing BAFE flow
-  const { signal, addQuizResult, completedModules } = useFusionRing(apiData, user?.id);
 
   // ── Handle ?upgrade=success redirect from Stripe ────────────────────
   useEffect(() => {
@@ -272,6 +271,82 @@ export default function App() {
   const showOnboarding = !hasCompleteProfile;
 
   // ── Main app ──────────────────────────────────────────────────────────
+
+  // Onboarding (no routing needed)
+  if (showOnboarding) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: siteVisible ? 1 : 0 }}
+        transition={{ duration: 2, ease: "easeOut", delay: 0.3 }}
+        className={`morning-bg min-h-screen font-sans selection:bg-[#8B6914]/20 flex flex-col ${planetariumMode ? "planetarium text-slate-100" : "text-[#1E2A3A]"}`}
+      >
+        <main className="flex-grow pt-24 md:pt-32 pb-24 md:pb-20 relative z-10 container mx-auto px-4 flex flex-col items-center justify-center">
+          {error && (
+            <div className="w-full max-w-md mb-8 bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl text-sm text-center">
+              {error}
+            </div>
+          )}
+          <BirthForm onSubmit={handleSubmit} isLoading={isLoading} />
+        </main>
+      </motion.div>
+    );
+  }
+
+  // Authenticated app with routing
+  return (
+    <BrowserRouter>
+      <FusionRingProvider apiResults={apiData} userId={user.id}>
+        <AppLayoutProvider value={{
+          interpretation: interpretation!,
+          apiData,
+          userId: user.id,
+          birthDate: birthDateStr,
+          onReset: handleReset,
+          onRegenerate: handleRegenerate,
+          isLoading,
+          apiIssues,
+          onStopAudio: ambiente.pause,
+          onResumeAudio: ambiente.resume,
+          isFirstReading,
+        }}>
+          <AppShell
+            user={user}
+            lang={lang}
+            setLang={setLang}
+            t={t}
+            siteVisible={siteVisible}
+            planetariumMode={planetariumMode}
+            togglePlanetarium={togglePlanetarium}
+            ambiente={ambiente}
+            signOut={signOut}
+            error={error}
+          />
+        </AppLayoutProvider>
+      </FusionRingProvider>
+    </BrowserRouter>
+  );
+}
+
+// ─── App Shell (inside BrowserRouter) ──────────────────────────────────
+// Extracted so useLocation() works (must be inside <BrowserRouter>).
+
+interface AppShellProps {
+  user: { email?: string };
+  lang: "de" | "en";
+  setLang: (l: "de" | "en") => void;
+  t: (key: string) => string;
+  siteVisible: boolean;
+  planetariumMode: boolean;
+  togglePlanetarium: () => void;
+  ambiente: { playing: boolean; toggle: () => void; pause: () => void; resume: () => void };
+  signOut: () => void;
+  error: string | null;
+}
+
+function AppShell({ user, lang, setLang, t, siteVisible, planetariumMode, togglePlanetarium, ambiente, signOut, error }: AppShellProps) {
+  const location = useLocation();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -281,16 +356,20 @@ export default function App() {
     >
       {/* ── Top Nav (Desktop) ────────────────────────────────────────── */}
       <header className="hidden md:flex fixed top-0 w-full h-20 items-center justify-between px-12 z-50 morning-header">
-        <div
+        <Link
+          to="/"
           className="font-serif text-xl tracking-widest text-[#8B6914] cursor-pointer select-none"
         >
           Bazodiac
-        </div>
+        </Link>
 
         <nav className="flex space-x-12 text-[10px] uppercase tracking-[0.3em]">
-          <a href="#" className="text-[#1E2A3A]/60 hover:text-[#8B6914] transition-colors active">
+          <Link to="/" className={`transition-colors ${location.pathname === "/" ? "text-[#8B6914]" : "text-[#1E2A3A]/60 hover:text-[#8B6914]"}`}>
             {t("nav.atlas")}
-          </a>
+          </Link>
+          <Link to="/fu-ring" className={`transition-colors ${location.pathname === "/fu-ring" ? "text-[#8B6914]" : "text-[#1E2A3A]/60 hover:text-[#8B6914]"}`}>
+            Fu-Ring
+          </Link>
         </nav>
 
         <div className="flex items-center gap-5">
@@ -360,34 +439,14 @@ export default function App() {
         </div>
       </header>
 
-      {/* ── Main content ─────────────────────────────────────────────── */}
+      {/* ── Main content (routed) ──────────────────────────────────────── */}
       <main className="flex-grow pt-24 md:pt-32 pb-24 md:pb-20 relative z-10 container mx-auto px-4 flex flex-col items-center justify-center">
         {error && (
           <div className="w-full max-w-md mb-8 bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl text-sm text-center">
             {error}
           </div>
         )}
-
-        {showOnboarding ? (
-          <BirthForm onSubmit={handleSubmit} isLoading={isLoading} />
-        ) : (
-          <Dashboard
-            interpretation={interpretation!}
-            apiData={apiData}
-            userId={user.id}
-            birthDate={birthDateStr}
-            onReset={handleReset}
-            onRegenerate={handleRegenerate}
-            isLoading={isLoading}
-            apiIssues={apiIssues}
-            onStopAudio={ambiente.pause}
-            onResumeAudio={ambiente.resume}
-            isFirstReading={isFirstReading}
-            fusionSignal={signal}
-            onQuizComplete={addQuizResult}
-            completedModules={completedModules}
-          />
-        )}
+        <AppRoutes />
       </main>
 
       {/* ── Bottom Nav (Mobile) ───────────────────────────────────────── */}
@@ -397,10 +456,15 @@ export default function App() {
           <button className={lang === "en" ? "active" : ""} onClick={() => setLang("en")}>EN</button>
         </div>
 
-        <a href="#" className="flex flex-col items-center gap-1 text-[#8B6914]">
+        <Link to="/" className={`flex flex-col items-center gap-1 ${location.pathname === "/" ? "text-[#8B6914]" : "text-[#1E2A3A]/40"}`}>
           <LayoutGrid className="w-5 h-5" />
           <span className="text-[8px] uppercase tracking-tighter">{t("nav.atlas")}</span>
-        </a>
+        </Link>
+
+        <Link to="/fu-ring" className={`flex flex-col items-center gap-1 ${location.pathname === "/fu-ring" ? "text-[#8B6914]" : "text-[#1E2A3A]/40"}`}>
+          <CircleDot className="w-5 h-5" />
+          <span className="text-[8px] uppercase tracking-tighter">Fu-Ring</span>
+        </Link>
 
         <button
           onClick={togglePlanetarium}
