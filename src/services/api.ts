@@ -1,3 +1,17 @@
+import type {
+  BafeBaziResponse,
+  BafeWesternResponse,
+  BafeFusionResponse,
+  BafeWuxingResponse,
+  BafeTstResponse,
+  BafePillarRaw,
+  BafeProblemDetail,
+  MappedBazi,
+  MappedWestern,
+  MappedWuxing,
+  MappedPillar,
+} from '@/src/types/bafe';
+
 export interface BirthData {
   date: string; // ISO 8601 local date time e.g. 2024-02-10T14:30:00
   tz: string;
@@ -11,11 +25,11 @@ export interface ApiIssue {
 }
 
 export interface ApiResults {
-  bazi: unknown;
-  western: unknown;
-  fusion: unknown;
-  wuxing: unknown;
-  tst: unknown;
+  bazi: MappedBazi;
+  western: MappedWestern;
+  fusion: BafeFusionResponse;
+  wuxing: MappedWuxing;
+  tst: BafeTstResponse;
   issues: ApiIssue[];
   _reading_id?: number | null;
 }
@@ -67,7 +81,10 @@ function validateBirthData(data: BirthData) {
   }
 }
 
-async function postCalculation(endpoint: string, payload: Record<string, unknown>) {
+async function postCalculation<T = unknown>(
+  endpoint: string,
+  payload: Record<string, unknown>,
+): Promise<T> {
   const res = await fetchWithTimeout(`${BASE_URL}/calculate/${endpoint}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -75,16 +92,27 @@ async function postCalculation(endpoint: string, payload: Record<string, unknown
   });
 
   if (!res.ok) {
-    const details = await res.text().catch(() => "No response body");
-    throw new Error(`Failed to calculate ${endpoint}: ${res.status} ${details}`);
+    const text = await res.text().catch(() => "");
+    let detail = text;
+
+    // Try parsing as Problem+JSON (BAFE C2 format)
+    try {
+      const problem: BafeProblemDetail = JSON.parse(text);
+      if (problem.detail) detail = problem.detail;
+      else if (problem.title) detail = problem.title;
+    } catch {
+      // Not JSON — use raw text
+    }
+
+    throw new Error(`Failed to calculate ${endpoint}: ${res.status} ${detail}`);
   }
 
-  return res.json();
+  return res.json() as Promise<T>;
 }
 
-export async function calculateBazi(data: BirthData) {
+export async function calculateBazi(data: BirthData): Promise<MappedBazi> {
   validateBirthData(data);
-  const raw = await postCalculation("bazi", {
+  const raw = await postCalculation<BafeBaziResponse>("bazi", {
     date: data.date,
     tz: data.tz,
     lon: data.lon,
@@ -99,7 +127,7 @@ export async function calculateBazi(data: BirthData) {
   // Map BAFE response to Dashboard-expected shape.
   // BAFE pillars use German keys (stamm/zweig/tier/element).
   // Dashboard expects stem/branch plus English animal names.
-  const mapPillar = (p: any) => ({
+  const mapPillar = (p: BafePillarRaw | undefined): MappedPillar => ({
     stem: p?.stamm || p?.stem || "",
     branch: p?.zweig || p?.branch || "",
     animal: p?.tier || p?.animal || "",
@@ -123,9 +151,9 @@ export async function calculateBazi(data: BirthData) {
   };
 }
 
-export async function calculateWestern(data: BirthData) {
+export async function calculateWestern(data: BirthData): Promise<MappedWestern> {
   validateBirthData(data);
-  const raw = await postCalculation("western", {
+  const raw = await postCalculation<BafeWesternResponse>("western", {
     date: data.date,
     tz: data.tz,
     lon: data.lon,
@@ -141,17 +169,31 @@ export async function calculateWestern(data: BirthData) {
   const ascendantDeg = raw.angles?.Ascendant;
   const ascendantSign = signFromDegrees(ascendantDeg);
 
+  // BAFE returns houses as degree values: {"1": 123.45, "2": 155.6, ...}
+  // Dashboard needs sign names per house. Convert cusp degrees → sign.
+  const normalizedHouses: Record<string, string> = {};
+  if (raw.houses && typeof raw.houses === "object") {
+    Object.entries(raw.houses).forEach(([key, deg]) => {
+      if (typeof deg === "number") {
+        normalizedHouses[key] = signFromDegrees(deg) || "";
+      } else if (typeof deg === "string") {
+        normalizedHouses[key] = deg;
+      }
+    });
+  }
+
   return {
     ...raw,
     zodiac_sign: sunSign,
     moon_sign: moonSign,
     ascendant_sign: ascendantSign,
+    houses: normalizedHouses,
   };
 }
 
-export async function calculateFusion(data: BirthData) {
+export async function calculateFusion(data: BirthData): Promise<BafeFusionResponse> {
   validateBirthData(data);
-  return postCalculation("fusion", {
+  return postCalculation<BafeFusionResponse>("fusion", {
     date: data.date,
     tz: data.tz,
     lon: data.lon,
@@ -162,9 +204,9 @@ export async function calculateFusion(data: BirthData) {
   });
 }
 
-export async function calculateWuxing(data: BirthData) {
+export async function calculateWuxing(data: BirthData): Promise<MappedWuxing> {
   validateBirthData(data);
-  return postCalculation("wuxing", {
+  const raw = await postCalculation<BafeWuxingResponse>("wuxing", {
     date: data.date,
     tz: data.tz,
     lon: data.lon,
@@ -172,11 +214,35 @@ export async function calculateWuxing(data: BirthData) {
     ambiguousTime: "earlier",
     nonexistentTime: "error",
   });
+
+  // BAFE returns `wu_xing_vector: {Holz: x, Feuer: x, ...}` (German keys).
+  // Dashboard expects `elements` and `dominant_element`.
+  const vec = raw.wu_xing_vector || {};
+
+  return {
+    ...raw,
+    // Provide both German (original) AND English-keyed element counts
+    // so Dashboard's fallback chain `el.key ?? el.name.de` always hits.
+    elements: {
+      Wood:  vec.Holz   ?? vec.Wood  ?? 0,
+      Fire:  vec.Feuer  ?? vec.Fire  ?? 0,
+      Earth: vec.Erde   ?? vec.Earth ?? 0,
+      Metal: vec.Metall ?? vec.Metal ?? 0,
+      Water: vec.Wasser ?? vec.Water ?? 0,
+      // Also keep German keys for downstream lookup
+      Holz:   vec.Holz   ?? vec.Wood  ?? 0,
+      Feuer:  vec.Feuer  ?? vec.Fire  ?? 0,
+      Erde:   vec.Erde   ?? vec.Earth ?? 0,
+      Metall: vec.Metall ?? vec.Metal ?? 0,
+      Wasser: vec.Wasser ?? vec.Water ?? 0,
+    },
+    dominant_element: raw.dominant_element || "",
+  };
 }
 
-export async function calculateTst(data: BirthData) {
+export async function calculateTst(data: BirthData): Promise<BafeTstResponse> {
   validateBirthData(data);
-  return postCalculation("tst", {
+  return postCalculation<BafeTstResponse>("tst", {
     date: data.date,
     tz: data.tz,
     lon: data.lon,
@@ -188,7 +254,13 @@ export async function calculateTst(data: BirthData) {
 
 // Fallback data is intentionally empty so the Dashboard shows "—" instead of
 // fake values when the API is unreachable.
-const MOCK_DATA = {
+const MOCK_DATA: {
+  bazi: MappedBazi;
+  western: MappedWestern;
+  wuxing: MappedWuxing;
+  fusion: BafeFusionResponse;
+  tst: BafeTstResponse;
+} = {
   bazi: {
     day_master: "",
     zodiac_sign: "",
@@ -198,9 +270,11 @@ const MOCK_DATA = {
     zodiac_sign: "",
     moon_sign: "",
     ascendant_sign: "",
+    houses: {},
   },
   wuxing: {
     dominant_element: "",
+    elements: {},
   },
   fusion: {},
   tst: {},
