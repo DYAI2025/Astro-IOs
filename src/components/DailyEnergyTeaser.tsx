@@ -22,7 +22,7 @@ export function DailyEnergyTeaser({ signal, lang, isPremium }: DailyEnergyTeaser
 
       <div className="h-1.5 rounded-sm bg-[#1E2A3A]/06 mb-3 overflow-hidden">
         <div
-          className="h-full rounded-sm transition-all duration-700"
+          className="h-full rounded-sm transition-[width] duration-700"
           style={{
             width: `${energy}%`,
             background: '#D4AF37',
