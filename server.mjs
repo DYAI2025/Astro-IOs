@@ -131,14 +131,12 @@ function cacheKey(method, url, reqBody) {
 // Evict expired entries every hour
 setInterval(() => {
   const now = Date.now();
-  let evicted = 0;
-  for (const [key, entry] of bafeCache) {
-    if (now - entry.timestamp > CACHE_TTL) {
-      bafeCache.delete(key);
-      evicted++;
-    }
-  }
-  if (evicted > 0) console.log(`[cache] evicted ${evicted} expired entries, ${bafeCache.size} remaining`);
+  // Collect expired keys first, then delete — avoids mutating the Map mid-iteration.
+  const expired = [...bafeCache.entries()]
+    .filter(([, entry]) => now - entry.timestamp > CACHE_TTL)
+    .map(([key]) => key);
+  expired.forEach(key => bafeCache.delete(key));
+  if (expired.length > 0) console.log(`[cache] evicted ${expired.length} expired entries, ${bafeCache.size} remaining`);
 }, 60 * 60 * 1000);
 
 // ── Retry + Timeout constants ────────────────────────────────────────
