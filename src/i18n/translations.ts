@@ -5,7 +5,7 @@
 export type Language = "en" | "de";
 
 // Recursive type that mirrors the structure but with string values
-type DeepStringRecord = { [key: string]: string | DeepStringRecord };
+export type DeepStringRecord = { [key: string]: string | DeepStringRecord };
 
 const translationsEn: DeepStringRecord = {
   nav: {

@@ -29,6 +29,7 @@ import { WuXingCycleWheel } from "./WuXingCycleWheel";
 import { BaZiInterpretation } from "./BaZiInterpretation";
 import { BaZiMiniRing } from "./BaZiMiniRing";
 import { getStemByCharacter } from "../lib/astro-data/heavenlyStems";
+import type { BafeData } from "../services/supabase";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Static data
@@ -143,7 +144,9 @@ function parseHouseNum(key: string): number | null {
   return n >= 1 && n <= 12 ? n : null;
 }
 
-function resolveSign(val: any): string {
+type HouseValue = string | { sign?: string; zodiac_sign?: number; sign_index?: number; index?: number };
+
+function resolveSign(val: HouseValue): string {
   if (typeof val === "string") return val;
   if (typeof val === "object" && val !== null) {
     if (val.sign && typeof val.sign === "string") return val.sign;
@@ -209,7 +212,7 @@ function Badge({ text }: { text: string }) {
 
 interface DashboardProps {
   interpretation: string;
-  apiData: any;
+  apiData: BafeData;
   userId: string;
   birthDate: string | null;
   onReset: () => void;
@@ -305,7 +308,7 @@ export function Dashboard({
   const sunSign       = apiData.western?.zodiac_sign      || "";
   const moonSign      = apiData.western?.moon_sign        || "";
   const ascendantSign = apiData.western?.ascendant_sign   || "";
-  const zodiacAnimal  = apiData.bazi?.zodiac_sign         || apiData.chinese?.zodiac || "";
+  const zodiacAnimal  = apiData.bazi?.zodiac_sign         || "";
   const dayMaster     = apiData.bazi?.day_master          || "—";
   const monthStem     = apiData.bazi?.pillars?.month?.stem || "—";
 
@@ -335,7 +338,7 @@ export function Dashboard({
 
   // WuXing element counts + percentage fix (FR-06 Bug)
   const wuxingCounts: Record<string, number> = useMemo(
-    () => apiData.wuxing?.elements || apiData.wuxing?.element_counts || {},
+    () => apiData.wuxing?.elements || (apiData.wuxing?.element_counts as Record<string, number> | undefined) || {},
     [apiData.wuxing],
   );
   const hasWuxingData = useMemo(
@@ -354,8 +357,8 @@ export function Dashboard({
   );
 
   // Houses
-  const houses: Record<string, any> = useMemo(
-    () => apiData.western?.houses || {},
+  const houses: Record<string, HouseValue> = useMemo(
+    () => (apiData.western?.houses as Record<string, HouseValue>) || {},
     [apiData.western],
   );
   const houseEntries = useMemo(
@@ -388,7 +391,7 @@ export function Dashboard({
     );
   }, [apiData.wuxing]);
 
-  const yearAnimal = apiData.bazi?.zodiac_sign || apiData.chinese?.zodiac || "";
+  const yearAnimal = apiData.bazi?.zodiac_sign || "";
   const yearEl = apiData.bazi?.pillars?.year?.element || "";
 
   // B(s) signals for mini-ring (from fusion computation)

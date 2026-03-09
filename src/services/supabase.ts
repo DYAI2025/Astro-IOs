@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import type { ApiResults } from "./api";
 
 // ── Types ───────────────────────────────────────────────────────────
 
@@ -9,6 +10,9 @@ export interface BirthInput {
   lat: number;
   place?: string;
 }
+
+/** Alias for the full BAFE engine response used for storage and display */
+export type BafeData = ApiResults;
 
 // ── Fetch profile (client-side, for re-display on revisit) ──────────
 // Returns the single astro_profile row for this user, or null.
@@ -34,7 +38,7 @@ export async function fetchAstroProfile(userId: string) {
 export async function upsertAstroProfile(
   userId: string,
   birth: BirthInput,
-  bafeData: any,
+  bafeData: BafeData,
   interpretation: string,
 ) {
   const sunSign = bafeData.western?.zodiac_sign || null;
@@ -92,7 +96,7 @@ export async function insertBirthData(userId: string, birth: BirthInput) {
 
 // ── Insert natal_charts (write-once per user) ───────────────────────
 
-export async function insertNatalChart(userId: string, bafeData: any) {
+export async function insertNatalChart(userId: string, bafeData: BafeData) {
   const { error } = await supabase.from("natal_charts").insert({
     user_id: userId,
     payload: bafeData,
