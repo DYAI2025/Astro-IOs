@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { ContributionEvent } from '@/src/lib/lme/types';
 import { kinkySeriesQuizToEvent } from '@/src/lib/fusion-ring/quiz-to-event';
@@ -480,6 +480,7 @@ export default function KinkySeriesQuiz({ onComplete, onClose, quizIndex }: Kink
   const [questionIdx, setQuestionIdx] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [resultProfile, setResultProfile] = useState<QuizProfile | null>(null);
+  const pendingEventRef = useRef<ContributionEvent | null>(null);
 
   const handleStart = useCallback(() => {
     setScreen('quiz');
@@ -502,16 +503,16 @@ export default function KinkySeriesQuiz({ onComplete, onClose, quizIndex }: Kink
     [questionIdx, answers, data.questions.length],
   );
 
+  // Compute result and transition to result screen after loading delay
   useEffect(() => {
     if (screen !== 'loading') return;
     const timer = setTimeout(() => {
       const { clusterScores, primaryType } = computeResult(data.questions, answers);
       const profile = data.profiles.find(p => p.id === primaryType) ?? data.profiles[0];
       setResultProfile(profile);
-      setScreen('result');
 
       const isSeriesComplete = quizIndex === 4;
-      const event = kinkySeriesQuizToEvent(
+      pendingEventRef.current = kinkySeriesQuizToEvent(
         quizIndex,
         primaryType,
         clusterScores,
@@ -519,10 +520,18 @@ export default function KinkySeriesQuiz({ onComplete, onClose, quizIndex }: Kink
         data.marker_emission.cluster_keyword_map,
         isSeriesComplete,
       );
-      onComplete(event);
+      setScreen('result');
     }, 2000);
     return () => clearTimeout(timer);
-  }, [screen, answers, data, quizIndex, onComplete]);
+  }, [screen, answers, data, quizIndex]);
+
+  // Fire onComplete only after result screen has rendered
+  useEffect(() => {
+    if (screen !== 'result' || !pendingEventRef.current) return;
+    const event = pendingEventRef.current;
+    pendingEventRef.current = null;
+    onComplete(event);
+  }, [screen, onComplete]);
 
   if (!data) return null;
 
