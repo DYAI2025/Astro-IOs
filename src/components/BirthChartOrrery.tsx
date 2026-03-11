@@ -206,8 +206,8 @@ export function BirthChartOrrery({
   useEffect(() => {
     if (!containerRef.current) return;
     const el = containerRef.current;
-    const W  = el.clientWidth;
-    const H  = el.clientHeight;
+    const W  = el.clientWidth  || 375;   // fallback: safe mobile default
+    const H  = el.clientHeight || 260;   // fallback: never let H = 0 → black canvas
 
     // ── Scene / Camera / Renderer ──────────────────────────────────────────
     const scene = new THREE.Scene();
@@ -817,10 +817,14 @@ export function BirthChartOrrery({
       renderer.setSize(w, h);
       composerRef.current?.setSize(w, h);
     };
+    // Use ResizeObserver (better than window resize for mobile chrome show/hide)
+    const ro = new ResizeObserver(() => onResize());
+    ro.observe(el);
     window.addEventListener('resize', onResize);
 
     return () => {
       cancelAnimationFrame(raf);
+      ro.disconnect();
       window.removeEventListener('resize', onResize);
       el.removeEventListener('mousedown',  onMouseDown);
       el.removeEventListener('mouseup',    onMouseUp);
@@ -922,10 +926,10 @@ export function BirthChartOrrery({
         </div>
       )}
 
-      {/* Three.js Canvas */}
+      {/* Three.js Canvas — height via .orrery-canvas-container in index.css */}
       <div
         ref={containerRef}
-        className="w-full h-[260px] md:h-[460px]"
+        className="orrery-canvas-container"
         style={{ cursor: planetariumMode ? 'crosshair' : 'grab' }}
       />
     </div>
