@@ -181,8 +181,16 @@ export function parseAstroProfileJson(raw: unknown): ParsedAstroProfile | null {
     wuxing = json.wuxing;
     tst = json.tst;
     interpretation = json.interpretation || '';
-    tiles = json.tiles || {};
-    houses = json.houses || {};
+
+    const rawTilesV1 = json.tiles;
+    tiles = (rawTilesV1 && typeof rawTilesV1 === 'object' && !Array.isArray(rawTilesV1))
+      ? (rawTilesV1 as Record<string, string>)
+      : {};
+
+    const rawHousesV1 = json.houses;
+    houses = (rawHousesV1 && typeof rawHousesV1 === 'object' && !Array.isArray(rawHousesV1))
+      ? (rawHousesV1 as Record<string, string>)
+      : {};
   } else {
     // Legacy format — data may be under 'bafe' key or at top level
     const legacy = json as AstroProfileJsonLegacy;
