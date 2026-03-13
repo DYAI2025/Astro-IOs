@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useAstroProfile } from '../hooks/useAstroProfile';
+import { parseAstroProfileJson } from '../types/bafe';
 
 // Mock all external services
 vi.mock('../services/api', () => ({
@@ -69,5 +70,45 @@ describe('useAstroProfile', () => {
     expect(result.current.profileState).toBe('found');
     expect(result.current.interpretation).toBe('Test interpretation');
     expect(result.current.isFirstReading).toBe(true);
+  });
+});
+
+describe('parseAstroProfileJson', () => {
+  it('parses v1 flat format', () => {
+    const input = {
+      version: 1 as const,
+      bazi: { day_master: 'Jia', zodiac_sign: 'Rat' },
+      western: { zodiac_sign: 'Aries', moon_sign: 'Taurus', ascendant_sign: 'Gemini', houses: {} },
+      wuxing: { dominant_element: 'Wood', elements: { Wood: 3 } },
+      fusion: {},
+      tst: {},
+      interpretation: 'Hello',
+      tiles: { sun: 'Sun' },
+      houses: {},
+    };
+    const result = parseAstroProfileJson(input);
+    expect(result?.interpretation).toBe('Hello');
+    expect(result?.apiData.bazi?.day_master).toBe('Jia');
+    expect(result?.tiles.sun).toBe('Sun');
+  });
+
+  it('parses legacy bafe-nested format', () => {
+    const input = {
+      bafe: {
+        bazi: { day_master: 'Yi', zodiac_sign: 'Ox' },
+        western: { zodiac_sign: 'Scorpio', moon_sign: 'Leo', ascendant_sign: 'Virgo', houses: {} },
+        wuxing: { dominant_element: 'Fire', elements: {} },
+        fusion: {},
+        tst: {},
+        interpretation: 'Legacy text',
+      },
+    };
+    const result = parseAstroProfileJson(input);
+    expect(result?.interpretation).toBe('Legacy text');
+    expect(result?.apiData.bazi?.day_master).toBe('Yi');
+  });
+
+  it('returns null for null input', () => {
+    expect(parseAstroProfileJson(null)).toBeNull();
   });
 });

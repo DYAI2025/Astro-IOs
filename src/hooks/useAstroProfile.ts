@@ -9,6 +9,7 @@ import {
   fetchAstroProfile,
 } from "../services/supabase";
 import type { ApiData } from "../types/bafe";
+import { parseAstroProfileJson } from "../types/bafe";
 import type { TileTexts, HouseTexts } from "../types/interpretation";
 import { trackEvent } from "../lib/analytics";
 
@@ -72,24 +73,17 @@ export function useAstroProfile(user: User | null, lang: string): AstroProfileRe
     fetchAstroProfile(user.id)
       .then(async (profile) => {
         if (profile?.astro_json) {
-          const json = profile.astro_json as any;
-
-          const bazi    = json.bazi    ?? json.bafe?.bazi;
-          const western = json.western ?? json.bafe?.western;
-          const fusion  = json.fusion  ?? json.bafe?.fusion;
-          const wuxing  = json.wuxing  ?? json.bafe?.wuxing;
-          const tst     = json.tst     ?? json.bafe?.tst;
-
-          setApiData({ bazi, western, fusion, wuxing, tst });
-
-          const storedInterpretation = json.interpretation ?? json.bafe?.interpretation ?? null;
+          const parsed = parseAstroProfileJson(profile.astro_json);
+          if (!parsed) {
+            setProfileState("not-found");
+            return;
+          }
+          const { apiData: restoredData, interpretation: storedInterpretation, tiles: storedTiles, houses: storedHouses } = parsed;
+          setApiData(restoredData);
 
           if (!storedInterpretation) {
             try {
-              const aiResult = await generateInterpretation(
-                { bazi, western, fusion, wuxing, tst },
-                lang,
-              );
+              const aiResult = await generateInterpretation(restoredData, lang);
               setInterpretation(aiResult.interpretation);
               setTileTexts(aiResult.tiles || {});
               setHouseTexts(aiResult.houses || {});
@@ -101,12 +95,8 @@ export function useAstroProfile(user: User | null, lang: string): AstroProfileRe
               );
             }
           } else {
-            const rawTiles = json.tiles;
-            setTileTexts(rawTiles && typeof rawTiles === "object" && !Array.isArray(rawTiles)
-              ? (rawTiles as TileTexts) : {});
-            const rawHouses = json.houses;
-            setHouseTexts(rawHouses && typeof rawHouses === "object" && !Array.isArray(rawHouses)
-              ? (rawHouses as HouseTexts) : {});
+            setTileTexts(storedTiles as TileTexts);
+            setHouseTexts(storedHouses as HouseTexts);
             setInterpretation(storedInterpretation);
           }
 
