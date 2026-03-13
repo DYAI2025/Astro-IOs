@@ -74,6 +74,20 @@ Defined in `src/router.tsx`, all lazy-loaded:
 | `src/hooks/usePremium.ts` | Reads `profiles.is_premium` from Supabase; re-fetches on tab focus (for Stripe redirect return) |
 | `src/components/PremiumGate.tsx` | Wrapper that locks content behind premium; triggers Stripe checkout via `/api/checkout` |
 | `src/data/articles.ts` | SEO article content (6 articles, full German text, TypeScript) |
+| `src/components/QuizOverlay.tsx` | Modal overlay that hosts the quiz system; launched from Dashboard |
+| `src/components/quizzes/` | 15+ quiz components (Krafttier, AuraColors, CareerDNA, etc.); results feed into Fusion Ring via `src/lib/fusion-ring/quiz-to-event.ts` |
+| `src/components/quizzes/Kinky/` | Kinky quiz series (multi-part, premium) |
+| `src/components/quizzes/PartnerMatch/` | PartnerMatch quiz series including `ConversationAnalysisQuiz` |
+| `src/components/ClusterEnergySystem.tsx` | Renders quiz-result "energy clusters" on the Dashboard |
+| `src/components/fusion-ring-3d/FusionRing3D.tsx` | Three.js 3D Fusion Ring — used on `/fu-ring` page |
+| `src/components/fusion-ring-website/FusionRingWebsiteCanvas.tsx` | Canvas-based Fusion Ring for the landing/marketing view |
+| `src/hooks/useSpaceWeather.ts` | Fetches NASA space-weather data (solar wind, Kp-index) and feeds it into the Fusion Ring signal |
+| `src/hooks/useAmbientePlayer.ts` | Ambient audio playback control |
+| `src/contexts/PlanetariumContext.tsx` | Context for the 3D orrery/planetarium state |
+| `src/contexts/LanguageContext.tsx` | i18n context (German UI default) |
+| `src/contexts/AppLayoutContext.tsx` | Layout/sidebar state shared across pages |
+| `src/types/bafe.ts` | TypeScript types for raw BAFE API responses (characterization-based; see BAFE mapping gotcha) |
+| `src/types/interpretation.ts` | Types for Gemini AI interpretation results |
 
 ### BAFE Response Mapping (Important Gotcha)
 
@@ -114,6 +128,14 @@ Railway via `nixpacks.toml` + `railway.json`. Build: `npm ci && npm run build`. 
 ### Path Alias
 
 `@/*` maps to **project root** (not `src/`), configured in both `tsconfig.json` and `vite.config.ts`. So `@/src/services/api` resolves to `./src/services/api`.
+
+### Quiz → Fusion Ring Integration
+
+Quizzes emit "contribution events" via `src/lib/fusion-ring/quiz-to-event.ts`. Each completed quiz adjusts the user's Fusion Ring signal (stored in `FusionRingContext`). Series quizzes (Kinky, PartnerMatch) share state via a series-level component that wraps individual quiz steps.
+
+### `features/plan/` Directory
+
+Contains `QuizzMe-main/` — a separate Next.js project and design reference that is **not part of the main app build**. It's excluded from Railway nixpacks. Treat it as a planning artefact / future integration target. Do not import from it into `src/`.
 
 ### Known Issues
 
