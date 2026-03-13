@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BrowserRouter, Link, useLocation } from "react-router-dom";
 import { BirthForm } from "./components/BirthForm";
@@ -6,31 +6,14 @@ import { Splash } from "./components/Splash";
 import { AuthGate } from "./components/AuthGate";
 import { useAuth } from "./contexts/AuthContext";
 import { useLanguage } from "./contexts/LanguageContext";
-import { calculateAll, BirthData, ApiIssue } from "./services/api";
-import { generateInterpretation } from "./services/gemini";
-import {
-  upsertAstroProfile,
-  insertBirthData,
-  insertNatalChart,
-  fetchAstroProfile,
-} from "./services/supabase";
-import type { ApiData } from "./types/bafe";
-import type { TileTexts, HouseTexts } from "./types/interpretation";
 import { useAmbientePlayer } from "./hooks/useAmbientePlayer";
+import { useAstroProfile } from "./hooks/useAstroProfile";
 import { trackEvent } from "./lib/analytics";
 import { usePlanetarium } from "./contexts/PlanetariumContext";
 import { FusionRingProvider } from "./contexts/FusionRingContext";
 import { AppLayoutProvider } from "./contexts/AppLayoutContext";
 import { AppRoutes } from "./router";
 import { Volume2, VolumeX, LogOut, LayoutGrid, Telescope, CircleDot } from "lucide-react";
-
-// ─── Profile loading states ──────────────────────────────────────────
-type ProfileState =
-  | "idle"           // no user logged in
-  | "loading"        // fetching from Supabase
-  | "found"          // profile loaded → show Dashboard
-  | "not-found"      // no profile → show Onboarding (BirthForm)
-  | "error";         // fetch failed → show Onboarding as fallback
 
 export default function App() {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -39,21 +22,24 @@ export default function App() {
 
   const [showSplash, setShowSplash] = useState(true);
   const [siteVisible, setSiteVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Profile state machine
-  const [profileState, setProfileState] = useState<ProfileState>("idle");
-  const [apiData, setApiData] = useState<ApiData | null>(null);
-  const [apiIssues, setApiIssues] = useState<ApiIssue[]>([]);
-  const [interpretation, setInterpretation] = useState<string | null>(null);
-  const [tileTexts, setTileTexts] = useState<TileTexts>({});
-  const [houseTexts, setHouseTexts] = useState<HouseTexts>({});
-  const [error, setError] = useState<string | null>(null);
-  const [birthDateStr, setBirthDateStr] = useState<string | null>(null);
-  const [isFirstReading, setIsFirstReading] = useState(false);
-
-  const profileFetchedForRef = useRef<string | null>(null);
   const ambiente = useAmbientePlayer();
+
+  const {
+    profileState,
+    apiData,
+    apiIssues,
+    interpretation,
+    tileTexts,
+    houseTexts,
+    birthDateStr,
+    isFirstReading,
+    isLoading,
+    error,
+    handleSubmit,
+    handleRegenerate,
+    handleReset,
+  } = useAstroProfile(user, lang);
 
   // ── Handle ?upgrade=success redirect from Stripe ────────────────────
   useEffect(() => {
@@ -64,181 +50,6 @@ export default function App() {
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // PROFILE LOADING — runs once when user logs in
-  // ═══════════════════════════════════════════════════════════════════════
-  useEffect(() => {
-    if (!user) {
-      // Logged out → reset everything
-      setProfileState("idle");
-      setApiData(null);
-      setInterpretation(null);
-      setTileTexts({});
-      setHouseTexts({});
-      setBirthDateStr(null);
-      setApiIssues([]);
-      setError(null);
-      setIsFirstReading(false);
-      profileFetchedForRef.current = null;
-      return;
-    }
-
-    // Already fetched for this user? Don't re-fetch.
-    if (profileFetchedForRef.current === user.id) return;
-    profileFetchedForRef.current = user.id;
-
-    setProfileState("loading");
-
-    fetchAstroProfile(user.id)
-      .then(async (profile) => {
-        if (profile?.astro_json) {
-          const json = profile.astro_json as any;
-
-          // Reconstruct apiData from stored JSON
-          // Support both old format { bafe: {…}, interpretation } and new flat format
-          const bazi    = json.bazi    ?? json.bafe?.bazi;
-          const western = json.western ?? json.bafe?.western;
-          const fusion  = json.fusion  ?? json.bafe?.fusion;
-          const wuxing  = json.wuxing  ?? json.bafe?.wuxing;
-          const tst     = json.tst     ?? json.bafe?.tst;
-
-          setApiData({ bazi, western, fusion, wuxing, tst });
-
-          // Retrieve stored interpretation
-          const storedInterpretation =
-            json.interpretation ?? json.bafe?.interpretation ?? null;
-
-          // If interpretation is missing (e.g. Gemini was down when profile was created),
-          // generate it now so the Dashboard can show.
-          if (!storedInterpretation) {
-            let regenerated: string;
-            try {
-              const aiResult = await generateInterpretation(
-                { bazi, western, fusion, wuxing, tst },
-                lang,
-              );
-              regenerated = aiResult.interpretation;
-              setTileTexts(aiResult.tiles || {});
-              setHouseTexts(aiResult.houses || {});
-            } catch {
-              regenerated =
-                lang === "de"
-                  ? "Dein kosmisches Profil wird geladen…"
-                  : "Loading your cosmic profile…";
-              // tiles/houses remain empty — catch path has no AI result
-            }
-            setInterpretation(regenerated);
-          } else {
-            // Restore stored tiles/houses with type guards (JSONB may be malformed)
-            const rawTiles = json.tiles;
-            setTileTexts(rawTiles && typeof rawTiles === 'object' && !Array.isArray(rawTiles)
-              ? (rawTiles as TileTexts)
-              : {});
-            const rawHouses = json.houses;
-            setHouseTexts(rawHouses && typeof rawHouses === 'object' && !Array.isArray(rawHouses)
-              ? (rawHouses as HouseTexts)
-              : {});
-            setInterpretation(storedInterpretation);
-          }
-
-          // Birth date
-          if (profile.birth_date) {
-            const time = profile.birth_time || "12:00";
-            setBirthDateStr(`${profile.birth_date}T${time}:00`);
-          }
-
-          setProfileState("found");
-        } else {
-          // No profile yet — user needs to go through onboarding
-          setProfileState("not-found");
-        }
-      })
-      .catch((err) => {
-        console.error("Profile load failed:", err);
-        setProfileState("error"); // fallback: show onboarding
-      });
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // ONBOARDING SUBMIT — only runs once per user lifetime
-  // ═══════════════════════════════════════════════════════════════════════
-  const handleSubmit = async (data: BirthData) => {
-    if (!user) return;
-
-    // Double-check: if user already has a profile, don't create another
-    if (profileState === "found") return;
-
-    setIsLoading(true);
-    setError(null);
-    trackEvent('reading_started');
-    try {
-      const results = await calculateAll(data);
-      setApiData(results);
-      setApiIssues(results.issues);
-      setBirthDateStr(data.date);
-
-      const aiResult = await generateInterpretation(results, lang);
-      setInterpretation(aiResult.interpretation);
-      setTileTexts(aiResult.tiles || {});
-      setHouseTexts(aiResult.houses || {});
-      trackEvent('reading_completed');
-
-      // Persist to Supabase (all three functions check for duplicates internally)
-      try {
-        await Promise.all([
-          upsertAstroProfile(user.id, data, results, aiResult.interpretation, aiResult.tiles || {}, aiResult.houses || {}),
-          insertBirthData(user.id, data),
-          insertNatalChart(user.id, results),
-        ]);
-      } catch (persistErr) {
-        console.warn("Supabase persist failed:", persistErr);
-        // Non-fatal: user can still see their Dashboard
-      }
-
-      setIsFirstReading(true);
-      setProfileState("found");
-    } catch (err: unknown) {
-      console.error("API Error:", err);
-      const msg = err instanceof Error ? err.message : "";
-      setError(msg || t("form.errorCalc"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // REGENERATE INTERPRETATION (re-run AI on existing data)
-  // ═══════════════════════════════════════════════════════════════════════
-  const handleRegenerate = async () => {
-    if (!apiData) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const aiResult = await generateInterpretation(apiData, lang);
-      setInterpretation(aiResult.interpretation);
-      setTileTexts(aiResult.tiles || {});
-      setHouseTexts(aiResult.houses || {});
-    } catch (err: unknown) {
-      console.error("AI Generation Error:", err);
-      const msg = err instanceof Error ? err.message : "";
-      setError(msg || t("form.errorRegen"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Reset is BLOCKED for users with a persisted profile.
-  // A person has only one birthday — no re-onboarding.
-  const handleReset = () => {
-    if (profileState === "found") return; // immutable
-    setApiData(null);
-    setInterpretation(null);
-    setTileTexts({});
-    setHouseTexts({});
-    setError(null);
-    setApiIssues([]);
-  };
 
   const handleEnter = () => {
     setShowSplash(false);
