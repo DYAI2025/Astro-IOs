@@ -30,6 +30,18 @@
           ],
           "data": [
             {
+              "scheme": "bazodiac"
+            }
+          ]
+        },
+        {
+          "action": "VIEW",
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ],
+          "data": [
+            {
               "scheme": "https",
               "host": "bazodiac.space"
             }
