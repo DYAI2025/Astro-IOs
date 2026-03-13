@@ -228,11 +228,7 @@ const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 function cacheKey(method, url, reqBody) {
   const raw = `${method}:${url}:${JSON.stringify(reqBody || {})}`;
-  let h = 0;
-  for (let i = 0; i < raw.length; i++) {
-    h = ((h << 5) - h + raw.charCodeAt(i)) | 0;
-  }
-  return String(h);
+  return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 32);
 }
 
 // Evict expired entries every hour
