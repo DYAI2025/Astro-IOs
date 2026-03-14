@@ -1,6 +1,8 @@
 import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 const appConfig = Constants.expoConfig?.extra ?? {};
+const IOS_STORE_PLACEHOLDER_URL = "https://apps.apple.com/app/id0000000000";
 
 export const mobileConfig = {
   apiBaseUrl:
@@ -9,12 +11,38 @@ export const mobileConfig = {
   supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL || "",
   supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "",
   googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  iosStoreUrl:
+    process.env.EXPO_PUBLIC_IOS_STORE_URL ||
+    IOS_STORE_PLACEHOLDER_URL,
+  androidStoreUrl:
+    process.env.EXPO_PUBLIC_ANDROID_STORE_URL ||
+    "https://play.google.com/store/apps/details?id=space.bazodiac.mobile",
 };
+
+export function getStoreUrlForCurrentPlatform(): string {
+  return Platform.OS === "ios"
+    ? mobileConfig.iosStoreUrl
+    : mobileConfig.androidStoreUrl;
+}
 
 export function assertMobileEnv(): void {
   const missing: string[] = [];
   if (!mobileConfig.supabaseUrl) missing.push("EXPO_PUBLIC_SUPABASE_URL");
   if (!mobileConfig.supabaseAnonKey) missing.push("EXPO_PUBLIC_SUPABASE_ANON_KEY");
+
+  const isProduction = process.env.NODE_ENV === "production";
+  if (isProduction) {
+    if (
+      !mobileConfig.iosStoreUrl ||
+      mobileConfig.iosStoreUrl === IOS_STORE_PLACEHOLDER_URL
+    ) {
+      missing.push("EXPO_PUBLIC_IOS_STORE_URL");
+    }
+
+    if (!mobileConfig.androidStoreUrl) {
+      missing.push("EXPO_PUBLIC_ANDROID_STORE_URL");
+    }
+  }
 
   if (missing.length > 0) {
     throw new Error(`Missing required mobile env vars: ${missing.join(", ")}`);

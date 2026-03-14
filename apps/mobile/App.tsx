@@ -8,12 +8,16 @@ import * as WebBrowser from "expo-web-browser";
 import { AuthProvider, useAuth } from "./src/contexts/AuthContext";
 import { AppStateProvider } from "./src/contexts/AppStateContext";
 import { useBootstrap } from "./src/hooks/useBootstrap";
+import { getAppVersion, getAppPlatform } from "./src/lib/device";
+import { getStoreUrlForCurrentPlatform } from "./src/lib/config";
+import { isBelowMinVersion, requiredVersionForPlatform } from "./src/lib/versionGate";
 import { useProfile } from "./src/hooks/useProfile";
 import { startQueueWorker } from "./src/lib/offlineQueue";
 import { LoadingScreen } from "./src/components/LoadingScreen";
 import { AuthScreen } from "./src/screens/AuthScreen";
 import { OnboardingScreen } from "./src/screens/OnboardingScreen";
 import { RootNavigator } from "./src/navigation/RootNavigator";
+import { ForceUpdateScreen } from "./src/screens/ForceUpdateScreen";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -39,6 +43,22 @@ function MobileRoot() {
 
   if (authLoading || bootstrapLoading) {
     return <LoadingScreen label="Preparing Bazodiac Mobile..." />;
+  }
+
+  const appVersion = getAppVersion();
+  const appPlatform = getAppPlatform();
+  const isNativePlatform = appPlatform === "ios" || appPlatform === "android";
+  const platform = isNativePlatform ? (appPlatform as "ios" | "android") : "android";
+  const belowMinimum = isNativePlatform && isBelowMinVersion(appVersion, bootstrap, platform);
+
+  if (isNativePlatform && belowMinimum) {
+    return (
+      <ForceUpdateScreen
+        currentVersion={appVersion}
+        requiredVersion={requiredVersionForPlatform(bootstrap, platform)}
+        storeUrl={getStoreUrlForCurrentPlatform()}
+      />
+    );
   }
 
   if (!user) {
