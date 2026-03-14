@@ -1,4 +1,5 @@
 import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 const appConfig = Constants.expoConfig?.extra ?? {};
 
@@ -9,7 +10,19 @@ export const mobileConfig = {
   supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL || "",
   supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "",
   googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  iosStoreUrl:
+    process.env.EXPO_PUBLIC_IOS_STORE_URL ||
+    "https://apps.apple.com/app/id0000000000",
+  androidStoreUrl:
+    process.env.EXPO_PUBLIC_ANDROID_STORE_URL ||
+    "https://play.google.com/store/apps/details?id=space.bazodiac.mobile",
 };
+
+export function getStoreUrlForCurrentPlatform(): string {
+  return Platform.OS === "ios"
+    ? mobileConfig.iosStoreUrl
+    : mobileConfig.androidStoreUrl;
+}
 
 export function assertMobileEnv(): void {
   const missing: string[] = [];
