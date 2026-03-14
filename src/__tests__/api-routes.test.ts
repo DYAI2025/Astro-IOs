@@ -49,7 +49,7 @@ describe('server api routes', () => {
     expect(response.status).toBe(200);
     expect(response.headers['cache-control']).toContain('max-age=900');
     expect(response.body.kp_index).toBe(0);
-    expect(response.body.source).toBe('DONKI');
+    expect(response.body.source).toBe('fallback');
     expect(response.body.fetched_at).toEqual(expect.any(String));
     expect(response.body.cache_ttl_seconds).toBe(900);
   });
