@@ -33,6 +33,10 @@ export function isBelowMinVersion(
       ? bootstrap.min_supported_versions.ios
       : bootstrap.min_supported_versions.android;
 
+  // Explicitly ignore empty / missing minimum version config so bad config
+  // does not silently change gating behavior.
+  if (!minVersion || !minVersion.trim()) return false;
+
   return compareVersions(appVersion, minVersion) < 0;
 }
 
