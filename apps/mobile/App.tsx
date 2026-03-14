@@ -46,10 +46,12 @@ function MobileRoot() {
   }
 
   const appVersion = getAppVersion();
-  const platform = getAppPlatform() === "ios" ? "ios" : "android";
-  const belowMinimum = isBelowMinVersion(appVersion, bootstrap, platform);
+  const appPlatform = getAppPlatform();
+  const isNativePlatform = appPlatform === "ios" || appPlatform === "android";
+  const platform = isNativePlatform ? (appPlatform as "ios" | "android") : "android";
+  const belowMinimum = isNativePlatform && isBelowMinVersion(appVersion, bootstrap, platform);
 
-  if (belowMinimum) {
+  if (isNativePlatform && belowMinimum) {
     return (
       <ForceUpdateScreen
         currentVersion={appVersion}
