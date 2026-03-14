@@ -15,10 +15,13 @@ const app = express();
 // ── Boot-time env var validation ─────────────────────────────────────
 const REQUIRED_ENV_VARS = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
 const missing = REQUIRED_ENV_VARS.filter(v => !process.env[v]);
-if (missing.length > 0 && process.env.NODE_ENV !== "test") {
+if (missing.length > 0 && !['test', 'development'].includes(process.env.NODE_ENV)) {
   console.error(`[server] Missing required environment variables: ${missing.join(', ')}`);
   console.error('[server] Copy .env.example to .env and fill in the required values.');
   process.exit(1);
+}
+if (missing.length > 0) {
+  console.warn(`[server] WARNING: Missing env vars (dev mode): ${missing.join(', ')}`);
 }
 
 const OPTIONAL_ENV_VARS = ['GEMINI_API_KEY', 'ELEVENLABS_TOOL_SECRET'];
