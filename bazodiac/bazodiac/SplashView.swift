@@ -2,7 +2,8 @@
 // Bazodiac iOS — Cinematic Splash Screen
 //
 // Phase sequence: .starfield → .title → .gate → (done)
-// Pure SwiftUI animations — no UIKit, no video.
+// Pure SwiftUI animations — no AVFoundation video.
+// UIKit used only for haptic feedback.
 // The iOS counterpart of the web Splash's animation sequence.
 
 import SwiftUI
