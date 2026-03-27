@@ -148,8 +148,7 @@ private struct BirthDateField: View {
             .datePickerStyle(.compact)
             .labelsHidden()
             .tint(Color.cosmicGold)
-            .colorInvert()
-            .colorMultiply(Color.cosmicGold)
+            .preferredColorScheme(.dark)
             .scaleEffect(0.9, anchor: .trailing)
         }
     }
@@ -169,8 +168,7 @@ private struct BirthTimeField: View {
             .datePickerStyle(.compact)
             .labelsHidden()
             .tint(Color.cosmicGold)
-            .colorInvert()
-            .colorMultiply(Color.cosmicGold)
+            .preferredColorScheme(.dark)
             .scaleEffect(0.9, anchor: .trailing)
         }
     }
