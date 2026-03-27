@@ -22,6 +22,17 @@ struct BazodiacApp: App {
             RootView()
                 .environment(cosmicStore)
                 .preferredColorScheme(.dark)   // Always dark — no light mode
+                .onAppear {
+                    #if DEBUG
+                    if CommandLine.arguments.contains("--skip-to-dashboard") {
+                        cosmicStore.profile   = .mock
+                        cosmicStore.appPhase  = .dashboard
+                    }
+                    if CommandLine.arguments.contains("--skip-to-birthform") {
+                        cosmicStore.appPhase  = .birthForm
+                    }
+                    #endif
+                }
         }
     }
 }
@@ -62,4 +73,30 @@ struct RootView: View {
         }
         .animation(.easeInOut(duration: 0.6), value: store.appPhase)
     }
+}
+
+// MARK: - Previews
+
+#Preview("Splash") {
+    RootView()
+        .environment(CosmicStore())
+}
+
+#Preview("Dashboard") {
+    RootView()
+        .environment({
+            let s = CosmicStore()
+            s.profile   = .mock
+            s.appPhase  = .dashboard
+            return s
+        }())
+}
+
+#Preview("BirthForm") {
+    RootView()
+        .environment({
+            let s = CosmicStore()
+            s.appPhase = .birthForm
+            return s
+        }())
 }
