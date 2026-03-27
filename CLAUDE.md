@@ -4,9 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-Bazodiac (Astro-Noctum) — a fusion astrology web app combining Western astrology, Chinese BaZi, and Wu-Xing (Five Elements). Users enter birth data, get chart calculations from the external BAFE API, AI-generated interpretations via Gemini, and can talk to "Levi Bazi" (an ElevenLabs voice agent). The UI is German-language, dark luxury aesthetic (obsidian/gold palette).
+Bazodiac (Astro-Noctum) — a fusion astrology platform combining Western astrology, Chinese BaZi, and Wu-Xing (Five Elements). Users enter birth data, get chart calculations from the external BAFE API, AI-generated interpretations via Gemini, and can talk to "Levi Bazi" (an ElevenLabs voice agent). The UI is German-language, dark luxury aesthetic (obsidian/gold palette).
+
+## Repo Structure (Monorepo)
+
+| Directory | What | Stack |
+|-----------|------|-------|
+| Root (`/`) | Web app (primary) | React 19 SPA, Vite, Tailwind v4, Three.js |
+| `apps/mobile/` | Mobile app | Expo 53, React Native 0.79, React Navigation |
+| `bazodiac/` | Native iOS scaffold | SwiftUI + SwiftData (Xcode project) |
+| `packages/shared/` | Shared library | TypeScript — Fusion Ring math, i18n keys, transit state, quiz modules |
+| `features/plan/` | Design/planning artefacts only — **not part of any build** |
+| `docs/` | Detailed reference docs (BAZODIAC.md, API_REFERENCE.md, FRONTEND_INTERNALS.md, DATABASE_SCHEMA.md, STRUCTURE.md) |
+
+The mobile app imports `@bazodiac/shared` via `file:../../packages/shared`.
 
 ## Commands
+
+### Web App (root)
 
 ```bash
 npm run dev        # Vite dev server on :3000 with HMR
@@ -18,15 +33,28 @@ npm run test       # Run Vitest test suite (once)
 npm run test:watch # Vitest in watch mode
 npm run test:coverage # Vitest with coverage
 npx vitest run src/__tests__/fusion-ring.test.ts  # Run a single test file
+npm run storybook  # Storybook on :6006
 
 # Full local dev (needs both):
 # Terminal 1: npm run dev                    (Vite on :3000)
 # Terminal 2: PORT=3001 node server.mjs      (Express API on :3001, for /api/auth, /api/profile, /api/agent)
 ```
 
-Node 20.19+ required (pinned in `.nvmrc`). Tests live in `src/__tests__/` and use Vitest. Copy `.env.example` to `.env.local` and fill values before starting dev.
+### Mobile App (`apps/mobile/`)
+
+```bash
+cd apps/mobile
+npm install
+npx expo start     # Expo dev server
+npx expo run:ios   # Build & run on iOS simulator
+npm run typecheck  # TypeScript check (tsc --noEmit)
+```
+
+Node 20.19+ required (pinned in `.nvmrc`). Web tests live in `src/__tests__/` and use Vitest. Copy `.env.example` to `.env.local` and fill values before starting dev.
 
 ## Architecture
+
+### Web App
 
 **React 19 SPA** — Vite + React Router v6 + Tailwind CSS v4 + TypeScript. The top-level auth/onboarding flow is state-driven in `App.tsx` (`Splash → AuthGate → BirthForm`), then React Router takes over for authenticated pages.
 
@@ -134,6 +162,14 @@ Railway via `nixpacks.toml` + `railway.json`. Build: `npm ci && npm run build`. 
 ### Quiz → Fusion Ring Integration
 
 Quizzes emit "contribution events" via `src/lib/fusion-ring/quiz-to-event.ts`. Each completed quiz adjusts the user's Fusion Ring signal (stored in `FusionRingContext`). Series quizzes (Kinky, PartnerMatch) share state via a series-level component that wraps individual quiz steps.
+
+### Mobile App (`apps/mobile/`)
+
+Expo 53 React Native app with React Navigation (native stack + bottom tabs). Shares Fusion Ring logic and i18n keys via `@bazodiac/shared`. Uses Supabase for auth (with `expo-secure-store` for token persistence) and the same BAFE API as the web app. Key screens mirror web routes: Dashboard, FuRing, WuXing, Wissen, Quiz, Voice. Has offline queue (`src/lib/offlineQueue.ts`) and version gating (`src/lib/versionGate.ts`) for forced updates.
+
+### Native iOS (`bazodiac/`)
+
+Bare SwiftUI + SwiftData Xcode project scaffold. Currently minimal (default template). Open `bazodiac/bazodiac.xcodeproj` in Xcode.
 
 ### `features/plan/` Directory
 
