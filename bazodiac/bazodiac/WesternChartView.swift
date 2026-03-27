@@ -14,11 +14,12 @@ import UIKit
 
 struct WesternChartView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
     @State private var selectedPlanet: PlanetPosition? = nil
 
     var body: some View {
         ZStack {
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
             StarfieldView(starCount: 50).ignoresSafeArea().opacity(0.4)
 
             ScrollView(showsIndicators: false) {
@@ -53,7 +54,7 @@ struct WesternChartView: View {
         .sheet(item: $selectedPlanet) { planet in
             PlanetDetailSheet(position: planet)
                 .presentationDetents([.fraction(0.42)])
-                .presentationBackground(Color.cosmicAsh)
+                .presentationBackground(theme.surfaceElevated)
         }
     }
 
@@ -62,7 +63,7 @@ struct WesternChartView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("Geburts-Chart")
                     .font(CosmicFont.display(26))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                    .foregroundStyle(theme.textPrimary)
                 Text("Western Astrologie · Natal Chart")
                     .goldLabel(0.4)
             }
@@ -80,6 +81,7 @@ struct WesternChartView: View {
 // MARK: - Zodiac Wheel Canvas
 
 private struct ZodiacWheelView: View {
+    @Environment(\.cosmicTheme) private var theme
     let data: WesternData
     @Binding var selectedPlanet: PlanetPosition?
 
@@ -288,6 +290,7 @@ private struct ZodiacWheelView: View {
 // MARK: - Big Three Row
 
 private struct BigThreeRow: View {
+    @Environment(\.cosmicTheme) private var theme
     let data: WesternData
 
     var body: some View {
@@ -305,6 +308,7 @@ private struct BigThreeRow: View {
 }
 
 private struct BigThreeCell: View {
+    @Environment(\.cosmicTheme) private var theme
     let title: String
     let sign:  ZodiacSign
     let deg:   Double
@@ -329,7 +333,7 @@ private struct BigThreeCell: View {
                 .foregroundStyle(Color.cosmicGold.opacity(0.8))
             Text(String(format: "%.1f°", deg))
                 .font(CosmicFont.mono(10))
-                .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                .foregroundStyle(theme.textTertiary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
@@ -339,6 +343,7 @@ private struct BigThreeCell: View {
 // MARK: - Planet List
 
 private struct PlanetList: View {
+    @Environment(\.cosmicTheme) private var theme
     let data: WesternData
     @Binding var selectedPlanet: PlanetPosition?
 
@@ -367,6 +372,7 @@ private struct PlanetList: View {
 }
 
 private struct PlanetRow: View {
+    @Environment(\.cosmicTheme) private var theme
     let position: PlanetPosition
     let onTap: () -> Void
 
@@ -382,7 +388,7 @@ private struct PlanetRow: View {
                 // Name
                 Text(position.planet.germanName)
                     .font(CosmicFont.heading(14, weight: .light))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.85))
+                    .foregroundStyle(theme.textPrimary.opacity(0.85))
 
                 Spacer()
 
@@ -396,10 +402,10 @@ private struct PlanetRow: View {
                         .background(position.sign.element.color.opacity(0.1), in: RoundedRectangle(cornerRadius: 3))
                     Text(position.sign.germanName)
                         .font(CosmicFont.heading(13, weight: .light))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.6))
+                        .foregroundStyle(theme.textSecondary)
                     Text(String(format: "%.0f°", position.degree.truncatingRemainder(dividingBy: 30)))
                         .font(CosmicFont.mono(11))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                        .foregroundStyle(theme.textTertiary)
                     if position.isRetrograde {
                         Text("℞")
                             .font(.system(size: 10))
@@ -421,6 +427,7 @@ private struct PlanetRow: View {
 // MARK: - Planet Detail Sheet
 
 private struct PlanetDetailSheet: View {
+    @Environment(\.cosmicTheme) private var theme
     let position: PlanetPosition
     @Environment(\.dismiss) private var dismiss
 
@@ -450,7 +457,7 @@ private struct PlanetDetailSheet: View {
                 VStack(spacing: 4) {
                     Text(position.planet.germanName)
                         .font(CosmicFont.display(24))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                        .foregroundStyle(theme.textPrimary)
 
                     HStack(spacing: 8) {
                         Text(position.sign.canvasLabel)
@@ -462,14 +469,14 @@ private struct PlanetDetailSheet: View {
                                         in: RoundedRectangle(cornerRadius: 3))
                         Text(position.sign.germanName)
                             .font(CosmicFont.heading(14, weight: .light))
-                            .foregroundStyle(Color.cosmicGold.opacity(0.7))
+                            .foregroundStyle(theme.textSecondary)
                         Text("· Haus \(position.house)")
                             .goldLabel(0.5)
                     }
 
                     Text(String(format: "%.2f° Ekliptik", position.degree))
                         .font(CosmicFont.mono(12))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                        .foregroundStyle(theme.textTertiary)
                 }
 
                 if position.isRetrograde {
@@ -492,7 +499,7 @@ private struct PlanetDetailSheet: View {
                 .padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity)
-        .background(Color.cosmicAsh)
+        .background(theme.surfaceElevated)
     }
 }
 

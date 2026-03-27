@@ -44,10 +44,11 @@ struct BazodiacApp: App {
 /// Phase-driven root navigator — no NavigationStack needed for this linear flow.
 struct RootView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         ZStack {
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
 
             switch store.appPhase {
             case .splash:

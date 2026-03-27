@@ -24,6 +24,7 @@ private struct Message: Identifiable {
 
 struct LeviView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     // PH-13 BEHOBEN: Startet leer statt mit vorgeladenem Sample
     // Echte Begrüßung kommt von ElevenLabs (Phase 4)
@@ -122,7 +123,7 @@ struct LeviView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Levi Bazi")
                     .font(CosmicFont.heading(17, weight: .light))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                    .foregroundStyle(theme.textPrimary)
                 Text(sessionActive
                      ? (isSpeaking ? "Spricht …" : isListening ? "Hört zu …" : "Verbunden")
                      : "KI-Kosmosbegleiter")
@@ -224,6 +225,7 @@ struct LeviView: View {
 // MARK: - Levi Avatar Section (Waveform)
 
 private struct LeviAvatarSection: View {
+    @Environment(\.cosmicTheme) private var theme
     let isSpeaking:  Bool
     let isListening: Bool
 
@@ -274,6 +276,7 @@ private struct LeviAvatarSection: View {
 }
 
 private struct LeviWaveform: View {
+    @Environment(\.cosmicTheme) private var theme
     let isSpeaking:  Bool
     let isListening: Bool
 
@@ -315,6 +318,7 @@ private struct LeviWaveform: View {
 // MARK: - Message Bubble
 
 private struct MessageBubble: View {
+    @Environment(\.cosmicTheme) private var theme
     let message: Message
 
     private var isUser: Bool { message.role == .user }
@@ -361,7 +365,7 @@ private struct MessageBubble: View {
             if isUser {
                 Image(systemName: "person.circle")
                     .font(.system(size: 14, weight: .thin))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                    .foregroundStyle(theme.textTertiary)
                     .padding(.bottom, 4)
             }
 
@@ -373,6 +377,7 @@ private struct MessageBubble: View {
 // MARK: - Control Bar
 
 private struct LeviControlBar: View {
+    @Environment(\.cosmicTheme) private var theme
     @Binding var isListening:   Bool
     @Binding var isSpeaking:    Bool
     @Binding var sessionActive: Bool
@@ -390,7 +395,7 @@ private struct LeviControlBar: View {
                 .padding(.vertical, 12)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.cosmicAsh.opacity(0.8))
+                        .fill(theme.surface.opacity(0.9))
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(Color.cosmicGold.opacity(0.15), lineWidth: 0.6)
                 }
@@ -412,7 +417,7 @@ private struct LeviControlBar: View {
                     Circle()
                         .fill(isListening
                               ? Color.cosmicGold.opacity(0.2)
-                              : Color.cosmicAsh.opacity(0.8))
+                              : theme.surface.opacity(0.9))
                         .frame(width: 48, height: 48)
                     Circle()
                         .strokeBorder(
@@ -438,7 +443,7 @@ private struct LeviControlBar: View {
                 ZStack {
                     Circle()
                         .fill(inputText.isEmpty
-                              ? Color.cosmicAsh.opacity(0.8)
+                              ? theme.surface.opacity(0.9)
                               : Color.cosmicGold.opacity(0.15))
                         .frame(width: 48, height: 48)
                     Circle()

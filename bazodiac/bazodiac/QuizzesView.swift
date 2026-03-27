@@ -13,12 +13,13 @@ import SwiftUI
 import UIKit
 
 struct QuizzesView: View {
+    @Environment(\.cosmicTheme) private var theme
     private let clusters = QuizCluster.mockClusters
 
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.obsidian.ignoresSafeArea()
+                theme.background.ignoresSafeArea()
                 StarfieldView(starCount: 60).ignoresSafeArea().opacity(0.35)
 
                 ScrollView(showsIndicators: false) {
@@ -47,13 +48,13 @@ struct QuizzesView: View {
         VStack(spacing: 8) {
             Image(systemName: "square.grid.2x2.fill")
                 .font(.system(size: 26, weight: .thin))
-                .foregroundStyle(Color.cosmicGold.opacity(0.7))
+                .foregroundStyle(theme.textSecondary)
 
             Text("Quizzes")
                 .font(CosmicFont.display(30))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [Color.cosmicGold.opacity(0.9), Color.cosmicGold.opacity(0.55)],
+                        colors: [theme.textPrimary, theme.textSecondary],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
@@ -68,7 +69,7 @@ struct QuizzesView: View {
             let completed = clusters.reduce(0) { $0 + $1.completedCount }
             Text("\(completed) / \(total) abgeschlossen")
                 .font(CosmicFont.mono(11))
-                .foregroundStyle(Color.cosmicGold.opacity(0.35))
+                .foregroundStyle(theme.textTertiary)
                 .padding(.top, 4)
         }
         .padding(.horizontal, 32)
@@ -94,6 +95,7 @@ struct QuizzesView: View {
 // MARK: - Cluster Tile
 
 private struct ClusterTile: View {
+    @Environment(\.cosmicTheme) private var theme
     let cluster: QuizCluster
     @State private var pressed = false
 
@@ -115,7 +117,7 @@ private struct ClusterTile: View {
             // Name
             Text(cluster.name)
                 .font(CosmicFont.heading(13, weight: .regular))
-                .foregroundStyle(Color.cosmicGold.opacity(0.85))
+                .foregroundStyle(theme.textPrimary.opacity(0.85))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
@@ -157,12 +159,13 @@ private struct ClusterTile: View {
 // MARK: - Cluster Detail View
 
 private struct ClusterDetailView: View {
+    @Environment(\.cosmicTheme) private var theme
     let cluster: QuizCluster
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
             StarfieldView(starCount: 50).ignoresSafeArea().opacity(0.3)
 
             ScrollView(showsIndicators: false) {
@@ -198,7 +201,7 @@ private struct ClusterDetailView: View {
                             .font(CosmicFont.label(10))
                             .tracking(2)
                     }
-                    .foregroundStyle(Color.cosmicGold.opacity(0.6))
+                    .foregroundStyle(theme.textSecondary)
                 }
                 .buttonStyle(.plain)
             }
@@ -224,7 +227,7 @@ private struct ClusterDetailView: View {
 
             Text(cluster.name)
                 .font(CosmicFont.display(24))
-                .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                .foregroundStyle(theme.textPrimary)
                 .tracking(1)
 
             // Progress arc + label
@@ -261,6 +264,7 @@ private struct ClusterDetailView: View {
 // MARK: - Progress Arc
 
 private struct ProgressArc: View {
+    @Environment(\.cosmicTheme) private var theme
     let value: Double
     let total: Double
     let color: Color
@@ -282,6 +286,7 @@ private struct ProgressArc: View {
 // MARK: - Quiz Tile
 
 private struct QuizTile: View {
+    @Environment(\.cosmicTheme) private var theme
     let quiz: Quiz
     let clusterColor: Color
 
@@ -315,7 +320,7 @@ private struct QuizTile: View {
         case .available:
             clusterColor.opacity(0.07)
         case .locked:
-            Color.cosmicAsh.opacity(0.5)
+            theme.surface.opacity(0.5)
         }
     }
 
@@ -371,7 +376,7 @@ private struct QuizTile: View {
                 Spacer()
                 Text(quiz.name)
                     .font(CosmicFont.heading(12, weight: .regular))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                    .foregroundStyle(theme.textPrimary)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
                 Text("\(quiz.questionCount) Fragen")
@@ -431,10 +436,11 @@ private struct QuizTile: View {
 
 // Workaround: private struct can't be in preview directly
 private struct ClusterDetailView_Preview: View {
+    @Environment(\.cosmicTheme) private var theme
     var body: some View {
         // inline for preview only
         ZStack {
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
             Text("See ClusterDetailView")
                 .foregroundStyle(Color.cosmicGold)
         }

@@ -23,6 +23,7 @@ private enum SplashPhase: Int, CaseIterable {
 
 struct SplashView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     // Phase drive animation
     @State private var phase: SplashPhase = .blank
@@ -36,13 +37,19 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             // ── 1. Deep space background
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
 
-            // ── 2. Starfield layer
-            StarfieldView(starCount: 140, goldTint: true)
-                .ignoresSafeArea()
-                .opacity(phase.rawValue >= SplashPhase.starfield.rawValue ? 1 : 0)
-                .animation(.easeIn(duration: 2.5), value: phase)
+            // ── 2. Starfield / ambient layer (theme-aware)
+            Group {
+                if theme.isDark {
+                    StarfieldView(starCount: 140, goldTint: true)
+                } else {
+                    LightAmbientView(count: 100)
+                }
+            }
+            .ignoresSafeArea()
+            .opacity(phase.rawValue >= SplashPhase.starfield.rawValue ? 1 : 0)
+            .animation(.easeIn(duration: 2.5), value: phase)
 
             // ── 3. Ambient radial glow (center)
             RadialGradient(
@@ -136,7 +143,7 @@ struct SplashView: View {
 
             Text("Coniunctio Caelorum")
                 .font(CosmicFont.bodySerif(12))
-                .foregroundStyle(Color.cosmicGold.opacity(0.35))
+                .foregroundStyle(theme.textTertiary)
                 .tracking(5)
                 .opacity(phase.rawValue >= SplashPhase.subtitle.rawValue ? 1 : 0)
                 .animation(.easeIn(duration: 1.5).delay(0.2), value: phase)
@@ -239,13 +246,14 @@ struct SplashView: View {
 
 /// The parchment-style inner scroll — shows a minimal zodiac ring illustration
 private struct ZodiacScrollBody: View {
+    @Environment(\.cosmicTheme) private var theme
     let unrolled: Bool
 
     var body: some View {
         ZStack {
             // Parchment background
             Rectangle()
-                .fill(Color.cosmicAsh.opacity(0.6))
+                .fill(theme.surface.opacity(0.6))
 
             // Gold border hairlines
             Rectangle()
@@ -262,6 +270,7 @@ private struct ZodiacScrollBody: View {
 
 /// Compact zodiac ring drawn with Canvas
 private struct ZodiacWheelMini: View {
+    @Environment(\.cosmicTheme) private var theme
     var body: some View {
         Canvas { context, size in
             let cx = size.width / 2

@@ -9,11 +9,18 @@ import UIKit
 
 struct HomeView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
-        ZStack {
-            Color.obsidian.ignoresSafeArea()
-            StarfieldView(starCount: 80).ignoresSafeArea()
+        ZStack(alignment: .topTrailing) {
+            theme.background.ignoresSafeArea()
+
+            // Light-Mode: sanfte goldene Partikel statt Sternenfeld
+            if theme.isDark {
+                StarfieldView(starCount: 80).ignoresSafeArea()
+            } else {
+                LightAmbientView(count: 80).ignoresSafeArea()
+            }
 
             ScrollView(showsIndicators: false) {
                 LazyVStack(spacing: 0, pinnedViews: []) {
@@ -26,6 +33,11 @@ struct HomeView: View {
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
+
+            // Theme-Toggle oben rechts
+            ThemeToggleButton { store.toggleTheme() }
+                .padding(.top, 58)
+                .padding(.trailing, 20)
         }
     }
 
@@ -48,6 +60,7 @@ struct HomeView: View {
 
 private struct CosmicHeader: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         ZStack {
@@ -80,7 +93,7 @@ private struct CosmicHeader: View {
                     .font(CosmicFont.display(42))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color.cosmicGold.opacity(0.95), Color.cosmicGold.opacity(0.60)],
+                            colors: [theme.textPrimary, theme.textSecondary.opacity(0.8)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -99,7 +112,7 @@ private struct CosmicHeader: View {
                 if let profile = store.profile {
                     Text(profile.birthData.birthPlace)
                         .font(CosmicFont.mono(11))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                        .foregroundStyle(theme.textTertiary)
                         .tracking(1)
                         .padding(.top, 2)
                 }
@@ -113,6 +126,7 @@ private struct CosmicHeader: View {
 
 private struct BigThreeBadges: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         HStack(spacing: 12) {
@@ -141,6 +155,7 @@ private struct BigThreeBadges: View {
 }
 
 private struct BigThreeBadge: View {
+    @Environment(\.cosmicTheme) private var theme
     let title: String
     let sfSymbol: String
     let sign: ZodiacSign
@@ -165,10 +180,10 @@ private struct BigThreeBadge: View {
                     .goldLabel(0.4)
                 Text(sign.germanName)
                     .font(CosmicFont.heading(13, weight: .light))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.85))
+                    .foregroundStyle(theme.textPrimary.opacity(0.85))
                 Text(String(format: "%.1f°", degree))
                     .font(CosmicFont.mono(10))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.35))
+                    .foregroundStyle(theme.textTertiary)
             }
         }
         .frame(maxWidth: .infinity)
@@ -181,6 +196,7 @@ private struct BigThreeBadge: View {
 
 private struct DailyInsightCard: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
     @State private var expanded = false
 
     var body: some View {
@@ -199,7 +215,7 @@ private struct DailyInsightCard: View {
             let text = store.profile?.interpretation ?? ""
             Text(text)
                 .font(CosmicFont.bodySerif(14))
-                .foregroundStyle(Color.cosmicGold.opacity(0.7))
+                .foregroundStyle(theme.textSecondary)
                 .lineSpacing(5)
                 .lineLimit(expanded ? nil : 3)
 
@@ -227,6 +243,7 @@ private struct DailyInsightCard: View {
 
 private struct SectionNavigationGrid: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     private let sections: [(tab: CosmicStore.Tab, title: String, sub: String, icon: String)] = [
         (.chart,   "Geburts-Chart",  "Western Astrologie",  "scope"),
@@ -265,6 +282,7 @@ private struct SectionNavigationGrid: View {
 }
 
 private struct SectionCard: View {
+    @Environment(\.cosmicTheme) private var theme
     let title: String
     let subtitle: String
     let icon: String
@@ -288,7 +306,7 @@ private struct SectionCard: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(CosmicFont.heading(13, weight: .regular))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                        .foregroundStyle(theme.textPrimary)
 
                     Text(subtitle)
                         .goldLabel(0.4)
@@ -313,6 +331,7 @@ private struct SectionCard: View {
 
 private struct LeviTeaser: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         Button {
@@ -328,7 +347,7 @@ private struct LeviTeaser: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Levi Bazi")
                         .font(CosmicFont.heading(15, weight: .light))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                        .foregroundStyle(theme.textPrimary)
                     Text("Dein KI-Kosmosbegleiter · Jetzt sprechen")
                         .goldLabel(0.45)
                 }
@@ -337,7 +356,7 @@ private struct LeviTeaser: View {
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .thin))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                    .foregroundStyle(theme.textTertiary)
             }
             .padding(18)
             .background {
@@ -347,7 +366,7 @@ private struct LeviTeaser: View {
                         LinearGradient(
                             colors: [
                                 Color.cosmicGold.opacity(0.08),
-                                Color.cosmicAsh.opacity(0.5),
+                                theme.surface.opacity(0.5),
                             ],
                             startPoint: .leading,
                             endPoint: .trailing
@@ -363,6 +382,7 @@ private struct LeviTeaser: View {
 
 /// Tiny animated waveform for the Levi teaser
 private struct LeviWaveformMini: View {
+    @Environment(\.cosmicTheme) private var theme
     var body: some View {
         TimelineView(.animation) { timeline in
             Canvas { context, size in
@@ -392,12 +412,13 @@ private struct LeviWaveformMini: View {
 
 private struct DailyQuoteCard: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         VStack(spacing: 14) {
             Image(systemName: "quote.opening")
                 .font(.system(size: 20, weight: .ultraLight))
-                .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                .foregroundStyle(theme.textTertiary)
 
             Text(store.profile?.dailyQuote ?? "")
                 .font(CosmicFont.bodySerif(14))

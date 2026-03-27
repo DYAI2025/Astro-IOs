@@ -11,13 +11,14 @@ import UIKit
 
 struct BaZiView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     @State private var appeared = false
     @State private var selectedPillar: BaZiPillar? = nil
 
     var body: some View {
         ZStack {
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
             StarfieldView(starCount: 55).ignoresSafeArea().opacity(0.4)
 
             ScrollView(showsIndicators: false) {
@@ -69,7 +70,7 @@ struct BaZiView: View {
         .sheet(item: $selectedPillar) { pillar in
             PillarDetailSheet(pillar: pillar)
                 .presentationDetents([.fraction(0.55)])
-                .presentationBackground(Color.cosmicAsh)
+                .presentationBackground(theme.surfaceElevated)
         }
     }
 
@@ -78,7 +79,7 @@ struct BaZiView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("Vier Säulen")
                     .font(CosmicFont.display(26))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                    .foregroundStyle(theme.textPrimary)
                 Text("BaZi · Vier Pfeiler des Schicksals")
                     .goldLabel(0.4)
             }
@@ -94,6 +95,7 @@ struct BaZiView: View {
 // MARK: - Day Master Highlight
 
 private struct DayMasterCard: View {
+    @Environment(\.cosmicTheme) private var theme
     let pillar: BaZiPillar
 
     var body: some View {
@@ -115,7 +117,7 @@ private struct DayMasterCard: View {
 
                 Text("\(pillar.stem.english)")
                     .font(CosmicFont.heading(18, weight: .light))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                    .foregroundStyle(theme.textPrimary)
 
                 Text("Das ist dein wahrstes Ich — deine Kernessenz im kosmischen System der Vier Säulen.")
                     .font(CosmicFont.bodySerif(13))
@@ -157,6 +159,7 @@ private struct FourPillarsGrid: View {
 // MARK: - Pillar Card (Stele Style)
 
 private struct PillarCard: View {
+    @Environment(\.cosmicTheme) private var theme
     let pillar: BaZiPillar
     let isDay: Bool
     let onTap: () -> Void
@@ -174,7 +177,7 @@ private struct PillarCard: View {
                 VStack(spacing: 2) {
                     Text(pillar.type.rawValue)
                         .font(CosmicFont.chinese(12, weight: .light))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.35))
+                        .foregroundStyle(theme.textTertiary)
                     Text(pillar.type.germanLabel)
                         .goldLabel(0.4)
                 }
@@ -240,7 +243,7 @@ private struct PillarCard: View {
                     )
             }
             .background(
-                Color.cosmicAsh.opacity(0.8)
+                theme.surface.opacity(0.9)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             )
             .shadow(
@@ -261,6 +264,7 @@ private struct PillarCard: View {
 // MARK: - Element Distribution Bar
 
 private struct ElementDistributionBar: View {
+    @Environment(\.cosmicTheme) private var theme
     let data: BaZiData
 
     private var counts: [CosmicElement: Int] {
@@ -291,7 +295,7 @@ private struct ElementDistributionBar: View {
 
                     Text(element.germanName)
                         .font(CosmicFont.heading(12, weight: .light))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.6))
+                        .foregroundStyle(theme.textSecondary)
                         .frame(width: 58, alignment: .leading)
 
                     // Progress bar
@@ -321,6 +325,7 @@ private struct ElementDistributionBar: View {
 // MARK: - Pillar Detail Sheet
 
 private struct PillarDetailSheet: View {
+    @Environment(\.cosmicTheme) private var theme
     let pillar: BaZiPillar
     @Environment(\.dismiss) private var dismiss
 
@@ -339,7 +344,7 @@ private struct PillarDetailSheet: View {
                     .foregroundStyle(Color.cosmicGold.opacity(0.4))
                 Text(pillar.type.germanLabel + " Säule")
                     .font(CosmicFont.display(26))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                    .foregroundStyle(theme.textPrimary)
                 Text(pillar.type.description)
                     .goldLabel(0.45)
                     .padding(.top, 2)
@@ -360,7 +365,7 @@ private struct PillarDetailSheet: View {
                         .foregroundStyle(pillar.stem.element.color.opacity(0.5))
                     Text(pillar.stem.english)
                         .font(CosmicFont.heading(12, weight: .light))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.6))
+                        .foregroundStyle(theme.textSecondary)
                 }
 
                 Rectangle()
@@ -388,7 +393,7 @@ private struct PillarDetailSheet: View {
                     }
                     Text(pillar.branch.animal)
                         .font(CosmicFont.heading(12, weight: .light))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.6))
+                        .foregroundStyle(theme.textSecondary)
                 }
             }
 
@@ -401,7 +406,7 @@ private struct PillarDetailSheet: View {
                 .padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity)
-        .background(Color.cosmicAsh)
+        .background(theme.surfaceElevated)
     }
 }
 

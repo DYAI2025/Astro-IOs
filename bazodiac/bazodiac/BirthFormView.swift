@@ -9,13 +9,14 @@ import UIKit
 
 struct BirthFormView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     @State private var appeared = false
 
     var body: some View {
         ZStack {
             // Background
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
             StarfieldView(starCount: 60, goldTint: true)
                 .ignoresSafeArea()
                 .opacity(0.5)
@@ -59,7 +60,7 @@ struct BirthFormView: View {
         VStack(spacing: 10) {
             Image(systemName: "sparkles")
                 .font(.system(size: 28, weight: .thin))
-                .foregroundStyle(Color.cosmicGold.opacity(0.7))
+                .foregroundStyle(theme.textSecondary)
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 12)
                 .animation(.spring(duration: 1).delay(0.2), value: appeared)
@@ -68,7 +69,7 @@ struct BirthFormView: View {
                 .font(CosmicFont.display(30))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [Color.cosmicGold.opacity(0.9), Color.cosmicGold.opacity(0.55)],
+                        colors: [theme.textPrimary, theme.textSecondary],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
@@ -121,13 +122,14 @@ struct BirthFormView: View {
 
 private struct NameField: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         @Bindable var store = store
         FormRow(icon: "person", label: "Name") {
             TextField("Dein Name", text: $store.birthData.name)
                 .font(CosmicFont.heading(15, weight: .light))
-                .foregroundStyle(Color.cosmicGold.opacity(0.85))
+                .foregroundStyle(theme.textPrimary.opacity(0.85))
                 .tint(Color.cosmicGold)
                 .submitLabel(.next)
         }
@@ -136,6 +138,7 @@ private struct NameField: View {
 
 private struct BirthDateField: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         @Bindable var store = store
@@ -148,7 +151,7 @@ private struct BirthDateField: View {
             .datePickerStyle(.compact)
             .labelsHidden()
             .tint(Color.cosmicGold)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(theme.isDark ? .dark : .light)
             .scaleEffect(0.9, anchor: .trailing)
         }
     }
@@ -156,6 +159,7 @@ private struct BirthDateField: View {
 
 private struct BirthTimeField: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         @Bindable var store = store
@@ -168,24 +172,21 @@ private struct BirthTimeField: View {
             .datePickerStyle(.compact)
             .labelsHidden()
             .tint(Color.cosmicGold)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(theme.isDark ? .dark : .light)
             .scaleEffect(0.9, anchor: .trailing)
         }
     }
 }
 
+/// PH-2 BEHOBEN: PlaceSearchField ersetzt einfaches TextField
+/// Liefert lat/lon/timezone via MKLocalSearch + CLGeocoder
 private struct BirthPlaceField: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
 
     var body: some View {
         @Bindable var store = store
-        FormRow(icon: "mappin.circle", label: "Geburtsort") {
-            TextField("Stadt, Land", text: $store.birthData.birthPlace)
-                .font(CosmicFont.heading(15, weight: .light))
-                .foregroundStyle(Color.cosmicGold.opacity(0.85))
-                .tint(Color.cosmicGold)
-                .submitLabel(.done)
-        }
+        PlaceSearchField(store: store)
     }
 }
 
@@ -221,6 +222,7 @@ private struct FormRow<Content: View>: View {
 
 private struct CalculateButton: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
     @State private var pulsing = false
 
     var body: some View {
@@ -257,7 +259,7 @@ private struct CalculateButton: View {
                         Text("Berechnung läuft …")
                             .font(CosmicFont.label(10))
                             .tracking(3)
-                            .foregroundStyle(Color.cosmicGold.opacity(0.6))
+                            .foregroundStyle(theme.textSecondary)
                     }
                 } else {
                     VStack(spacing: 4) {
@@ -269,7 +271,7 @@ private struct CalculateButton: View {
                         Text("Western · BaZi · Wu-Xing")
                             .font(CosmicFont.label(8))
                             .tracking(2)
-                            .foregroundStyle(Color.cosmicGold.opacity(0.3))
+                            .foregroundStyle(theme.textTertiary)
                     }
                 }
             }

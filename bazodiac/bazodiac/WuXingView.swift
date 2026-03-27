@@ -9,11 +9,12 @@ import SwiftUI
 
 struct WuXingView: View {
     @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
     @State private var appeared = false
 
     var body: some View {
         ZStack {
-            Color.obsidian.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
             StarfieldView(starCount: 55).ignoresSafeArea().opacity(0.4)
 
             ScrollView(showsIndicators: false) {
@@ -84,7 +85,7 @@ struct WuXingView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("Wu-Xing")
                     .font(CosmicFont.display(26))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.9))
+                    .foregroundStyle(theme.textPrimary)
                 Text("Fünf Elemente · Kosmische Balance")
                     .goldLabel(0.4)
             }
@@ -100,6 +101,7 @@ struct WuXingView: View {
 // MARK: - Wu-Xing Pentagon Canvas
 
 private struct WuXingPentagon: View {
+    @Environment(\.cosmicTheme) private var theme
     let data: WuXingData
 
     // Element order for pentagon: top-center, then clockwise
@@ -251,6 +253,7 @@ private struct WuXingPentagon: View {
 }
 
 private struct ElementLabel: View {
+    @Environment(\.cosmicTheme) private var theme
     let element: CosmicElement
 
     var body: some View {
@@ -286,6 +289,7 @@ private struct ElementHighlights: View {
 }
 
 private struct ElementHighlightCard: View {
+    @Environment(\.cosmicTheme) private var theme
     let title: String
     let element: CosmicElement
     let icon: String
@@ -322,6 +326,7 @@ private struct ElementHighlightCard: View {
 // MARK: - Element Balance Bars
 
 private struct ElementBalanceBars: View {
+    @Environment(\.cosmicTheme) private var theme
     let data: WuXingData
 
     var body: some View {
@@ -346,6 +351,7 @@ private struct ElementBalanceBars: View {
 }
 
 private struct ElementBarRow: View {
+    @Environment(\.cosmicTheme) private var theme
     let element: CosmicElement
     let value:   Double
     @State private var animValue: Double = 0
@@ -359,7 +365,7 @@ private struct ElementBarRow: View {
 
             Text(element.germanName)
                 .font(CosmicFont.heading(12, weight: .light))
-                .foregroundStyle(Color.cosmicGold.opacity(0.6))
+                .foregroundStyle(theme.textSecondary)
                 .frame(width: 56, alignment: .leading)
 
             GeometryReader { geo in
@@ -395,6 +401,7 @@ private struct ElementBarRow: View {
 // MARK: - Cycles Legend
 
 private struct CyclesLegend: View {
+    @Environment(\.cosmicTheme) private var theme
     var body: some View {
         VStack(spacing: 12) {
             HStack {
@@ -418,6 +425,7 @@ private struct CyclesLegend: View {
 }
 
 private struct CycleLegendItem: View {
+    @Environment(\.cosmicTheme) private var theme
     let color: Color
     let dashed: Bool
     let label: String
@@ -438,7 +446,7 @@ private struct CycleLegendItem: View {
                 }
                 Text(label)
                     .font(CosmicFont.heading(12, weight: .light))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.7))
+                    .foregroundStyle(theme.textSecondary)
             }
             Text(sublabel)
                 .goldLabel(0.3)
@@ -450,6 +458,7 @@ private struct CycleLegendItem: View {
 // MARK: - Interpretation Card
 
 private struct ElementInterpretation: View {
+    @Environment(\.cosmicTheme) private var theme
     let data: WuXingData
 
     var body: some View {
@@ -462,7 +471,7 @@ private struct ElementInterpretation: View {
 
             Text(data.interpretation)
                 .font(CosmicFont.bodySerif(14))
-                .foregroundStyle(Color.cosmicGold.opacity(0.65))
+                .foregroundStyle(theme.textSecondary)
                 .lineSpacing(5)
         }
         .padding(18)
