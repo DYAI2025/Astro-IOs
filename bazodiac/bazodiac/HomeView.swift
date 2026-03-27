@@ -51,6 +51,7 @@ struct HomeView: View {
             GoldLine()
                 .padding(.vertical, 4)
             LeviTeaser()
+            EveTeaser()
             DailyQuoteCard()
         }
     }
@@ -250,6 +251,7 @@ private struct SectionNavigationGrid: View {
         (.bazi,    "BaZi Säulen",    "Vier Pfeiler",         "rectangle.grid.2x2.fill"),
         (.quizzes, "Quizzes",        "Kosmische Muster",     "square.grid.2x2.fill"),
         (.levi,    "Levi",           "KI-Begleiter",         "waveform.circle.fill"),
+        (.eve,     "Eve",            "KI-Intuition",         "sparkles"),
     ]
 
     var body: some View {
@@ -405,6 +407,65 @@ private struct LeviWaveformMini: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Eve Teaser
+
+private struct EveTeaser: View {
+    @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
+
+    private let eveColor = Color(hex: "#A78BFA")
+
+    var body: some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            withAnimation { store.selectedTab = .eve }
+        } label: {
+            HStack(spacing: 16) {
+                // Eve visual
+                ZStack {
+                    Circle()
+                        .fill(eveColor.opacity(0.12))
+                        .frame(width: 44, height: 44)
+                    Circle()
+                        .strokeBorder(eveColor.opacity(0.35), lineWidth: 0.75)
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 20, weight: .thin))
+                        .foregroundStyle(eveColor.opacity(0.8))
+                        .symbolEffect(.breathe)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Eve")
+                        .font(CosmicFont.heading(15, weight: .light))
+                        .foregroundStyle(theme.textPrimary)
+                    Text("Kosmische Intuition · Jetzt verbinden")
+                        .goldLabel(0.45)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .thin))
+                    .foregroundStyle(theme.textTertiary)
+            }
+            .padding(18)
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(
+                        LinearGradient(
+                            colors: [eveColor.opacity(0.06), theme.surface.opacity(0.5)],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                    )
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(eveColor.opacity(0.18), lineWidth: 0.75)
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
 

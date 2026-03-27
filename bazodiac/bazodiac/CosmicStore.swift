@@ -84,6 +84,7 @@ final class CosmicStore {
         case bazi    = "bazi"
         case quizzes = "quizzes"
         case levi    = "levi"
+        case eve     = "eve"
 
         var label: String {
             switch self {
@@ -92,6 +93,7 @@ final class CosmicStore {
             case .bazi:    return "BaZi"
             case .quizzes: return "Quizzes"
             case .levi:    return "Levi"
+            case .eve:     return "Eve"
             }
         }
 
@@ -102,6 +104,7 @@ final class CosmicStore {
             case .bazi:    return "rectangle.grid.2x2.fill"
             case .quizzes: return "square.grid.2x2.fill"
             case .levi:    return "waveform.circle.fill"
+            case .eve:     return "sparkles"
             }
         }
     }

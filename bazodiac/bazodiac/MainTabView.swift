@@ -31,6 +31,7 @@ struct MainTabView: View {
         case .bazi:    BaZiView()
         case .quizzes: QuizzesView()
         case .levi:    LeviView()
+        case .eve:     EveView()
         }
     }
 }

@@ -1,44 +1,52 @@
 // QuizzesView.swift
-// Bazodiac iOS — Quiz Hub
+// Bazodiac iOS — Quiz Hub mit echten Fragen
 //
-// Navigation:  QuizzesView (cluster grid)
-//              → ClusterDetailView (quiz tiles)
-//
-// Quiz tile states:
-//   completed  — gold outline, gold glow, checkmark
-//   available  — cluster-color outline, cluster-color tint
-//   locked     — gray, lock icon, name hidden
+// Zeigt alle verfügbaren Quizzes als Kacheln.
+// Tap → QuizPlayView (vollständiger Frage-für-Frage-Fluss)
+// Ergebnis wird lokal in UserDefaults gespeichert.
 
 import SwiftUI
 import UIKit
 
 struct QuizzesView: View {
     @Environment(\.cosmicTheme) private var theme
-    private let clusters = QuizCluster.mockClusters
+    @Environment(CosmicStore.self) private var store
+    @State private var completedQuizIds: Set<String> = []
+    @State private var activeQuiz: FullQuiz? = nil
+
+    private let quizzes = allQuizzes
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                theme.background.ignoresSafeArea()
+        ZStack {
+            theme.background.ignoresSafeArea()
+            if theme.isDark {
                 StarfieldView(starCount: 60).ignoresSafeArea().opacity(0.35)
+            } else {
+                LightAmbientView(count: 50).ignoresSafeArea()
+            }
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        quizzesHeader
-                            .padding(.top, 60)
-                            .padding(.bottom, 28)
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    quizzesHeader
+                        .padding(.top, 60)
+                        .padding(.bottom, 28)
 
-                        clusterGrid
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 120)
-                    }
+                    quizGrid
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 120)
                 }
-                .scrollBounceBehavior(.basedOnSize)
             }
-            .navigationBarHidden(true)
-            .navigationDestination(for: QuizCluster.self) { cluster in
-                ClusterDetailView(cluster: cluster)
+            .scrollBounceBehavior(.basedOnSize)
+        }
+        .fullScreenCover(item: $activeQuiz) { quiz in
+            QuizPlayView(quiz: quiz) { profile, scores in
+                completedQuizIds.insert(quiz.id)
+                saveCompletedQuizIds()
             }
+            .environment(\.cosmicTheme, theme)
+        }
+        .onAppear {
+            loadCompletedQuizIds()
         }
     }
 
@@ -48,7 +56,7 @@ struct QuizzesView: View {
         VStack(spacing: 8) {
             Image(systemName: "square.grid.2x2.fill")
                 .font(.system(size: 26, weight: .thin))
-                .foregroundStyle(theme.textSecondary)
+                .foregroundStyle(theme.gold.opacity(0.7))
 
             Text("Quizzes")
                 .font(CosmicFont.display(30))
@@ -64,10 +72,7 @@ struct QuizzesView: View {
                 .goldLabel(0.4)
                 .tracking(4)
 
-            // Total progress summary
-            let total     = clusters.reduce(0) { $0 + $1.totalCount }
-            let completed = clusters.reduce(0) { $0 + $1.completedCount }
-            Text("\(completed) / \(total) abgeschlossen")
+            Text("\(completedQuizIds.count) / \(quizzes.count) abgeschlossen")
                 .font(CosmicFont.mono(11))
                 .foregroundStyle(theme.textTertiary)
                 .padding(.top, 4)
@@ -75,374 +80,122 @@ struct QuizzesView: View {
         .padding(.horizontal, 32)
     }
 
-    // MARK: - Cluster Grid (2 columns)
+    // MARK: - Quiz Grid
 
-    private var clusterGrid: some View {
+    private var quizGrid: some View {
         LazyVGrid(
             columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
             spacing: 14
         ) {
-            ForEach(clusters) { cluster in
-                NavigationLink(value: cluster) {
-                    ClusterTile(cluster: cluster)
+            ForEach(quizzes) { quiz in
+                QuizGridTile(
+                    quiz: quiz,
+                    isCompleted: completedQuizIds.contains(quiz.id)
+                ) {
+                    let impact = UIImpactFeedbackGenerator(style: .light)
+                    impact.impactOccurred()
+                    activeQuiz = quiz
                 }
-                .buttonStyle(.plain)
             }
         }
     }
+
+    // MARK: - Persistence
+
+    private func saveCompletedQuizIds() {
+        UserDefaults.standard.set(Array(completedQuizIds), forKey: "bazodiac.completedQuizzes")
+    }
+
+    private func loadCompletedQuizIds() {
+        let saved = UserDefaults.standard.stringArray(forKey: "bazodiac.completedQuizzes") ?? []
+        completedQuizIds = Set(saved)
+    }
 }
 
-// MARK: - Cluster Tile
+// MARK: - Quiz Grid Tile
 
-private struct ClusterTile: View {
+private struct QuizGridTile: View {
     @Environment(\.cosmicTheme) private var theme
-    let cluster: QuizCluster
+    let quiz: FullQuiz
+    let isCompleted: Bool
+    let onTap: () -> Void
     @State private var pressed = false
 
     var body: some View {
-        VStack(spacing: 10) {
-            // Icon circle
-            ZStack {
-                Circle()
-                    .fill(cluster.color.opacity(0.15))
-                    .frame(width: 52, height: 52)
-                Circle()
-                    .strokeBorder(cluster.color.opacity(0.4), lineWidth: 0.75)
-                    .frame(width: 52, height: 52)
-                Image(systemName: cluster.icon)
-                    .font(.system(size: 20, weight: .thin))
-                    .foregroundStyle(cluster.color)
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    // Icon
+                    ZStack {
+                        Circle()
+                            .fill(quiz.color.opacity(0.15))
+                            .frame(width: 40, height: 40)
+                        Circle()
+                            .strokeBorder(quiz.color.opacity(0.4), lineWidth: 0.75)
+                            .frame(width: 40, height: 40)
+                        Image(systemName: quiz.icon)
+                            .font(.system(size: 16, weight: .thin))
+                            .foregroundStyle(quiz.color)
+                    }
+                    Spacer()
+                    if isCompleted {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color.cosmicGold)
+                    }
+                }
+
+                Spacer()
+
+                // Title
+                Text(quiz.title)
+                    .font(CosmicFont.heading(13, weight: .regular))
+                    .foregroundStyle(theme.textPrimary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // Meta
+                HStack(spacing: 8) {
+                    Text("\(quiz.questions.count) Fragen")
+                        .font(CosmicFont.mono(9))
+                        .foregroundStyle(quiz.color.opacity(0.6))
+                    Text("~\(quiz.estimatedMinutes) Min.")
+                        .font(CosmicFont.mono(9))
+                        .foregroundStyle(theme.textTertiary)
+                }
             }
-
-            // Name
-            Text(cluster.name)
-                .font(CosmicFont.heading(13, weight: .regular))
-                .foregroundStyle(theme.textPrimary.opacity(0.85))
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
-            // Progress badge
-            Text(cluster.progressLabel)
-                .font(CosmicFont.mono(11))
-                .foregroundStyle(cluster.color.opacity(0.8))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 3)
-                .background(cluster.color.opacity(0.12), in: Capsule())
-                .overlay(Capsule().strokeBorder(cluster.color.opacity(0.25), lineWidth: 0.5))
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 145)
+            .background {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(isCompleted ? Color.cosmicGold.opacity(0.06) : quiz.color.opacity(0.05))
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(
+                        isCompleted ? Color.cosmicGold.opacity(0.45) : quiz.color.opacity(0.22),
+                        lineWidth: isCompleted ? 1 : 0.75
+                    )
+            }
+            .scaleEffect(pressed ? 0.95 : 1.0)
         }
-        .padding(.vertical, 18)
-        .padding(.horizontal, 12)
-        .frame(maxWidth: .infinity)
-        .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(cluster.color.opacity(pressed ? 0.1 : 0.05))
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(
-                    cluster.isFullyDone
-                        ? Color.cosmicGold.opacity(0.55)
-                        : cluster.color.opacity(0.22),
-                    lineWidth: cluster.isFullyDone ? 1 : 0.75
-                )
-        }
-        .shadow(color: cluster.color.opacity(pressed ? 0.2 : 0.0), radius: 10)
-        .scaleEffect(pressed ? 0.95 : 1.0)
-        .animation(.spring(duration: 0.25, bounce: 0.3), value: pressed)
+        .buttonStyle(.plain)
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
-                .onChanged { _ in pressed = true }
-                .onEnded   { _ in pressed = false }
+                .onChanged { _ in withAnimation(.easeOut(duration: 0.1)) { pressed = true } }
+                .onEnded   { _ in withAnimation(.spring(duration: 0.3)) { pressed = false } }
         )
     }
 }
 
-// MARK: - Cluster Detail View
+// MARK: - FullQuiz Identifiable conformance
 
-private struct ClusterDetailView: View {
-    @Environment(\.cosmicTheme) private var theme
-    let cluster: QuizCluster
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        ZStack {
-            theme.background.ignoresSafeArea()
-            StarfieldView(starCount: 50).ignoresSafeArea().opacity(0.3)
-
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    clusterHeader
-                        .padding(.top, 16)
-                        .padding(.bottom, 28)
-
-                    GoldLine()
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-
-                    quizGrid
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 120)
-                }
-            }
-            .scrollBounceBehavior(.basedOnSize)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    let impact = UIImpactFeedbackGenerator(style: .light)
-                    impact.impactOccurred()
-                    dismiss()
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 13, weight: .light))
-                        Text("Quizzes")
-                            .font(CosmicFont.label(10))
-                            .tracking(2)
-                    }
-                    .foregroundStyle(theme.textSecondary)
-                }
-                .buttonStyle(.plain)
-            }
-        }
-    }
-
-    // MARK: Cluster Header
-
-    private var clusterHeader: some View {
-        VStack(spacing: 12) {
-            // Large icon
-            ZStack {
-                Circle()
-                    .fill(cluster.color.opacity(0.12))
-                    .frame(width: 72, height: 72)
-                Circle()
-                    .strokeBorder(cluster.color.opacity(0.4), lineWidth: 1)
-                    .frame(width: 72, height: 72)
-                Image(systemName: cluster.icon)
-                    .font(.system(size: 28, weight: .thin))
-                    .foregroundStyle(cluster.color)
-            }
-
-            Text(cluster.name)
-                .font(CosmicFont.display(24))
-                .foregroundStyle(theme.textPrimary)
-                .tracking(1)
-
-            // Progress arc + label
-            HStack(spacing: 12) {
-                ProgressArc(
-                    value: Double(cluster.completedCount),
-                    total: Double(cluster.totalCount),
-                    color: cluster.color
-                )
-                .frame(width: 28, height: 28)
-
-                Text("\(cluster.completedCount) von \(cluster.totalCount) abgeschlossen")
-                    .font(CosmicFont.mono(11))
-                    .foregroundStyle(cluster.color.opacity(0.7))
-            }
-        }
-        .padding(.horizontal, 32)
-    }
-
-    // MARK: Quiz Grid (2 columns of rectangular tiles)
-
-    private var quizGrid: some View {
-        LazyVGrid(
-            columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
-            spacing: 12
-        ) {
-            ForEach(cluster.quizzes) { quiz in
-                QuizTile(quiz: quiz, clusterColor: cluster.color)
-            }
-        }
-    }
-}
-
-// MARK: - Progress Arc
-
-private struct ProgressArc: View {
-    @Environment(\.cosmicTheme) private var theme
-    let value: Double
-    let total: Double
-    let color: Color
-
-    private var fraction: Double { total > 0 ? value / total : 0 }
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(color.opacity(0.15), lineWidth: 2.5)
-            Circle()
-                .trim(from: 0, to: fraction)
-                .stroke(color.opacity(0.8), style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-        }
-    }
-}
-
-// MARK: - Quiz Tile
-
-private struct QuizTile: View {
-    @Environment(\.cosmicTheme) private var theme
-    let quiz: Quiz
-    let clusterColor: Color
-
-    @State private var appeared = false
-
-    var body: some View {
-        ZStack {
-            tileBackground
-            tileContent
-        }
-        .frame(height: 108)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(tileStroke)
-        .shadow(color: tileShadow, radius: 8)
-        .opacity(appeared ? 1 : 0)
-        .scaleEffect(appeared ? 1 : 0.92)
-        .onAppear {
-            withAnimation(.spring(duration: 0.55).delay(Double.random(in: 0...0.25))) {
-                appeared = true
-            }
-        }
-    }
-
-    // MARK: - Visual states
-
-    @ViewBuilder
-    private var tileBackground: some View {
-        switch quiz.status {
-        case .completed:
-            Color.cosmicGold.opacity(0.07)
-        case .available:
-            clusterColor.opacity(0.07)
-        case .locked:
-            theme.surface.opacity(0.5)
-        }
-    }
-
-    @ViewBuilder
-    private var tileStroke: some View {
-        switch quiz.status {
-        case .completed:
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [Color.cosmicGold.opacity(0.9), Color.cosmicGold.opacity(0.5)],
-                        startPoint: .topLeading, endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1.25
-                )
-        case .available:
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(clusterColor.opacity(0.45), lineWidth: 0.75)
-        case .locked:
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Color.white.opacity(0.07), lineWidth: 0.5)
-        }
-    }
-
-    private var tileShadow: Color {
-        switch quiz.status {
-        case .completed: return Color.cosmicGold.opacity(0.12)
-        case .available: return clusterColor.opacity(0.08)
-        case .locked:    return .clear
-        }
-    }
-
-    @ViewBuilder
-    private var tileContent: some View {
-        switch quiz.status {
-
-        case .completed:
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundStyle(Color.cosmicGold)
-                    Spacer()
-                    // Subtle radiant badge
-                    Text("✓")
-                        .font(.system(size: 9))
-                        .foregroundStyle(Color.cosmicGold.opacity(0.5))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.cosmicGold.opacity(0.1), in: Capsule())
-                        .overlay(Capsule().strokeBorder(Color.cosmicGold.opacity(0.3), lineWidth: 0.5))
-                }
-                Spacer()
-                Text(quiz.name)
-                    .font(CosmicFont.heading(12, weight: .regular))
-                    .foregroundStyle(theme.textPrimary)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text("\(quiz.questionCount) Fragen")
-                    .font(CosmicFont.mono(10))
-                    .foregroundStyle(Color.cosmicGold.opacity(0.4))
-            }
-            .padding(14)
-
-        case .available:
-            VStack(alignment: .leading, spacing: 6) {
-                Image(systemName: "play.circle")
-                    .font(.system(size: 14, weight: .thin))
-                    .foregroundStyle(clusterColor.opacity(0.8))
-                Spacer()
-                Text(quiz.name)
-                    .font(CosmicFont.heading(12, weight: .regular))
-                    .foregroundStyle(clusterColor.opacity(0.9))
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text("\(quiz.questionCount) Fragen")
-                    .font(CosmicFont.mono(10))
-                    .foregroundStyle(clusterColor.opacity(0.5))
-            }
-            .padding(14)
-
-        case .locked:
-            VStack(spacing: 8) {
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 18, weight: .thin))
-                    .foregroundStyle(Color.white.opacity(0.15))
-                Text("Gesperrt")
-                    .font(CosmicFont.label(9))
-                    .tracking(2)
-                    .foregroundStyle(Color.white.opacity(0.2))
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
+extension FullQuiz: @retroactive Equatable {
+    static func == (lhs: FullQuiz, rhs: FullQuiz) -> Bool { lhs.id == rhs.id }
 }
 
 // MARK: - Preview
 
-#Preview("Quizzes Hub") {
+#Preview {
     QuizzesView()
-        .environment({
-            let s = CosmicStore()
-            s.profile = .mock
-            return s
-        }())
-}
-
-#Preview("Cluster Detail") {
-    NavigationStack {
-        ClusterDetailView_Preview()
-    }
-}
-
-// Workaround: private struct can't be in preview directly
-private struct ClusterDetailView_Preview: View {
-    @Environment(\.cosmicTheme) private var theme
-    var body: some View {
-        // inline for preview only
-        ZStack {
-            theme.background.ignoresSafeArea()
-            Text("See ClusterDetailView")
-                .foregroundStyle(Color.cosmicGold)
-        }
-    }
+        .environment(CosmicStore())
 }
