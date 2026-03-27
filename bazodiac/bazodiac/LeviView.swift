@@ -429,6 +429,7 @@ private struct LeviControlBar: View {
             .buttonStyle(.plain)
             .disabled(!sessionActive)
             .opacity(sessionActive ? 1 : 0.35)
+            .accessibilityLabel(isListening ? "Aufnahme stoppen" : "Sprachaufnahme starten")
 
             // Send button
             Button(action: onSend) {
@@ -448,6 +449,7 @@ private struct LeviControlBar: View {
             }
             .buttonStyle(.plain)
             .disabled(inputText.isEmpty || !sessionActive)
+            .accessibilityLabel("Nachricht senden")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

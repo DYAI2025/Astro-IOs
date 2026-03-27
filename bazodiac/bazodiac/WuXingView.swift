@@ -129,6 +129,8 @@ private struct WuXingPentagon: View {
         .aspectRatio(1, contentMode: .fit)
         .frame(maxWidth: 340)
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Wu-Xing Fünf-Elemente-Pentagon. Dominant: \(data.dominant.germanName). Schwächstes Element: \(data.weakest.germanName).")
     }
 
     private func drawPentagon(context: GraphicsContext, cx: CGFloat, cy: CGFloat, r: CGFloat) {
@@ -375,7 +377,9 @@ private struct ElementBarRow: View {
             }
             .frame(height: 6)
             .onAppear {
-                withAnimation(.spring(duration: 1.1).delay(Double.random(in: 0...0.3))) {
+                // Guard against re-firing on re-appear (LazyVStack recycling)
+                guard animValue == 0 else { return }
+                withAnimation(.spring(duration: 1.1).delay(Double.random(in: 0.0...0.3))) {
                     animValue = value
                 }
             }

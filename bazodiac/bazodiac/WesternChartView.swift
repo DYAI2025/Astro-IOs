@@ -79,7 +79,7 @@ struct WesternChartView: View {
 
 // MARK: - Zodiac Wheel Canvas
 
-struct ZodiacWheelView: View {
+private struct ZodiacWheelView: View {
     let data: WesternData
     @Binding var selectedPlanet: PlanetPosition?
 
@@ -119,10 +119,13 @@ struct ZodiacWheelView: View {
                     }
                     .offset(x: pos.x - cx, y: pos.y - cy)
                     .buttonStyle(.plain)
+                    .accessibilityLabel("\(planet.planet.germanName) in \(planet.sign.germanName), Haus \(planet.house)")
                 }
             }
         }
         .aspectRatio(1, contentMode: .fit)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Geburts-Chart — Zodiak-Rad mit Planetenpositionen")
     }
 
     // MARK: Canvas Drawing

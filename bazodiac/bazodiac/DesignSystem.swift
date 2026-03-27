@@ -221,6 +221,7 @@ struct StarfieldView: View {
             }
         }
         .allowsHitTesting(false)
+        .accessibilityHidden(true)   // decorative — no semantic content
     }
 }
 
@@ -279,6 +280,7 @@ struct OrbitalRingsView: View {
             }
         }
         .allowsHitTesting(false)
+        .accessibilityHidden(true)   // decorative — no semantic content
     }
 }
 
