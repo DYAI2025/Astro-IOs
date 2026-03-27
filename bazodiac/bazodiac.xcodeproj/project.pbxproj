@@ -27,6 +27,13 @@
 		F1F600E32F66EA97000A871E /* bazodiac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bazodiac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1F600F42F66EA99000A871E /* bazodiacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bazodiacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1F600FE2F66EA99000A871E /* bazodiacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bazodiacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA1000001 /* CormorantGaramond-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fonts/CormorantGaramond-Light.ttf"; sourceTree = "<group>"; };
+		AA1000002 /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fonts/CormorantGaramond-Regular.ttf"; sourceTree = "<group>"; };
+		AA1000003 /* CormorantGaramond-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fonts/CormorantGaramond-Medium.ttf"; sourceTree = "<group>"; };
+		AA1000004 /* CormorantGaramond-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fonts/CormorantGaramond-SemiBold.ttf"; sourceTree = "<group>"; };
+		AA1000005 /* CormorantGaramond-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fonts/CormorantGaramond-Bold.ttf"; sourceTree = "<group>"; };
+		AA1000006 /* CormorantGaramond-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fonts/CormorantGaramond-Italic.ttf"; sourceTree = "<group>"; };
+		AA1000007 /* CormorantGaramond-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fonts/CormorantGaramond-LightItalic.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -225,21 +232,39 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
+				AA2000001 /* CormorantGaramond-Light.ttf in Resources */,
+				AA2000002 /* CormorantGaramond-Regular.ttf in Resources */,
+				AA2000003 /* CormorantGaramond-Medium.ttf in Resources */,
+				AA2000004 /* CormorantGaramond-SemiBold.ttf in Resources */,
+				AA2000005 /* CormorantGaramond-Bold.ttf in Resources */,
+				AA2000006 /* CormorantGaramond-Italic.ttf in Resources */,
+				AA2000007 /* CormorantGaramond-LightItalic.ttf in Resources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F1F600F22F66EA99000A871E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
+				AA2000001 /* CormorantGaramond-Light.ttf in Resources */,
+				AA2000002 /* CormorantGaramond-Regular.ttf in Resources */,
+				AA2000003 /* CormorantGaramond-Medium.ttf in Resources */,
+				AA2000004 /* CormorantGaramond-SemiBold.ttf in Resources */,
+				AA2000005 /* CormorantGaramond-Bold.ttf in Resources */,
+				AA2000006 /* CormorantGaramond-Italic.ttf in Resources */,
+				AA2000007 /* CormorantGaramond-LightItalic.ttf in Resources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F1F600FC2F66EA99000A871E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
+				AA2000001 /* CormorantGaramond-Light.ttf in Resources */,
+				AA2000002 /* CormorantGaramond-Regular.ttf in Resources */,
+				AA2000003 /* CormorantGaramond-Medium.ttf in Resources */,
+				AA2000004 /* CormorantGaramond-SemiBold.ttf in Resources */,
+				AA2000005 /* CormorantGaramond-Bold.ttf in Resources */,
+				AA2000006 /* CormorantGaramond-Italic.ttf in Resources */,
+				AA2000007 /* CormorantGaramond-LightItalic.ttf in Resources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */

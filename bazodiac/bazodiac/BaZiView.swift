@@ -206,10 +206,20 @@ private struct PillarCard: View {
                         .font(CosmicFont.chinese(32, weight: .ultraLight))
                         .foregroundStyle(pillar.branch.element.color)
 
-                    Text(pillar.branch.animalEmoji)
-                        .font(.system(size: 16))
+                    // Animal badge — element-colored with first letter
+                    ZStack {
+                        Circle()
+                            .fill(pillar.branch.element.color.opacity(0.18))
+                            .frame(width: 28, height: 28)
+                        Circle()
+                            .strokeBorder(pillar.branch.element.color.opacity(0.4), lineWidth: 0.5)
+                            .frame(width: 28, height: 28)
+                        Text(String(pillar.branch.animal.prefix(2)).uppercased())
+                            .font(.system(size: 7, weight: .medium).monospacedDigit())
+                            .foregroundStyle(pillar.branch.element.color.opacity(0.9))
+                    }
 
-                    Text(pillar.branch.animal)
+                    Text(pillar.branch.animal.uppercased())
                         .goldLabel(0.35)
                 }
                 .padding(.vertical, 14)
@@ -364,8 +374,18 @@ private struct PillarDetailSheet: View {
                     Text(pillar.branch.char)
                         .font(CosmicFont.chinese(56, weight: .ultraLight))
                         .foregroundStyle(pillar.branch.element.color)
-                    Text(pillar.branch.animalEmoji)
-                        .font(.system(size: 22))
+                    // Animal badge — fallback for emoji rendering issues on iOS 26+
+                    ZStack {
+                        Circle()
+                            .fill(pillar.branch.element.color.opacity(0.18))
+                            .frame(width: 36, height: 36)
+                        Circle()
+                            .strokeBorder(pillar.branch.element.color.opacity(0.4), lineWidth: 0.5)
+                            .frame(width: 36, height: 36)
+                        Text(String(pillar.branch.animal.prefix(2)).uppercased())
+                            .font(.system(size: 9, weight: .medium).monospacedDigit())
+                            .foregroundStyle(pillar.branch.element.color.opacity(0.9))
+                    }
                     Text(pillar.branch.animal)
                         .font(CosmicFont.heading(12, weight: .light))
                         .foregroundStyle(Color.cosmicGold.opacity(0.6))

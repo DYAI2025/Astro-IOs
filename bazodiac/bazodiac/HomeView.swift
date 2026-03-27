@@ -75,21 +75,25 @@ private struct CosmicHeader: View {
 
                 Spacer().frame(height: 8)
 
-                // Greeting
-                Text("Dein Kosmischer Atlas")
-                    .goldLabel(0.4)
-                    .tracking(5)
-
-                Text(store.displayName)
-                    .font(CosmicFont.display(34))
+                // Title
+                Text("Bazodiac")
+                    .font(CosmicFont.display(42))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color.cosmicGold.opacity(0.95), Color.cosmicGold.opacity(0.65)],
+                            colors: [Color.cosmicGold.opacity(0.95), Color.cosmicGold.opacity(0.60)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .tracking(2)
+                    .tracking(4)
+
+                // Personalised sub-label
+                if !store.displayName.isEmpty, store.displayName != "Dein Kosmos" {
+                    Text(store.displayName)
+                        .goldLabel(0.55)
+                        .tracking(5)
+                        .padding(.top, 2)
+                }
 
                 // Birth place
                 if let profile = store.profile {
@@ -115,22 +119,21 @@ private struct BigThreeBadges: View {
             if let w = store.profile?.westernData {
                 BigThreeBadge(
                     title: "Sonne",
-                    glyph: "☉",
+                    sfSymbol: "sun.max.fill",
                     sign: w.sunSign,
                     degree: w.sunDegree
                 )
                 BigThreeBadge(
                     title: "Mond",
-                    glyph: "☽",
+                    sfSymbol: "moon.fill",
                     sign: w.moonSign,
                     degree: w.moonDegree
                 )
                 BigThreeBadge(
                     title: "Aszendent",
-                    glyph: "ASC",
+                    sfSymbol: "arrow.up.circle",
                     sign: w.ascendant,
-                    degree: w.ascendantDegree,
-                    glyphIsText: true
+                    degree: w.ascendantDegree
                 )
             }
         }
@@ -139,24 +142,21 @@ private struct BigThreeBadges: View {
 
 private struct BigThreeBadge: View {
     let title: String
-    let glyph: String
+    let sfSymbol: String
     let sign: ZodiacSign
     let degree: Double
-    var glyphIsText: Bool = false
 
     var body: some View {
         VStack(spacing: 8) {
-            // Element color dot
+            // Element color dot with SF Symbol
             Circle()
                 .fill(sign.element.color.opacity(0.25))
                 .frame(width: 44, height: 44)
                 .overlay {
                     Circle()
                         .strokeBorder(sign.element.color.opacity(0.4), lineWidth: 0.75)
-                    Text(glyph)
-                        .font(glyphIsText
-                              ? CosmicFont.label(8).bold()
-                              : .system(size: 18, weight: .thin))
+                    Image(systemName: sfSymbol)
+                        .font(.system(size: 16, weight: .thin))
                         .foregroundStyle(sign.element.color)
                 }
 
@@ -229,10 +229,10 @@ private struct SectionNavigationGrid: View {
     @Environment(CosmicStore.self) private var store
 
     private let sections: [(tab: CosmicStore.Tab, title: String, sub: String, icon: String)] = [
-        (.chart,    "Geburts-Chart",  "Western Astrologie",     "scope"),
-        (.bazi,     "BaZi Säulen",    "Vier Pfeiler",            "rectangle.grid.2x2.fill"),
-        (.elements, "Wu-Xing",        "Fünf Elemente",           "pentagon.fill"),
-        (.levi,     "Levi",           "KI-Begleiter",            "waveform.circle.fill"),
+        (.chart,   "Geburts-Chart",  "Western Astrologie",  "scope"),
+        (.bazi,    "BaZi Säulen",    "Vier Pfeiler",         "rectangle.grid.2x2.fill"),
+        (.quizzes, "Quizzes",        "Kosmische Muster",     "square.grid.2x2.fill"),
+        (.levi,    "Levi",           "KI-Begleiter",         "waveform.circle.fill"),
     ]
 
     var body: some View {

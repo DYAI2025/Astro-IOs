@@ -25,7 +25,9 @@ private struct Message: Identifiable {
 struct LeviView: View {
     @Environment(CosmicStore.self) private var store
 
-    @State private var messages: [Message] = Message.sampleConversation
+    // PH-13 BEHOBEN: Startet leer statt mit vorgeladenem Sample
+    // Echte Begrüßung kommt von ElevenLabs (Phase 4)
+    @State private var messages: [Message] = []
     @State private var isListening   = false
     @State private var isSpeaking    = false
     @State private var sessionActive = false

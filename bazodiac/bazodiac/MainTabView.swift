@@ -26,11 +26,11 @@ struct MainTabView: View {
     @ViewBuilder
     private var tabContent: some View {
         switch store.selectedTab {
-        case .home:     HomeView()
-        case .chart:    WesternChartView()
-        case .bazi:     BaZiView()
-        case .elements: WuXingView()
-        case .levi:     LeviView()
+        case .home:    HomeView()
+        case .chart:   WesternChartView()
+        case .bazi:    BaZiView()
+        case .quizzes: QuizzesView()
+        case .levi:    LeviView()
         }
     }
 }

@@ -21,11 +21,13 @@ struct BazodiacApp: App {
         WindowGroup {
             RootView()
                 .environment(cosmicStore)
-                .preferredColorScheme(.dark)   // Always dark — no light mode
+                .environment(\.cosmicTheme, cosmicStore.theme)
+                .preferredColorScheme(cosmicStore.theme.isDark ? .dark : .light)
                 .onAppear {
                     #if DEBUG
                     if CommandLine.arguments.contains("--skip-to-dashboard") {
                         cosmicStore.profile   = .mock
+                        cosmicStore.birthData.name = "Vorschau"
                         cosmicStore.appPhase  = .dashboard
                     }
                     if CommandLine.arguments.contains("--skip-to-birthform") {

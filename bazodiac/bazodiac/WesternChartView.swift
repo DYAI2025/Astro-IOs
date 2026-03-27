@@ -167,11 +167,11 @@ private struct ZodiacWheelView: View {
             let glyphR   = (oR + iR) / 2
             let glyphPt  = pointOnCircle(cx: cx, cy: cy, r: glyphR, deg: glyphDeg)
             var glyphText = context.resolve(
-                Text(sign.glyph)
-                    .font(.system(size: r * 0.055))
+                Text(sign.canvasLabel)
+                    .font(.system(size: r * 0.055, weight: .medium).monospacedDigit())
             )
-            glyphText.shading = .color(sign.element.color.opacity(0.7))
-            context.draw(glyphText, at: glyphPt)
+            glyphText.shading = .color(sign.element.color.opacity(0.85))
+            context.draw(glyphText, at: glyphPt, anchor: .center)
         }
 
         // ── Outer ring ─────────────────────────────────────────────────────
@@ -212,7 +212,7 @@ private struct ZodiacWheelView: View {
                     .font(.system(size: r * 0.04, weight: .thin))
             )
             numText.shading = .color(Color.cosmicGold.opacity(0.3))
-            context.draw(numText, at: numPt)
+            context.draw(numText, at: numPt, anchor: .center)
         }
 
         // ── House ring arcs ─────────────────────────────────────────────────
@@ -264,7 +264,7 @@ private struct ZodiacWheelView: View {
                     .font(.system(size: r * 0.042))
             )
             glyphText.shading = .color(planet.planet.color)
-            context.draw(glyphText, at: CGPoint(x: pos.x, y: pos.y - planetR * 2.8))
+            context.draw(glyphText, at: CGPoint(x: pos.x, y: pos.y - planetR * 2.8), anchor: .center)
         }
     }
 
@@ -310,11 +310,20 @@ private struct BigThreeCell: View {
     let deg:   Double
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
             Text(title).goldLabel(0.4)
-            Text(sign.glyph)
-                .font(.system(size: 22, weight: .thin))
-                .foregroundStyle(sign.element.color)
+            // Sign badge — element-colored circle with 2-letter code
+            ZStack {
+                Circle()
+                    .fill(sign.element.color.opacity(0.18))
+                    .frame(width: 40, height: 40)
+                Circle()
+                    .strokeBorder(sign.element.color.opacity(0.45), lineWidth: 0.75)
+                    .frame(width: 40, height: 40)
+                Text(sign.canvasLabel)
+                    .font(.system(size: 10, weight: .medium).monospacedDigit())
+                    .foregroundStyle(sign.element.color.opacity(0.9))
+            }
             Text(sign.germanName)
                 .font(CosmicFont.heading(12, weight: .light))
                 .foregroundStyle(Color.cosmicGold.opacity(0.8))
@@ -364,9 +373,9 @@ private struct PlanetRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 14) {
-                // Planet glyph
-                Text(position.planet.glyph)
-                    .font(.system(size: 18, weight: .thin))
+                // Planet icon (SF Symbol — SF font can't render classic astrological glyphs)
+                Image(systemName: position.planet.sfSymbol)
+                    .font(.system(size: 16, weight: .thin))
                     .foregroundStyle(position.planet.color)
                     .frame(width: 28)
 
@@ -379,9 +388,12 @@ private struct PlanetRow: View {
 
                 // Sign + degree
                 HStack(spacing: 6) {
-                    Text(position.sign.glyph)
-                        .font(.system(size: 13))
-                        .foregroundStyle(position.sign.element.color.opacity(0.8))
+                    Text(position.sign.canvasLabel)
+                        .font(.system(size: 10, weight: .medium).monospacedDigit())
+                        .foregroundStyle(position.sign.element.color.opacity(0.85))
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(position.sign.element.color.opacity(0.1), in: RoundedRectangle(cornerRadius: 3))
                     Text(position.sign.germanName)
                         .font(CosmicFont.heading(13, weight: .light))
                         .foregroundStyle(Color.cosmicGold.opacity(0.6))
@@ -430,8 +442,8 @@ private struct PlanetDetailSheet: View {
                     Circle()
                         .strokeBorder(position.planet.color.opacity(0.35), lineWidth: 1)
                         .frame(width: 72, height: 72)
-                    Text(position.planet.glyph)
-                        .font(.system(size: 32, weight: .thin))
+                    Image(systemName: position.planet.sfSymbol)
+                        .font(.system(size: 28, weight: .thin))
                         .foregroundStyle(position.planet.color)
                 }
 
@@ -441,9 +453,13 @@ private struct PlanetDetailSheet: View {
                         .foregroundStyle(Color.cosmicGold.opacity(0.9))
 
                     HStack(spacing: 8) {
-                        Text(position.sign.glyph)
-                            .font(.system(size: 16))
+                        Text(position.sign.canvasLabel)
+                            .font(.system(size: 11, weight: .medium).monospacedDigit())
                             .foregroundStyle(position.sign.element.color)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(position.sign.element.color.opacity(0.12),
+                                        in: RoundedRectangle(cornerRadius: 3))
                         Text(position.sign.germanName)
                             .font(CosmicFont.heading(14, weight: .light))
                             .foregroundStyle(Color.cosmicGold.opacity(0.7))

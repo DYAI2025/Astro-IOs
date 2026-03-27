@@ -55,7 +55,7 @@ struct SplashView: View {
             .opacity(phase.rawValue >= SplashPhase.title.rawValue ? 1 : 0)
             .animation(.easeInOut(duration: 3), value: phase)
 
-            // ── 4. Ephemeris scroll (center visual)
+            // ── 4. Single-flow content column (scroll → title → gate)
             VStack(spacing: 0) {
                 Spacer()
 
@@ -64,14 +64,7 @@ struct SplashView: View {
                     .scaleEffect(phase.rawValue >= SplashPhase.title.rawValue ? 1 : 0.88)
                     .animation(.spring(duration: 2.5, bounce: 0.1), value: phase)
 
-                Spacer()
-            }
-
-            // ── 5. Title composition (below scroll)
-            VStack(spacing: 0) {
-                Spacer()
-                Spacer()
-                Spacer()
+                Spacer().frame(height: 36)
 
                 titleBlock
 
@@ -79,7 +72,7 @@ struct SplashView: View {
 
                 languageGate
 
-                Spacer().frame(height: 60)
+                Spacer().frame(height: 56)
             }
         }
         .onAppear {
@@ -312,10 +305,10 @@ private struct ZodiacWheelMini: View {
                 let gx = cx + gr * CGFloat(cos(glyphAngle.radians))
                 let gy = cy + gr * CGFloat(sin(glyphAngle.radians))
 
-                var text = context.resolve(Text(sign.glyph)
-                    .font(.system(size: 7, weight: .ultraLight)))
-                text.shading = .color(Color.cosmicGold.opacity(0.7))
-                context.draw(text, at: CGPoint(x: gx, y: gy))
+                var text = context.resolve(Text(sign.canvasLabel)
+                    .font(.system(size: 7, weight: .medium).monospacedDigit()))
+                text.shading = .color(Color.cosmicGold.opacity(0.75))
+                context.draw(text, at: CGPoint(x: gx, y: gy), anchor: .center)
             }
 
             // Center circle

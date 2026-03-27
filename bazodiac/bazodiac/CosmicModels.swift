@@ -7,7 +7,7 @@ import SwiftUI
 
 // MARK: - Birth Data
 
-struct BirthData: Equatable {
+struct BirthData: Equatable, Codable {
     var name: String = ""
     var birthDate: Date = {
         var c = DateComponents()
@@ -113,9 +113,16 @@ enum ZodiacSign: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// Full Unicode astrological symbol — for regular Text views
     var glyph: String {
         let glyphs = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"]
         return glyphs[ZodiacSign.allCases.firstIndex(of: self) ?? 0]
+    }
+
+    /// 2-letter abbreviation for Canvas rendering (SF font lacks astrological block)
+    var canvasLabel: String {
+        let labels = ["AR", "TA", "GE", "CN", "LE", "VI", "LI", "SC", "SG", "CP", "AQ", "PI"]
+        return labels[ZodiacSign.allCases.firstIndex(of: self) ?? 0]
     }
 
     var element: ZodiacElement {
@@ -213,6 +220,22 @@ enum Planet: String, CaseIterable, Identifiable {
         case .uranus:  return "Uranus"
         case .neptune: return "Neptun"
         case .pluto:   return "Pluto"
+        }
+    }
+
+    /// SF Symbol name — used in SwiftUI views (SF font can't render classic astrological glyphs)
+    var sfSymbol: String {
+        switch self {
+        case .sun:     return "sun.max.fill"
+        case .moon:    return "moon.fill"
+        case .mercury: return "waveform.path.ecg"
+        case .venus:   return "heart.circle.fill"
+        case .mars:    return "arrow.up.right.circle.fill"
+        case .jupiter: return "circle.hexagongrid.fill"
+        case .saturn:  return "rotate.3d"
+        case .uranus:  return "bolt.circle.fill"
+        case .neptune: return "water.waves"
+        case .pluto:   return "circle.dotted"
         }
     }
 

@@ -1,9 +1,11 @@
 // DesignSystem.swift
 // Bazodiac iOS — Design Tokens, Typography, Modifiers, Reusable Components
 //
-// Color palette mirrors the web app exactly:
-//   Obsidian #00050A + Gold #D4AF37 (dark luxury theme)
-//   Dawn #E2ECF6 + Ink #1E2A3A (morning/light theme — future)
+// Two themes:
+//   DARK  — Obsidian #00050A + Gold #D4AF37  (deep space luxury)
+//   LIGHT — Ivory  #F8F3E8 + Gold #9A7B2F    (bright astro luxury, parchment feel)
+//
+// Font: Cormorant Garamond (bundled) for all display/heading/serif text.
 
 import SwiftUI
 
@@ -20,22 +22,158 @@ extension Color {
     }
 }
 
-// MARK: - Design Palette
+// MARK: - Theme Definition
+
+enum CosmicTheme: String, CaseIterable {
+    case dark  = "dark"
+    case light = "light"
+
+    // ── Backgrounds ────────────────────────────────────────────────────────────
+    /// Primary app background
+    var background: Color {
+        switch self {
+        case .dark:  return Color(hex: "#00050A")   // deep space black
+        case .light: return Color(hex: "#F8F3E8")   // warm ivory / parchment
+        }
+    }
+    /// Card / surface background
+    var surface: Color {
+        switch self {
+        case .dark:  return Color(hex: "#1A1C1E")
+        case .light: return Color(hex: "#FFFFFF")
+        }
+    }
+    /// Secondary surface (elevated cards, sheets)
+    var surfaceElevated: Color {
+        switch self {
+        case .dark:  return Color(hex: "#22252A")
+        case .light: return Color(hex: "#FDF9F1")
+        }
+    }
+
+    // ── Primary accent (Gold) ──────────────────────────────────────────────────
+    var gold: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37")   // bright gold on dark
+        case .light: return Color(hex: "#9A7B2F")   // deep antique gold on light
+        }
+    }
+    var goldSubtle: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.55)
+        case .light: return Color(hex: "#9A7B2F").opacity(0.70)
+        }
+    }
+    var goldBorder: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.14)
+        case .light: return Color(hex: "#9A7B2F").opacity(0.22)
+        }
+    }
+    var goldFaint: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.06)
+        case .light: return Color(hex: "#9A7B2F").opacity(0.08)
+        }
+    }
+
+    // ── Text ───────────────────────────────────────────────────────────────────
+    var textPrimary: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.95)
+        case .light: return Color(hex: "#2C1E0F")   // dark warm brown
+        }
+    }
+    var textSecondary: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.60)
+        case .light: return Color(hex: "#5C4A2A").opacity(0.80)
+        }
+    }
+    var textTertiary: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.30)
+        case .light: return Color(hex: "#8B6914").opacity(0.55)
+        }
+    }
+    var textLabel: Color {        // goldLabel-equivalent
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.55)
+        case .light: return Color(hex: "#9A7B2F").opacity(0.70)
+        }
+    }
+
+    // ── Dividers ───────────────────────────────────────────────────────────────
+    var dividerColors: [Color] {
+        switch self {
+        case .dark:  return [.clear, Color(hex: "#D4AF37").opacity(0.3), .clear]
+        case .light: return [.clear, Color(hex: "#9A7B2F").opacity(0.35), .clear]
+        }
+    }
+
+    // ── Star / ambient ─────────────────────────────────────────────────────────
+    var starColor: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37")
+        case .light: return Color(hex: "#9A7B2F")
+        }
+    }
+    var ambientGlow: Color {
+        switch self {
+        case .dark:  return Color(hex: "#D4AF37").opacity(0.06)
+        case .light: return Color(hex: "#C8A84B").opacity(0.10)
+        }
+    }
+
+    // ── Card style ─────────────────────────────────────────────────────────────
+    var cardBackground: Color {
+        switch self {
+        case .dark:  return Color(hex: "#1A1C1E").opacity(0.85)
+        case .light: return Color(hex: "#FFFFFF").opacity(0.90)
+        }
+    }
+
+    // ── Tab bar ────────────────────────────────────────────────────────────────
+    var tabBarBackground: Color {
+        switch self {
+        case .dark:  return Color(hex: "#0D0F11").opacity(0.92)
+        case .light: return Color(hex: "#FDFAF3").opacity(0.95)
+        }
+    }
+
+    // ── Convenience ────────────────────────────────────────────────────────────
+    var isDark: Bool { self == .dark }
+
+    var toggleIcon: String {
+        switch self {
+        case .dark:  return "sun.max.fill"
+        case .light: return "moon.stars.fill"
+        }
+    }
+    var next: CosmicTheme {
+        switch self {
+        case .dark:  return .light
+        case .light: return .dark
+        }
+    }
+}
+
+// MARK: - Static Color Aliases (dark-mode static — kept for Canvas code)
 
 extension Color {
-    // Core dark-luxury palette (web variables translated)
-    static let obsidian     = Color(hex: "#00050A")   // --color-obsidian
-    static let cosmicGold   = Color(hex: "#D4AF37")   // --color-gold
-    static let goldDeep     = Color(hex: "#8B6914")   // --color-gold-deep
-    static let cosmicAsh    = Color(hex: "#1A1C1E")   // --color-ash
-    static let cosmicInk    = Color(hex: "#1E2A3A")   // --color-ink
+    // Dark palette constants (Canvas drawing, Wu-Xing, Zodiac)
+    static let obsidian     = Color(hex: "#00050A")
+    static let cosmicGold   = Color(hex: "#D4AF37")
+    static let goldDeep     = Color(hex: "#8B6914")
+    static let cosmicAsh    = Color(hex: "#1A1C1E")
+    static let cosmicInk    = Color(hex: "#1E2A3A")
 
-    // Five Elements — Wu-Xing
-    static let elementWood  = Color(hex: "#52A853")   // 木 Holz — Smaragdgrün
-    static let elementFire  = Color(hex: "#EA4335")   // 火 Feuer — Rot
-    static let elementEarth = Color(hex: "#FBBC05")   // 土 Erde — Ocker
-    static let elementMetal = Color(hex: "#C8D4E4")   // 金 Metall — Silber
-    static let elementWater = Color(hex: "#4285F4")   // 水 Wasser — Tiefblau
+    // Five Elements — Wu-Xing (unchanged, vibrant)
+    static let elementWood  = Color(hex: "#52A853")
+    static let elementFire  = Color(hex: "#EA4335")
+    static let elementEarth = Color(hex: "#FBBC05")
+    static let elementMetal = Color(hex: "#C8D4E4")
+    static let elementWater = Color(hex: "#4285F4")
 
     // Western zodiac element tints
     static let zodiacFire   = Color(hex: "#FF6B4A")
@@ -43,72 +181,133 @@ extension Color {
     static let zodiacAir    = Color(hex: "#7EC8E3")
     static let zodiacWater  = Color(hex: "#5B9BD5")
 
-    // Utility
+    // Utility (dark-mode defaults)
     static let goldFaint    = Color(hex: "#D4AF37").opacity(0.06)
     static let goldBorder   = Color(hex: "#D4AF37").opacity(0.14)
     static let goldMid      = Color(hex: "#D4AF37").opacity(0.45)
 }
 
-// MARK: - Typography Scale
+// MARK: - Typography — Cormorant Garamond
 
 enum CosmicFont {
-    // Display — like Cormorant Garamond (serif system alternative)
+
+    // ── Cormorant Garamond font names ──────────────────────────────────────────
+    private static let cgLight      = "CormorantGaramond-Light"
+    private static let cgRegular    = "CormorantGaramond-Regular"
+    private static let cgMedium     = "CormorantGaramond-Medium"
+    private static let cgSemiBold   = "CormorantGaramond-SemiBold"
+    private static let cgBold       = "CormorantGaramond-Bold"
+    private static let cgItalic     = "CormorantGaramond-Italic"
+    private static let cgLightItalic = "CormorantGaramond-LightItalic"
+
+    /// Verify font is available, fallback to system serif
+    private static func cg(_ name: String, size: CGFloat) -> Font {
+        // Try custom font; if not loaded yet, fallback gracefully
+        let font = UIFont(name: name, size: size)
+        if font != nil {
+            return Font.custom(name, size: size)
+        }
+        // Fallback: system serif
+        return .system(size: size, weight: .ultraLight, design: .serif)
+    }
+
+    // ── Display — large cinematic titles (Splash, Home header) ────────────────
     static func display(_ size: CGFloat) -> Font {
-        .system(size: size, weight: .ultraLight, design: .serif)
+        cg(cgLight, size: size)
     }
-    // Heading — Sora-feel (clean, geometric sans)
+
+    // ── Heading — section titles, card headers ─────────────────────────────────
     static func heading(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
+        switch weight {
+        case .bold, .heavy, .black:
+            return cg(cgBold, size: size)
+        case .semibold:
+            return cg(cgSemiBold, size: size)
+        case .medium:
+            return cg(cgMedium, size: size)
+        case .thin, .ultraLight:
+            return cg(cgLight, size: size)
+        default:
+            return cg(cgRegular, size: size)
+        }
     }
-    // Body — serif for interpretive/atmospheric text
+
+    // ── Body serif — interpretation text, quotes ───────────────────────────────
     static func bodySerif(_ size: CGFloat) -> Font {
-        .system(size: size, weight: .light, design: .serif)
+        cg(cgLight, size: size)
     }
-    // Label — tight tracked caps (10px 0.5em tracking in web)
+
+    // ── Body serif italic ──────────────────────────────────────────────────────
+    static func bodySerifItalic(_ size: CGFloat) -> Font {
+        cg(cgLightItalic, size: size)
+    }
+
+    // ── Label — uppercase tracked small caps ───────────────────────────────────
     static func label(_ size: CGFloat = 10) -> Font {
         .system(size: size, weight: .medium, design: .default)
     }
-    // Mono — for degrees, coordinates
+
+    // ── Mono — degrees, coordinates ───────────────────────────────────────────
     static func mono(_ size: CGFloat) -> Font {
         .system(size: size, weight: .light, design: .monospaced)
     }
-    // Chinese glyphs
+
+    // ── Chinese glyphs ────────────────────────────────────────────────────────
     static func chinese(_ size: CGFloat, weight: Font.Weight = .ultraLight) -> Font {
         .system(size: size, weight: weight)
     }
 }
 
+// MARK: - Theme Environment Key
+
+struct CosmicThemeKey: EnvironmentKey {
+    static let defaultValue: CosmicTheme = .dark
+}
+
+extension EnvironmentValues {
+    var cosmicTheme: CosmicTheme {
+        get { self[CosmicThemeKey.self] }
+        set { self[CosmicThemeKey.self] = newValue }
+    }
+}
+
 // MARK: - View Modifiers
 
-/// Small gold uppercase tracking label (web: text-[10px] tracking-[0.5em] uppercase text-gold/60)
+/// Gold uppercase tracking label — theme-aware
 struct GoldLabelStyle: ViewModifier {
     var opacity: Double = 0.55
+    @Environment(\.cosmicTheme) private var theme
+
     func body(content: Content) -> some View {
         content
             .font(CosmicFont.label(9))
             .tracking(5)
             .textCase(.uppercase)
-            .foregroundStyle(Color.cosmicGold.opacity(opacity))
+            .foregroundStyle(theme.textLabel.opacity(opacity / 0.55))
     }
 }
 
-/// Dark obsidian card with gold hairline border
+/// Dark/light cosmic card with gold hairline border
 struct CosmicCardStyle: ViewModifier {
     var cornerRadius: CGFloat = 16
+    @Environment(\.cosmicTheme) private var theme
+
     func body(content: Content) -> some View {
         content
-            .background(Color.cosmicAsh.opacity(0.85))
+            .background(theme.cardBackground)
             .clipShape(.rect(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(Color.goldBorder, lineWidth: 0.75)
+                    .strokeBorder(theme.goldBorder, lineWidth: 0.75)
             )
     }
 }
 
-/// Glass card — Liquid Glass on iOS 26+, material fallback on earlier
+/// Glass card — Liquid Glass on iOS 26+, theme-aware material fallback
 struct GlassCardStyle: ViewModifier {
     var cornerRadius: CGFloat = 16
+    @Environment(\.cosmicTheme) private var theme
+
     func body(content: Content) -> some View {
         if #available(iOS 26, *) {
             content
@@ -118,20 +317,22 @@ struct GlassCardStyle: ViewModifier {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .strokeBorder(Color.goldBorder, lineWidth: 0.5)
+                        .strokeBorder(theme.goldBorder, lineWidth: 0.5)
                 )
         }
     }
 }
 
-/// Glowing gold separator line
+/// Glowing gold separator
 struct GoldDividerStyle: ViewModifier {
+    @Environment(\.cosmicTheme) private var theme
+
     func body(content: Content) -> some View {
         content
             .frame(height: 0.5)
             .background(
                 LinearGradient(
-                    colors: [.clear, Color.cosmicGold.opacity(0.3), .clear],
+                    colors: theme.dividerColors,
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -212,7 +413,6 @@ struct StarfieldView: View {
                     let tint: Color = goldTint ? .cosmicGold : .white
                     context.fill(Path(ellipseIn: rect), with: .color(tint.opacity(alpha)))
 
-                    // Subtle halo on larger stars
                     if star.radius > 1.5 {
                         let haloRect = rect.insetBy(dx: -star.radius * 1.5, dy: -star.radius * 1.5)
                         context.fill(Path(ellipseIn: haloRect), with: .color(tint.opacity(alpha * 0.15)))
@@ -221,7 +421,7 @@ struct StarfieldView: View {
             }
         }
         .allowsHitTesting(false)
-        .accessibilityHidden(true)   // decorative — no semantic content
+        .accessibilityHidden(true)
     }
 }
 
@@ -252,18 +452,16 @@ struct OrbitalRingsView: View {
                     let ringRect = CGRect(x: cx - radius, y: cy - radius,
                                          width: radius * 2, height: radius * 2)
 
-                    // Draw orbital ellipse
                     context.stroke(
                         Path(ellipseIn: ringRect),
                         with: .color(Color.cosmicGold.opacity(ringAlpha)),
                         lineWidth: 0.5
                     )
 
-                    // Orbiting planet dot
                     let orbit = orbitData[i]
                     let angle = t * orbit.speed + orbit.phaseOffset
                     let px = cx + radius * cos(angle)
-                    let py = cy + radius * sin(angle) * 0.35  // flattened ellipse
+                    let py = cy + radius * sin(angle) * 0.35
                     let dotR = orbit.dotSize / 2
                     let dotRect = CGRect(x: px - dotR, y: py - dotR,
                                         width: dotR * 2, height: dotR * 2)
@@ -272,7 +470,6 @@ struct OrbitalRingsView: View {
                     context.fill(Path(ellipseIn: dotRect),
                                  with: .color(Color.cosmicGold.opacity(dotAlpha)))
 
-                    // Planet halo
                     let haloRect = dotRect.insetBy(dx: -dotR * 1.5, dy: -dotR * 1.5)
                     context.fill(Path(ellipseIn: haloRect),
                                  with: .color(Color.cosmicGold.opacity(dotAlpha * 0.2)))
@@ -280,7 +477,7 @@ struct OrbitalRingsView: View {
             }
         }
         .allowsHitTesting(false)
-        .accessibilityHidden(true)   // decorative — no semantic content
+        .accessibilityHidden(true)
     }
 }
 
@@ -305,6 +502,64 @@ struct ElementBadge: View {
     }
 }
 
+// MARK: - Reusable: Theme Toggle Button
+
+struct ThemeToggleButton: View {
+    @Environment(\.cosmicTheme) private var theme
+
+    let onToggle: () -> Void
+
+    var body: some View {
+        Button(action: onToggle) {
+            Image(systemName: theme.toggleIcon)
+                .font(.system(size: 16, weight: .thin))
+                .foregroundStyle(theme.gold.opacity(0.7))
+                .frame(width: 36, height: 36)
+                .background(theme.goldFaint, in: Circle())
+                .overlay(Circle().strokeBorder(theme.goldBorder, lineWidth: 0.5))
+        }
+        .buttonStyle(.plain)
+        .animation(.spring(duration: 0.4, bounce: 0.2), value: theme)
+    }
+}
+
+// MARK: - Reusable: Light-mode Star Background
+
+/// For light mode: subtle vellum/parchment texture with faint gold dots
+struct LightAmbientView: View {
+    private struct Speck: Sendable {
+        let x, y, r, phase, speed: CGFloat
+    }
+    private let specks: [Speck]
+
+    init(count: Int = 60) {
+        specks = (0..<count).map { _ in
+            Speck(x: .random(in: 0...1), y: .random(in: 0...1),
+                  r: .random(in: 0.3...1.4),
+                  phase: .random(in: 0...(2 * .pi)),
+                  speed: .random(in: 0.15...0.5))
+        }
+    }
+
+    var body: some View {
+        TimelineView(.animation) { tl in
+            Canvas { ctx, size in
+                let t = tl.date.timeIntervalSinceReferenceDate
+                for s in specks {
+                    let alpha = 0.04 + (sin(t * s.speed + s.phase) + 1) * 0.09
+                    let rect = CGRect(x: s.x * size.width - s.r,
+                                      y: s.y * size.height - s.r,
+                                      width: s.r * 2, height: s.r * 2)
+                    ctx.fill(Path(ellipseIn: rect),
+                             with: .color(Color(hex: "#9A7B2F").opacity(alpha)))
+                }
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
 // MARK: - Helpers
 
 extension Comparable {
@@ -313,46 +568,60 @@ extension Comparable {
     }
 }
 
-// MARK: - Design System Previews
+// MARK: - Previews
 
-#Preview("Starfield") {
-    StarfieldView(starCount: 120, goldTint: true)
-        .frame(width: 390, height: 844)
-        .background(Color.obsidian)
-}
-
-#Preview("OrbitalRings") {
-    OrbitalRingsView(rings: 4, baseRadius: 50, ringSpacing: 32)
-        .frame(width: 300, height: 300)
-        .background(Color.obsidian)
-}
-
-#Preview("ElementBadge") {
-    HStack(spacing: 16) {
-        ForEach(CosmicElement.allCases) { e in
-            ElementBadge(element: e, size: 44)
+#Preview("Dark Theme") {
+    ZStack {
+        Color.obsidian.ignoresSafeArea()
+        StarfieldView(starCount: 120, goldTint: true).ignoresSafeArea()
+        VStack(spacing: 20) {
+            Text("Bazodiac")
+                .font(CosmicFont.display(52))
+                .foregroundStyle(Color.cosmicGold)
+            Text("Coniunctio Caelorum")
+                .font(CosmicFont.bodySerifItalic(14))
+                .foregroundStyle(Color.cosmicGold.opacity(0.5))
+            Text("DISPLAY FONT")
+                .goldLabel()
+            Text("Section Heading")
+                .font(CosmicFont.heading(22))
+                .foregroundStyle(Color.cosmicGold.opacity(0.85))
+            Text("Body text interpretation flows here with serif grace.")
+                .font(CosmicFont.bodySerif(15))
+                .foregroundStyle(Color.cosmicGold.opacity(0.65))
         }
+        .padding()
     }
-    .padding(24)
-    .background(Color.obsidian)
+    .environment(\.cosmicTheme, .dark)
 }
 
-#Preview("GoldCards") {
-    VStack(spacing: 16) {
-        Text("Cosmic Card")
-            .font(CosmicFont.heading(16))
-            .foregroundStyle(Color.cosmicGold)
-            .padding()
-            .cosmicCard()
-        Text("Glass Card")
-            .font(CosmicFont.heading(16))
-            .foregroundStyle(Color.cosmicGold)
-            .padding()
-            .glassCard()
-        Text("GOLD LABEL")
-            .goldLabel()
+#Preview("Light Theme") {
+    let theme = CosmicTheme.light
+    ZStack {
+        theme.background.ignoresSafeArea()
+        LightAmbientView(count: 60).ignoresSafeArea()
+        VStack(spacing: 20) {
+            Text("Bazodiac")
+                .font(CosmicFont.display(52))
+                .foregroundStyle(theme.gold)
+            Text("Coniunctio Caelorum")
+                .font(CosmicFont.bodySerifItalic(14))
+                .foregroundStyle(theme.textSecondary)
+            Text("DISPLAY FONT")
+                .goldLabel()
+            Text("Section Heading")
+                .font(CosmicFont.heading(22))
+                .foregroundStyle(theme.textPrimary)
+            Text("Body text interpretation flows here with serif grace.")
+                .font(CosmicFont.bodySerif(15))
+                .foregroundStyle(theme.textSecondary)
+            Text("Sample card")
+                .font(CosmicFont.heading(16))
+                .foregroundStyle(theme.textPrimary)
+                .padding()
+                .cosmicCard()
+        }
+        .padding()
     }
-    .padding(24)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.obsidian)
+    .environment(\.cosmicTheme, .light)
 }
