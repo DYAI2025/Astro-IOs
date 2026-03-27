@@ -114,8 +114,8 @@ enum ZodiacSign: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     var glyph: String {
-        ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"]
-            [ZodiacSign.allCases.firstIndex(of: self) ?? 0]
+        let glyphs = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"]
+        return glyphs[ZodiacSign.allCases.firstIndex(of: self) ?? 0]
     }
 
     var element: ZodiacElement {
@@ -145,9 +145,9 @@ enum ZodiacSign: String, CaseIterable, Identifiable {
     }
 
     var germanName: String {
-        ["Widder","Stier","Zwillinge","Krebs","Löwe","Jungfrau",
-         "Waage","Skorpion","Schütze","Steinbock","Wassermann","Fische"]
-            [ZodiacSign.allCases.firstIndex(of: self) ?? 0]
+        let names = ["Widder","Stier","Zwillinge","Krebs","Löwe","Jungfrau",
+                     "Waage","Skorpion","Schütze","Steinbock","Wassermann","Fische"]
+        return names[ZodiacSign.allCases.firstIndex(of: self) ?? 0]
     }
 }
 

@@ -240,13 +240,13 @@ private struct WuXingPentagon: View {
         // Start from top (-90°), clockwise, 72° apart
         let deg = Double(i) * 72.0 - 90.0
         let rad = deg * .pi / 180.0
-        return CGPoint(x: cx + r * cos(rad), y: cy + r * sin(rad))
+        return CGPoint(x: cx + r * CGFloat(cos(rad)), y: cy + r * CGFloat(sin(rad)))
     }
 
     private func labelPoint(index: Int, cx: CGFloat, cy: CGFloat, r: CGFloat) -> CGPoint {
         let deg = Double(index) * 72.0 - 90.0
         let rad = deg * .pi / 180.0
-        return CGPoint(x: cx + r * cos(rad), y: cy + r * sin(rad))
+        return CGPoint(x: cx + r * CGFloat(cos(rad)), y: cy + r * CGFloat(sin(rad)))
     }
 }
 

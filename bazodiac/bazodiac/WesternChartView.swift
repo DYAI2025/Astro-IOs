@@ -272,7 +272,7 @@ private struct ZodiacWheelView: View {
 
     private func pointOnCircle(cx: CGFloat, cy: CGFloat, r: CGFloat, deg: Double) -> CGPoint {
         let rad = deg * .pi / 180
-        return CGPoint(x: cx + r * cos(rad), y: cy + r * sin(rad))
+        return CGPoint(x: cx + CGFloat(cos(rad)) * r, y: cy + CGFloat(sin(rad)) * r)
     }
 
     private func planetScreenPos(planet: PlanetPosition, cx: CGFloat, cy: CGFloat, r: CGFloat) -> CGPoint {

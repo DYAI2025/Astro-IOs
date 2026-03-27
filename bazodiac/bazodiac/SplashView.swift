@@ -298,10 +298,10 @@ private struct ZodiacWheelMini: View {
                 // Division tick
                 var tick = Path()
                 let tickAngle = Angle.degrees(startAngle)
-                let tx1 = cx + innerR  * cos(tickAngle.radians)
-                let ty1 = cy + innerR  * sin(tickAngle.radians)
-                let tx2 = cx + outerR  * cos(tickAngle.radians)
-                let ty2 = cy + outerR  * sin(tickAngle.radians)
+                let tx1 = cx + innerR  * CGFloat(cos(tickAngle.radians))
+                let ty1 = cy + innerR  * CGFloat(sin(tickAngle.radians))
+                let tx2 = cx + outerR  * CGFloat(cos(tickAngle.radians))
+                let ty2 = cy + outerR  * CGFloat(sin(tickAngle.radians))
                 tick.move(to: CGPoint(x: tx1, y: ty1))
                 tick.addLine(to: CGPoint(x: tx2, y: ty2))
                 context.stroke(tick, with: .color(Color.cosmicGold.opacity(0.25)), lineWidth: 0.5)
@@ -309,8 +309,8 @@ private struct ZodiacWheelMini: View {
                 // Glyph
                 let glyphAngle = Angle.degrees(startAngle + 15)
                 let gr = (outerR + innerR) / 2
-                let gx = cx + gr * cos(glyphAngle.radians)
-                let gy = cy + gr * sin(glyphAngle.radians)
+                let gx = cx + gr * CGFloat(cos(glyphAngle.radians))
+                let gy = cy + gr * CGFloat(sin(glyphAngle.radians))
 
                 var text = context.resolve(Text(sign.glyph)
                     .font(.system(size: 7, weight: .ultraLight)))
