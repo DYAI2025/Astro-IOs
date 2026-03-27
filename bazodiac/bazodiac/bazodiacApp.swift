@@ -1,32 +1,65 @@
+// bazodiacApp.swift
+// Bazodiac iOS — App Entry Point
 //
-//  bazodiacApp.swift
-//  bazodiac
+// Phase-based root navigation:
+//   .splash     → SplashView  (cinematic intro)
+//   .birthForm  → BirthFormView (first-launch data entry)
+//   .dashboard  → MainTabView  (main experience)
 //
-//  Created by Benjamin Poersch on 15.03.26.
-//
+// No SwiftData — replaced by CosmicStore (@Observable).
+// CosmicStore injected as @State at root for full app lifetime.
 
 import SwiftUI
-import SwiftData
 
 @main
-struct bazodiacApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+struct BazodiacApp: App {
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    // @Observable store — created once, lives for app lifetime
+    @State private var cosmicStore = CosmicStore()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(cosmicStore)
+                .preferredColorScheme(.dark)   // Always dark — no light mode
         }
-        .modelContainer(sharedModelContainer)
+    }
+}
+
+// MARK: - Root View
+
+/// Phase-driven root navigator — no NavigationStack needed for this linear flow.
+struct RootView: View {
+    @Environment(CosmicStore.self) private var store
+
+    var body: some View {
+        ZStack {
+            Color.obsidian.ignoresSafeArea()
+
+            switch store.appPhase {
+            case .splash:
+                SplashView()
+                    .transition(.opacity)
+
+            case .birthForm:
+                BirthFormView()
+                    .transition(
+                        .asymmetric(
+                            insertion: .push(from: .bottom),
+                            removal:   .opacity
+                        )
+                    )
+
+            case .dashboard:
+                MainTabView()
+                    .transition(
+                        .asymmetric(
+                            insertion: .push(from: .trailing),
+                            removal:   .opacity
+                        )
+                    )
+            }
+        }
+        .animation(.easeInOut(duration: 0.6), value: store.appPhase)
     }
 }
