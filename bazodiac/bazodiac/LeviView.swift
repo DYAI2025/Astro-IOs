@@ -34,6 +34,7 @@ struct LeviView: View {
     @State private var sessionActive = false
     @State private var inputText     = ""
     @State private var appeared      = false
+    @State private var leviService   = LeviConversationHandler()
 
     private let scrollID = "bottom"
 
@@ -141,11 +142,12 @@ struct LeviView: View {
                         isListening = false
                         isSpeaking  = false
                     } else {
-                        // Simulate Levi greeting
-                        Task {
-                            try? await Task.sleep(for: .milliseconds(800))
-                            addLeviMessage("Willkommen zurück. Was beschäftigt deinen Geist heute?")
-                        }
+                        // Echte ElevenLabs-Verbindung starten
+                        leviService.onText = { text in addLeviMessage(text) }
+                        leviService.connect(
+                            profile: store.profile,
+                            language: store.language
+                        )
                     }
                 }
                 let impact = UIImpactFeedbackGenerator(style: .medium)
@@ -188,17 +190,18 @@ struct LeviView: View {
         }
         inputText = ""
 
-        // Simulate Levi typing then responding
-        Task {
-            isSpeaking = false
-            isListening = false
-            try? await Task.sleep(for: .seconds(1.2))
-            withAnimation(.spring(duration: 0.4)) {
-                isSpeaking = true
+        withAnimation(.spring(duration: 0.3)) { isSpeaking = true }
+
+        if leviService.isConnected {
+            // Echte ElevenLabs-Nachricht
+            leviService.send(text: text)
+        } else {
+            // Fallback wenn nicht verbunden
+            Task {
+                try? await Task.sleep(for: .seconds(1.5))
+                addLeviMessage(leviResponse(for: text))
+                withAnimation { isSpeaking = false }
             }
-            try? await Task.sleep(for: .seconds(1.8))
-            addLeviMessage(leviResponse(for: text))
-            withAnimation { isSpeaking = false }
         }
     }
 

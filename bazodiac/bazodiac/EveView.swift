@@ -32,6 +32,7 @@ struct EveView: View {
     @State private var isSpeaking    = false
     @State private var sessionActive = false
     @State private var inputText     = ""
+    @State private var eveService     = EveConversationHandler()
 
     private let scrollID = "eve-bottom"
 
@@ -143,10 +144,12 @@ struct EveView: View {
                     if !sessionActive {
                         isListening = false; isSpeaking = false
                     } else {
-                        Task {
-                            try? await Task.sleep(for: .milliseconds(800))
-                            addEveMessage("Willkommen zurück, Sternenstaub. Ich spüre, dass etwas in dir arbeitet. Wovon soll ich dir erzählen?")
-                        }
+                        // Echte ElevenLabs-Verbindung
+                        eveService.onText = { text in addEveMessage(text) }
+                        eveService.connect(
+                            profile: store.profile,
+                            language: store.language
+                        )
                     }
                 }
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -183,13 +186,16 @@ struct EveView: View {
         }
         inputText = ""
 
-        Task {
-            isSpeaking = false; isListening = false
-            try? await Task.sleep(for: .seconds(1.0))
-            withAnimation { isSpeaking = true }
-            try? await Task.sleep(for: .seconds(1.5))
-            addEveMessage(eveResponse(for: text))
-            withAnimation { isSpeaking = false }
+        withAnimation(.spring(duration: 0.3)) { isSpeaking = true }
+
+        if eveService.isConnected {
+            eveService.send(text: text)
+        } else {
+            Task {
+                try? await Task.sleep(for: .seconds(1.5))
+                addEveMessage(eveResponse(for: text))
+                withAnimation { isSpeaking = false }
+            }
         }
     }
 
