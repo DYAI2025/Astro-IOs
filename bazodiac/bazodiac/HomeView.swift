@@ -43,13 +43,14 @@ struct HomeView: View {
 
     private var contentStack: some View {
         VStack(spacing: 20) {
+            // ── Day Pulse — prominente Tages-Energie ──────────────────
+            DayPulseCard()
+
             BigThreeBadges()
-            DailyInsightCard()
-            GoldLine()
-                .padding(.vertical, 4)
+
+            GoldLine().padding(.vertical, 4)
             SectionNavigationGrid()
-            GoldLine()
-                .padding(.vertical, 4)
+            GoldLine().padding(.vertical, 4)
             AgentsTeaser()
             DailyQuoteCard()
         }
@@ -192,7 +193,138 @@ private struct BigThreeBadge: View {
     }
 }
 
-// MARK: - Daily Insight Card
+// MARK: - Day Pulse Card
+
+private struct DayPulseCard: View {
+    @Environment(CosmicStore.self) private var store
+    @Environment(\.cosmicTheme) private var theme
+    @State private var pulse: DayPulse = .empty
+    @State private var appeared = false
+
+    // Intensitätsfarbe: grün (ruhig) → gold (mittel) → rot (Sturm)
+    private var intensityColor: Color {
+        if pulse.kpIndex < 2 { return Color(hex: "#52A853") }
+        if pulse.kpIndex < 4 { return Color(hex: "#D4AF37") }
+        if pulse.kpIndex < 6 { return Color(hex: "#FF9800") }
+        return Color(hex: "#EA4335")
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // ── Header: Day Pulse Label + Mond ──────────────────
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(store.language == .german ? "TAGES-PULS" : "DAY PULSE")
+                        .font(CosmicFont.label(9))
+                        .tracking(5)
+                        .foregroundStyle(intensityColor.opacity(0.8))
+
+                    // Datum
+                    Text(Date(), format: .dateTime.day().month(.wide).year())
+                        .font(CosmicFont.mono(11))
+                        .foregroundStyle(theme.textTertiary)
+                }
+
+                Spacer()
+
+                // Mond-Phase-Indikator
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(theme.gold.opacity(pulse.moonIllumination * 0.35))
+                            .frame(width: 36, height: 36)
+                        Circle()
+                            .strokeBorder(theme.gold.opacity(0.3), lineWidth: 0.75)
+                            .frame(width: 36, height: 36)
+                        Image(systemName: pulse.moonPhase.icon)
+                            .font(.system(size: 16, weight: .thin))
+                            .foregroundStyle(theme.gold.opacity(0.8))
+                    }
+                    Text(store.language == .german
+                         ? pulse.moonPhase.germanName
+                         : pulse.moonPhase.englishName)
+                        .font(CosmicFont.label(7))
+                        .tracking(1.5)
+                        .foregroundStyle(theme.textTertiary)
+                }
+            }
+            .padding(.bottom, 14)
+
+            // ── Kp Intensitäts-Bar ──────────────────────────────
+            HStack(spacing: 8) {
+                // Intensitätspunkte (5 Dots)
+                HStack(spacing: 4) {
+                    ForEach(0..<5) { i in
+                        Circle()
+                            .fill(Double(i) < pulse.kpIndex / 2
+                                  ? intensityColor
+                                  : theme.goldFaint)
+                            .frame(width: 6, height: 6)
+                    }
+                }
+
+                Text(pulse.subtext)
+                    .font(CosmicFont.mono(9))
+                    .foregroundStyle(theme.textTertiary)
+
+                Spacer()
+            }
+            .padding(.bottom, 16)
+
+            // ── Divider ─────────────────────────────────────────
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [.clear, intensityColor.opacity(0.3), .clear],
+                        startPoint: .leading, endPoint: .trailing
+                    )
+                )
+                .frame(height: 0.5)
+                .padding(.bottom, 16)
+
+            // ── Hauptspruch ─────────────────────────────────────
+            Text(pulse.headline)
+                .font(CosmicFont.bodySerif(15))
+                .foregroundStyle(theme.textPrimary.opacity(0.85))
+                .lineSpacing(6)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(20)
+        .background {
+            RoundedRectangle(cornerRadius: 18)
+                .fill(theme.cardBackground)
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [intensityColor.opacity(0.3), theme.goldBorder],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 0.75
+                )
+        }
+        .opacity(appeared ? 1 : 0)
+        .offset(y: appeared ? 0 : 12)
+        .animation(.spring(duration: 0.8).delay(0.1), value: appeared)
+        .onAppear {
+            appeared = true
+            loadPulse()
+        }
+    }
+
+    private func loadPulse() {
+        guard let profile = store.profile else { return }
+        Task {
+            let weather = await CosmicWeatherService.shared.fetch()
+            pulse = DayPulseGenerator.generate(
+                profile: profile,
+                weather: weather,
+                language: store.language
+            )
+        }
+    }
+}
+
+// MARK: - Daily Insight Card (bestehendes Interpretationsfeld — jetzt sekundär)
 
 private struct DailyInsightCard: View {
     @Environment(CosmicStore.self) private var store
