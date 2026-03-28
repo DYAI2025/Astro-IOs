@@ -87,11 +87,11 @@ final class CosmicStore {
 
         var label: String {
             switch self {
-            case .home:    return "Kosmos"
-            case .chart:   return "Chart"
-            case .bazi:    return "BaZi"
+            case .home:    return "Atlas"
+            case .chart:   return "Charts"
+            case .bazi:    return "Signatur"
             case .quizzes: return "Quizzes"
-            case .agents:  return "Agents"
+            case .agents:  return "Companions"
             }
         }
 
