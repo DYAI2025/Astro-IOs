@@ -90,7 +90,8 @@ final class VoiceRecordingService: NSObject {
         ]
 
         do {
-            audioRecorder = try AVAudioRecorder(url: recordingURL!, settings: settings)
+            guard let url = recordingURL else { return }
+            audioRecorder = try AVAudioRecorder(url: url, settings: settings)
             audioRecorder?.delegate = self
             audioRecorder?.record()
             isRecording = true

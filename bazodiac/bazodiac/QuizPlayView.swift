@@ -160,7 +160,8 @@ struct QuizPlayView: View {
             selectedOption = option.id
         }
 
-        answers[currentQuestion!.id] = option.id
+        guard let question = currentQuestion else { return }
+        answers[question.id] = option.id
 
         // Delay then advance
         Task {

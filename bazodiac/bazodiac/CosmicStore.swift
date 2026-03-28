@@ -261,7 +261,8 @@ final class CosmicStore {
             interpretation: "Vorschau-Interpretation. Geburtsort-Koordinaten werden nach Implementierung des Geocodings durch echte Daten ersetzt.",
             dailyQuote:     "Die Sterne laden ein — gehe den Weg, der bereits deiner ist."
         )
-        PersistenceService.saveProfile(profile!)
+        guard let profile else { return }
+        PersistenceService.saveProfile(profile)
         isLoading = false
         withAnimation(.spring(duration: 0.7)) {
             appPhase = .dashboard
