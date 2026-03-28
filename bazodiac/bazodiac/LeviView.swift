@@ -35,6 +35,7 @@ struct LeviView: View {
     @State private var inputText     = ""
     @State private var appeared      = false
     @State private var leviService   = LeviConversationHandler()
+    @Environment(\.dismiss) private var dismiss
 
     private let scrollID = "bottom"
 
@@ -107,6 +108,15 @@ struct LeviView: View {
 
     private var leviHeader: some View {
         HStack(spacing: 12) {
+            // Zurück-Button
+            Button { dismiss() } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 14, weight: .light))
+                    .foregroundStyle(Color.cosmicGold.opacity(0.5))
+                    .frame(width: 32, height: 32)
+            }
+            .buttonStyle(.plain)
+
             // Levi avatar badge
             ZStack {
                 Circle()

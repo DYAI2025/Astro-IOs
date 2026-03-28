@@ -33,6 +33,7 @@ struct EveView: View {
     @State private var sessionActive = false
     @State private var inputText     = ""
     @State private var eveService     = EveConversationHandler()
+    @Environment(\.dismiss) private var dismiss
 
     private let scrollID = "eve-bottom"
 
@@ -111,6 +112,15 @@ struct EveView: View {
 
     private var eveHeader: some View {
         HStack(spacing: 12) {
+            // Zurück-Button
+            Button { dismiss() } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 14, weight: .light))
+                    .foregroundStyle(eveGlow.opacity(0.5))
+                    .frame(width: 32, height: 32)
+            }
+            .buttonStyle(.plain)
+
             // Eve avatar
             ZStack {
                 Circle()

@@ -50,8 +50,7 @@ struct HomeView: View {
             SectionNavigationGrid()
             GoldLine()
                 .padding(.vertical, 4)
-            LeviTeaser()
-            EveTeaser()
+            AgentsTeaser()
             DailyQuoteCard()
         }
     }
@@ -250,8 +249,7 @@ private struct SectionNavigationGrid: View {
         (.chart,   "Geburts-Chart",  "Western Astrologie",  "scope"),
         (.bazi,    "BaZi Säulen",    "Vier Pfeiler",         "rectangle.grid.2x2.fill"),
         (.quizzes, "Quizzes",        "Kosmische Muster",     "square.grid.2x2.fill"),
-        (.levi,    "Levi",           "KI-Begleiter",         "waveform.circle.fill"),
-        (.eve,     "Eve",            "KI-Intuition",         "sparkles"),
+        (.agents,  "Levi & Eve",     "KI-Begleiter",         "person.2.fill"),
     ]
 
     var body: some View {
@@ -329,120 +327,51 @@ private struct SectionCard: View {
     }
 }
 
-// MARK: - Levi Teaser
+// MARK: - Agents Teaser (Levi + Eve)
 
-private struct LeviTeaser: View {
+private struct AgentsTeaser: View {
     @Environment(CosmicStore.self) private var store
     @Environment(\.cosmicTheme) private var theme
-
-    var body: some View {
-        Button {
-            let impact = UIImpactFeedbackGenerator(style: .medium)
-            impact.impactOccurred()
-            withAnimation { store.selectedTab = .levi }
-        } label: {
-            HStack(spacing: 16) {
-                // Waveform visual
-                LeviWaveformMini()
-                    .frame(width: 44, height: 44)
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Levi Bazi")
-                        .font(CosmicFont.heading(15, weight: .light))
-                        .foregroundStyle(theme.textPrimary)
-                    Text("Dein KI-Kosmosbegleiter · Jetzt sprechen")
-                        .goldLabel(0.45)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .thin))
-                    .foregroundStyle(theme.textTertiary)
-            }
-            .padding(18)
-            .background {
-                // Special gradient background for Levi
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.cosmicGold.opacity(0.08),
-                                theme.surface.opacity(0.5),
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.cosmicGold.opacity(0.2), lineWidth: 0.75)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// Tiny animated waveform for the Levi teaser
-private struct LeviWaveformMini: View {
-    @Environment(\.cosmicTheme) private var theme
-    var body: some View {
-        TimelineView(.animation) { timeline in
-            Canvas { context, size in
-                let t = timeline.date.timeIntervalSinceReferenceDate
-                let bars = 9
-                let barW: CGFloat = size.width / CGFloat(bars * 2)
-                let cx = size.width / 2
-
-                for i in 0..<bars {
-                    let x = cx + CGFloat(i - bars / 2) * barW * 2
-                    let phase = Double(i) * 0.6
-                    let h = size.height * (0.2 + 0.6 * abs(sin(t * 1.4 + phase)))
-                    let y = (size.height - h) / 2
-                    let rect = CGRect(x: x - barW / 2, y: y, width: barW, height: h)
-                    let alpha = 0.4 + 0.4 * abs(sin(t * 1.4 + phase))
-                    context.fill(
-                        Path(roundedRect: rect, cornerRadius: barW),
-                        with: .color(Color.cosmicGold.opacity(alpha))
-                    )
-                }
-            }
-        }
-    }
-}
-
-// MARK: - Eve Teaser
-
-private struct EveTeaser: View {
-    @Environment(CosmicStore.self) private var store
-    @Environment(\.cosmicTheme) private var theme
-
-    private let eveColor = Color(hex: "#A78BFA")
 
     var body: some View {
         Button {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            withAnimation { store.selectedTab = .eve }
+            withAnimation { store.selectedTab = .agents }
         } label: {
             HStack(spacing: 16) {
-                // Eve visual
+                // Dual agent avatars
                 ZStack {
+                    // Levi
                     Circle()
-                        .fill(eveColor.opacity(0.12))
-                        .frame(width: 44, height: 44)
+                        .fill(Color(hex: "#0A1628").opacity(0.8))
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Image(systemName: "waveform.circle.fill")
+                                .font(.system(size: 16, weight: .thin))
+                                .foregroundStyle(Color(hex: "#D4AF37").opacity(0.8))
+                        )
+                        .offset(x: -10)
+
+                    // Eve
                     Circle()
-                        .strokeBorder(eveColor.opacity(0.35), lineWidth: 0.75)
-                        .frame(width: 44, height: 44)
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 20, weight: .thin))
-                        .foregroundStyle(eveColor.opacity(0.8))
-                        .symbolEffect(.breathe)
+                        .fill(Color(hex: "#1A0A2E").opacity(0.8))
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 16, weight: .thin))
+                                .foregroundStyle(Color(hex: "#A78BFA").opacity(0.8))
+                        )
+                        .offset(x: 10)
                 }
+                .frame(width: 56, height: 44)
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Eve")
+                    Text("Levi & Eve")
                         .font(CosmicFont.heading(15, weight: .light))
                         .foregroundStyle(theme.textPrimary)
-                    Text("Kosmische Intuition · Jetzt verbinden")
+                    Text(store.language == .german
+                         ? "Deine KI-Begleiter · Jetzt verbinden"
+                         : "Your AI companions · Connect now")
                         .goldLabel(0.45)
                 }
 
@@ -457,12 +386,14 @@ private struct EveTeaser: View {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(
                         LinearGradient(
-                            colors: [eveColor.opacity(0.06), theme.surface.opacity(0.5)],
+                            colors: [Color(hex: "#D4AF37").opacity(0.06),
+                                     Color(hex: "#A78BFA").opacity(0.06),
+                                     theme.surface.opacity(0.4)],
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
                 RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(eveColor.opacity(0.18), lineWidth: 0.75)
+                    .strokeBorder(theme.goldBorder, lineWidth: 0.75)
             }
         }
         .buttonStyle(.plain)

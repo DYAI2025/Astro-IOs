@@ -30,8 +30,7 @@ struct MainTabView: View {
         case .chart:   WesternChartView()
         case .bazi:    BaZiView()
         case .quizzes: QuizzesView()
-        case .levi:    LeviView()
-        case .eve:     EveView()
+        case .agents:  AgentsView()
         }
     }
 }
