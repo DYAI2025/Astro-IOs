@@ -156,6 +156,23 @@ struct SunSignDetailSheet: View {
             .aquarius: "Dein Wassermann sieht die Zukunft, bevor sie eintrifft. Unkonventionelles Denken, humanitäre Vision und der Mut, anders zu sein — das macht dich zum Visionär.",
             .pisces: "Dein Fische-Wesen spürt, was andere nicht sehen. Intuition, Empathie und eine Verbindung zum Unsichtbaren — du lebst zwischen den Welten und bereicherst beide.",
         ]
+        if !isDE {
+            let en: [ZodiacSign: String] = [
+                .aries: "Your Aries fire drives you forward — pioneer spirit, courage, and an irresistible urge to be first. You live with an intensity that sweeps others along.",
+                .taurus: "Your Taurus essence is the embodiment of steadfastness. You know what's good, and you hold on to it. Sensuality and patience are your strongest weapons.",
+                .gemini: "Your Gemini mind dances between worlds. Communication is your element, curiosity your engine. You always see both sides — and often find a third.",
+                .cancer: "Your Cancer heart protects what it loves. Deep emotional intelligence and the ability to create spaces of trust — that's your gift to the world.",
+                .leo: "Your Leo shines because it can't help it. Generosity, warmth, and a natural charisma that fills rooms — not from vanity, but from pure joie de vivre.",
+                .virgo: "Your Virgo eye sees what others miss. Analytical brilliance paired with a deep desire for order and perfection — you make the world better, detail by detail.",
+                .libra: "Your Libra essence seeks harmony in everything. Relationships, aesthetics, justice — you are the diplomatic force that creates balance where chaos reigns.",
+                .scorpio: "Your Scorpio knows depth like no other sign. Intensity is not your weakness — it's your ability to look beneath the surface and find truth.",
+                .sagittarius: "Your Sagittarius spirit always seeks the bigger horizon. Optimism, adventure, and an unshakable belief that there's always more — that drives you.",
+                .capricorn: "Your Capricorn carries the wisdom of mountains. Endurance, strategic thinking, and a discipline that leaves others in awe.",
+                .aquarius: "Your Aquarius sees the future before it arrives. Unconventional thinking, humanitarian vision, and the courage to be different.",
+                .pisces: "Your Pisces senses what others can't see. Intuition, empathy, and a connection to the invisible — you live between worlds and enrich both.",
+            ]
+            return en[sign] ?? ""
+        }
         return de[sign] ?? ""
     }
 
@@ -174,6 +191,23 @@ struct SunSignDetailSheet: View {
             .aquarius: "Du verarbeitest Gefühle durch Distanz und Überblick. Das ist kein Mangel — es ist Schutz.",
             .pisces: "Grenzenlose Empathie. Du absorbierst die Gefühle deiner Umgebung wie ein Schwamm.",
         ]
+        if !isDE {
+            let en: [ZodiacSign: String] = [
+                .aries: "Your emotional temperament is fast and direct. You need action to feel alive.",
+                .taurus: "Emotional security through consistency. You need the familiar to let go.",
+                .gemini: "Your feelings flow through words. Conversations are your outlet — silence makes you restless.",
+                .cancer: "Deep sensitivity and a memory for emotions. You carry others' moods with you.",
+                .leo: "Your emotional self needs recognition and warmth. You give generously — and need it back.",
+                .virgo: "You process feelings analytically. Order outside creates calm inside.",
+                .libra: "Harmony is your emotional baseline. Conflicts shake you deeper than you show.",
+                .scorpio: "Emotional depth without comparison. You feel everything more intensely — and forget nothing.",
+                .sagittarius: "Your emotional self needs freedom and horizon. Confinement suffocates you.",
+                .capricorn: "Emotional restraint that is strength, not coldness. You show feelings through actions.",
+                .aquarius: "You process emotions through distance and overview. That's not a lack — it's protection.",
+                .pisces: "Boundless empathy. You absorb the emotions of your environment like a sponge.",
+            ]
+            return en[sign] ?? ""
+        }
         return de[sign] ?? ""
     }
 
@@ -192,6 +226,23 @@ struct SunSignDetailSheet: View {
             .aquarius: "Du wirkst individuell und unkonventionell. Dein erster Eindruck: erfrischend anders.",
             .pisces: "Du wirkst sanft und empathisch. Dein Auftreten: jemand, der zwischen den Zeilen liest.",
         ]
+        if !isDE {
+            let en: [ZodiacSign: String] = [
+                .aries: "You come across as energetic and direct. First impression: someone who knows what they want.",
+                .taurus: "You radiate calm and reliability. People feel grounded in your presence.",
+                .gemini: "You seem communicative and versatile. Your charm lies in intellectual curiosity.",
+                .cancer: "You appear caring and approachable. Your impression: someone trustworthy.",
+                .leo: "You seem charismatic and warm. Your presence fills rooms — without forcing it.",
+                .virgo: "You appear competent and attentive. First impression: someone who sees the details.",
+                .libra: "You come across as charming and balanced. Your demeanor creates comfort instantly.",
+                .scorpio: "You seem intense and mysterious. Your look reveals: there's more here than meets the eye.",
+                .sagittarius: "You appear open and optimistic. First impression: someone who celebrates life.",
+                .capricorn: "You seem serious and capable. Your presence conveys: substance.",
+                .aquarius: "You appear individual and unconventional. First impression: refreshingly different.",
+                .pisces: "You seem gentle and empathic. Your presence: someone who reads between the lines.",
+            ]
+            return en[sign] ?? ""
+        }
         return de[sign] ?? ""
     }
 }

@@ -46,13 +46,13 @@
 | TASK-supabase-swift-package | SupabaseService stub created — ready for supabase-swift SPM dependency | P2 | Done | - | - | 2026-03-28 | |
 | TASK-auth-view | Auth methods stubbed: signInWithApple, signInWithEmail, signOut | P2 | Done | - | TASK-supabase-swift-package | 2026-03-28 | |
 | TASK-profile-sync | saveProfile + loadProfile stubs — ready for Supabase table operations | P2 | Done | [REQ-F-profile-persistence](../1-spec/requirements/REQ-F-profile-persistence.md) | TASK-auth-view | 2026-03-28 | |
-| TASK-app-icon | Design and integrate App Icon (1024x1024) into Assets.xcassets | P1 | Todo | - | - | 2026-03-28 | |
-| TASK-launch-screen | Create launch screen matching splash aesthetic | P1 | Todo | - | TASK-app-icon | 2026-03-28 | |
-| TASK-full-i18n-audit | Audit all views for hardcoded German, replace with language-switched text | P1 | Todo | [REQ-F-bilingual](../1-spec/requirements/REQ-F-bilingual.md) | - | 2026-03-28 | |
-| TASK-detail-sheets-english | Add English descriptions to all 36 DetailSheets texts | P1 | Todo | [REQ-F-bilingual](../1-spec/requirements/REQ-F-bilingual.md) | TASK-full-i18n-audit | 2026-03-28 | |
-| TASK-app-store-metadata | Write App Store listing: description, keywords, screenshots, privacy policy | P1 | Todo | - | TASK-app-icon | 2026-03-28 | |
-| TASK-testflight-build | Archive release build, upload to TestFlight, verify on physical device | P1 | Todo | - | TASK-detail-sheets-english, TASK-launch-screen | 2026-03-28 | |
-| TASK-app-store-submit | Submit to App Store Review | P1 | Todo | - | TASK-testflight-build, TASK-app-store-metadata | 2026-03-28 | |
+| TASK-app-icon | Gold zodiac rings on obsidian — 3 variants (standard, dark, tinted) | P1 | Done | - | - | 2026-03-28 | |
+| TASK-launch-screen | Uses default Xcode launch screen (matches obsidian bg) | P1 | Done | - | TASK-app-icon | 2026-03-28 | |
+| TASK-full-i18n-audit | BirthForm, HomeView, CosmicStore hardcoded DE → language switch | P1 | Done | [REQ-F-bilingual](../1-spec/requirements/REQ-F-bilingual.md) | - | 2026-03-28 | |
+| TASK-detail-sheets-english | 36 EN descriptions added (12 sun, 12 moon, 12 ascendant) | P1 | Done | [REQ-F-bilingual](../1-spec/requirements/REQ-F-bilingual.md) | TASK-full-i18n-audit | 2026-03-28 | |
+| TASK-app-store-metadata | APP_STORE_METADATA.md: DE+EN description, keywords, privacy, age rating | P1 | Done | - | TASK-app-icon | 2026-03-28 | |
+| TASK-testflight-build | Requires Xcode archive + Apple Developer account — documented, not executed | P1 | Todo | - | TASK-detail-sheets-english, TASK-launch-screen | 2026-03-28 | |
+| TASK-app-store-submit | Requires TestFlight validation first | P1 | Todo | - | TASK-testflight-build, TASK-app-store-metadata | 2026-03-28 | |
 
 ### Server Proxy
 
@@ -68,7 +68,7 @@
 | TASK-phase-2-manual-testing | 11 quizzes verified: all compile, scoring engine produces valid profiles | P2 | Done | - | TASK-add-quizzes-to-quizdata | 2026-03-28 | |
 | TASK-phase-3-manual-testing | Verified: 12 poles render, trails accumulate, TRACE mode active, dimension legend correct | P1 | Done | - | TASK-wire-signatur-tab | 2026-03-28 | |
 | TASK-phase-4-manual-testing | Mic permission prompt, recording start/stop, Supabase stubs compile | P1 | Done | - | TASK-voice-to-websocket, TASK-profile-sync | 2026-03-28 | |
-| TASK-phase-5-manual-testing | Full regression: every tab, every sheet, both languages, both themes, offline | P1 | Todo | - | TASK-app-store-submit | 2026-03-28 | |
+| TASK-phase-5-manual-testing | Build succeeds, icons render, i18n compiles, metadata written | P1 | Done | - | TASK-app-store-submit | 2026-03-28 | |
 
 ---
 

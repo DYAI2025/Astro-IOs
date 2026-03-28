@@ -457,11 +457,11 @@ private struct DailyInsightCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Label("Tages-Interpretation", systemImage: "sparkles")
+                Label(store.language == .german ? "Tages-Interpretation" : "Daily Interpretation", systemImage: "sparkles")
                     .goldLabel(0.55)
                     .labelStyle(.titleAndIcon)
                 Spacer()
-                Text("Heute")
+                Text(store.language == .german ? "Heute" : "Today")
                     .goldLabel(0.3)
             }
 
@@ -480,7 +480,7 @@ private struct DailyInsightCard: View {
                 }
             } label: {
                 HStack(spacing: 4) {
-                    Text(expanded ? "Weniger" : "Mehr lesen")
+                    Text(expanded ? (store.language == .german ? "Weniger" : "Less") : (store.language == .german ? "Mehr lesen" : "Read more"))
                         .goldLabel(0.5)
                     Image(systemName: expanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 8, weight: .medium))
@@ -510,7 +510,7 @@ private struct SectionNavigationGrid: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Dein Kosmos")
+                Text(store.language == .german ? "Dein Kosmos" : "Your Cosmos")
                     .goldLabel(0.55)
                 Spacer()
             }

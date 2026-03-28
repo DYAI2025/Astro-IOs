@@ -65,7 +65,7 @@ struct BirthFormView: View {
                 .offset(y: appeared ? 0 : 12)
                 .animation(.spring(duration: 1).delay(0.2), value: appeared)
 
-            Text("Kosmischer Blueprint")
+            Text(store.language == .german ? "Kosmischer Blueprint" : "Cosmic Blueprint")
                 .font(CosmicFont.display(30))
                 .foregroundStyle(
                     LinearGradient(
@@ -78,7 +78,7 @@ struct BirthFormView: View {
                 .offset(y: appeared ? 0 : 16)
                 .animation(.spring(duration: 1.1).delay(0.35), value: appeared)
 
-            Text("Gib deine Geburtsdaten ein, um dein\npersönliches kosmisches Koordinatensystem zu berechnen.")
+            Text(store.language == .german ? "Gib deine Geburtsdaten ein, um dein\npersönliches kosmisches Koordinatensystem zu berechnen." : "Enter your birth data to calculate your\npersonal cosmic coordinate system.")
                 .font(CosmicFont.bodySerif(13))
                 .foregroundStyle(Color.cosmicGold.opacity(0.4))
                 .multilineTextAlignment(.center)
@@ -127,7 +127,7 @@ private struct NameField: View {
     var body: some View {
         @Bindable var store = store
         FormRow(icon: "person", label: "Name") {
-            TextField("Dein Name", text: $store.birthData.name)
+            TextField(store.language == .german ? "Dein Name" : "Your Name", text: $store.birthData.name)
                 .font(CosmicFont.heading(15, weight: .light))
                 .foregroundStyle(theme.textPrimary.opacity(0.85))
                 .tint(Color.cosmicGold)
@@ -142,7 +142,7 @@ private struct BirthDateField: View {
 
     var body: some View {
         @Bindable var store = store
-        FormRow(icon: "calendar", label: "Geburtsdatum") {
+        FormRow(icon: "calendar", label: store.language == .german ? "Geburtsdatum" : "Birth Date") {
             DatePicker(
                 "",
                 selection: $store.birthData.birthDate,
@@ -163,7 +163,7 @@ private struct BirthTimeField: View {
 
     var body: some View {
         @Bindable var store = store
-        FormRow(icon: "clock", label: "Geburtszeit") {
+        FormRow(icon: "clock", label: store.language == .german ? "Geburtszeit" : "Birth Time") {
             DatePicker(
                 "",
                 selection: $store.birthData.birthDate,
@@ -256,14 +256,14 @@ private struct CalculateButton: View {
                             .progressViewStyle(.circular)
                             .tint(Color.cosmicGold.opacity(0.7))
                             .scaleEffect(0.7)
-                        Text("Berechnung läuft …")
+                        Text(store.language == .german ? "Berechnung läuft …" : "Calculating …")
                             .font(CosmicFont.label(10))
                             .tracking(3)
                             .foregroundStyle(theme.textSecondary)
                     }
                 } else {
                     VStack(spacing: 4) {
-                        Text("Kosmischen Blueprint berechnen")
+                        Text(store.language == .german ? "Kosmischen Blueprint berechnen" : "Calculate Cosmic Blueprint")
                             .font(CosmicFont.label(10))
                             .tracking(3)
                             .foregroundStyle(Color.cosmicGold.opacity(0.8))

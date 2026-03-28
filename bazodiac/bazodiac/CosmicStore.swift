@@ -117,7 +117,7 @@ final class CosmicStore {
 
     var displayName: String {
         let name = birthData.name.trimmingCharacters(in: .whitespaces)
-        return name.isEmpty ? "Dein Kosmos" : name
+        return name.isEmpty ? (language == .german ? "Dein Kosmos" : "Your Cosmos") : name
     }
 
     // MARK: - Actions
