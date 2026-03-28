@@ -64,7 +64,7 @@
 
 | ID | Task | Priority | Status | Req | Dependencies | Updated | Notes |
 |----|------|----------|--------|-----|--------------|---------|-------|
-| TASK-phase-1-manual-testing | Create runbook: startup, E2E test scenarios (birth submit, chart, day mode) | P1 | Todo | - | TASK-verify-day-mode-live | 2026-03-28 | |
+| TASK-phase-1-manual-testing | Runbook created: startup, 6 test scenarios, offline mode | P1 | Done | - | TASK-verify-day-mode-live | 2026-03-28 | |
 | TASK-phase-2-manual-testing | Test all 16 quizzes: play through, verify scoring, check result profiles | P2 | Todo | - | TASK-add-quizzes-to-quizdata | 2026-03-28 | |
 | TASK-phase-3-manual-testing | Verify signature renders differently per birth data, reacts to Pulse/Trace | P1 | Todo | - | TASK-wire-signatur-tab | 2026-03-28 | |
 | TASK-phase-4-manual-testing | Test mic → companion response, sign in → profile sync | P1 | Todo | - | TASK-voice-to-websocket, TASK-profile-sync | 2026-03-28 | |
