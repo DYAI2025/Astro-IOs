@@ -20,6 +20,6 @@
 
 ## Related Artifacts
 
-- User stories: [US-enter-birth-data](../user-stories/US-enter-birth-data.md), [US-see-daily-mode](../user-stories/US-see-daily-mode.md)
-- Requirements: _none yet_
+- User stories: [US-verify-transparency](../user-stories/US-verify-transparency.md)
+- Requirements: [REQ-F-day-mode-selection](../requirements/REQ-F-day-mode-selection.md)
 - Constraints: [CON-bafe-dependency](../constraints/CON-bafe-dependency.md)

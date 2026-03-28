@@ -15,4 +15,4 @@
 
 ## Derived Requirements
 
-- _none yet_
+- [REQ-F-fusion-calculation](../requirements/REQ-F-fusion-calculation.md), [REQ-SEC-no-keys-in-binary](../requirements/REQ-SEC-no-keys-in-binary.md), [REQ-PERF-api-response](../requirements/REQ-PERF-api-response.md), [REQ-REL-bafe-fallback](../requirements/REQ-REL-bafe-fallback.md), [REQ-F-geocoding](../requirements/REQ-F-geocoding.md)

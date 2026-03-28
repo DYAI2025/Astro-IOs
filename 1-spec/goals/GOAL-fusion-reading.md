@@ -18,6 +18,6 @@
 
 ## Related Artifacts
 
-- User stories: [US-enter-birth-data](../user-stories/US-enter-birth-data.md), [US-view-sun-sign-detail](../user-stories/US-view-sun-sign-detail.md), [US-view-year-animal-detail](../user-stories/US-view-year-animal-detail.md), [US-view-element-detail](../user-stories/US-view-element-detail.md)
-- Requirements: _none yet_
+- User stories: [US-enter-birth-data](../user-stories/US-enter-birth-data.md), [US-view-sun-sign-detail](../user-stories/US-view-sun-sign-detail.md), [US-view-year-animal-detail](../user-stories/US-view-year-animal-detail.md), [US-view-element-detail](../user-stories/US-view-element-detail.md), [US-offline-access](../user-stories/US-offline-access.md)
+- Requirements: [REQ-F-fusion-calculation](../requirements/REQ-F-fusion-calculation.md), [REQ-F-geocoding](../requirements/REQ-F-geocoding.md), [REQ-F-profile-persistence](../requirements/REQ-F-profile-persistence.md), [REQ-F-detail-sheets](../requirements/REQ-F-detail-sheets.md), [REQ-REL-bafe-fallback](../requirements/REQ-REL-bafe-fallback.md)
 - Constraints: [CON-bafe-dependency](../constraints/CON-bafe-dependency.md)

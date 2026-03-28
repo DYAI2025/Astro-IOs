@@ -16,6 +16,9 @@ Astronomical ephemeris calculations (planetary positions, house cusps, Chinese c
 
 ## Impact
 
+## Derived Requirements
+- [REQ-REL-bafe-fallback](../requirements/REQ-REL-bafe-fallback.md)
+
 - App requires internet connectivity for initial profile creation
 - Cached profile allows offline access to existing readings (UserDefaults persistence)
 - BAFE downtime blocks new user onboarding — template interpretation serves as degraded fallback

@@ -16,4 +16,4 @@
 
 ## Derived Requirements
 
-- _none yet_
+- [REQ-USA-no-astro-jargon](../requirements/REQ-USA-no-astro-jargon.md), [REQ-F-cosmic-weather](../requirements/REQ-F-cosmic-weather.md), [REQ-F-day-mode-selection](../requirements/REQ-F-day-mode-selection.md)

@@ -15,4 +15,4 @@
 
 ## Derived Requirements
 
-- _none yet_
+- [REQ-F-detail-sheets](../requirements/REQ-F-detail-sheets.md)

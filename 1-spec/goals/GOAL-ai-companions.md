@@ -21,5 +21,5 @@
 ## Related Artifacts
 
 - User stories: [US-choose-companion](../user-stories/US-choose-companion.md), [US-converse-with-companion](../user-stories/US-converse-with-companion.md)
-- Requirements: _none yet_
+- Requirements: [REQ-F-companion-websocket](../requirements/REQ-F-companion-websocket.md), [REQ-USA-no-astro-jargon](../requirements/REQ-USA-no-astro-jargon.md)
 - Constraints: [CON-no-api-key-client](../constraints/CON-no-api-key-client.md), [CON-no-esoteric-language](../constraints/CON-no-esoteric-language.md)

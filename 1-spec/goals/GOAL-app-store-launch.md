@@ -20,6 +20,6 @@
 
 ## Related Artifacts
 
-- User stories: [US-onboarding-flow](../user-stories/US-onboarding-flow.md), [US-switch-theme](../user-stories/US-switch-theme.md)
-- Requirements: _none yet_
+- User stories: [US-onboarding-flow](../user-stories/US-onboarding-flow.md), [US-switch-theme](../user-stories/US-switch-theme.md), [US-language-switch](../user-stories/US-language-switch.md)
+- Requirements: [REQ-F-bilingual](../requirements/REQ-F-bilingual.md), [REQ-PERF-api-response](../requirements/REQ-PERF-api-response.md)
 - Constraints: [CON-ios-only](../constraints/CON-ios-only.md), [CON-solo-founder](../constraints/CON-solo-founder.md)

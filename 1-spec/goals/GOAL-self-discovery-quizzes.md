@@ -20,4 +20,4 @@
 ## Related Artifacts
 
 - User stories: [US-play-quiz](../user-stories/US-play-quiz.md)
-- Requirements: _none yet_
+- Requirements: [REQ-F-quiz-scoring](../requirements/REQ-F-quiz-scoring.md)

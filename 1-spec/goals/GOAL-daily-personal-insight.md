@@ -21,5 +21,5 @@
 ## Related Artifacts
 
 - User stories: [US-see-daily-mode](../user-stories/US-see-daily-mode.md)
-- Requirements: _none yet_
+- Requirements: [REQ-F-day-mode-selection](../requirements/REQ-F-day-mode-selection.md), [REQ-F-cosmic-weather](../requirements/REQ-F-cosmic-weather.md)
 - Constraints: [CON-no-esoteric-language](../constraints/CON-no-esoteric-language.md)

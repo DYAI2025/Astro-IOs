@@ -16,6 +16,9 @@ iOS binaries can be decompiled. Embedded keys are trivially extractable and woul
 
 ## Impact
 
+## Derived Requirements
+- [REQ-SEC-no-keys-in-binary](../requirements/REQ-SEC-no-keys-in-binary.md)
+
 - BAFE and Gemini calls go through `/api/calculate/*` and `/api/interpret` server proxy
 - ElevenLabs uses public agent WebSocket endpoints (no key needed for Convai agents)
 - Supabase anon key (read-only, RLS-protected) is the only key in the client

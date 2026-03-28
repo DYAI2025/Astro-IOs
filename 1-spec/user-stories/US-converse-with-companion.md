@@ -16,4 +16,4 @@
 
 ## Derived Requirements
 
-- _none yet_
+- [REQ-F-companion-websocket](../requirements/REQ-F-companion-websocket.md)

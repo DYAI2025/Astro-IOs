@@ -17,4 +17,4 @@
 
 ## Derived Requirements
 
-- _none yet_
+- [REQ-F-bilingual](../requirements/REQ-F-bilingual.md), [REQ-F-profile-persistence](../requirements/REQ-F-profile-persistence.md)

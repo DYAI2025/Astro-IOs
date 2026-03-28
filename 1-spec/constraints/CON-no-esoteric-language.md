@@ -16,6 +16,9 @@ The target audience explicitly does not identify with esoteric belief systems. T
 
 ## Impact
 
+## Derived Requirements
+- [REQ-USA-no-astro-jargon](../requirements/REQ-USA-no-astro-jargon.md)
+
 - Day Pulse/Trace text generator uses element-based atmosphere and natal archetype qualities, never planetary mechanics
 - AI companions (Levi & Eve) must be prompted to avoid astro jargon in their system prompts
 - Quiz result descriptions use personality psychology framing, not zodiac prophecies

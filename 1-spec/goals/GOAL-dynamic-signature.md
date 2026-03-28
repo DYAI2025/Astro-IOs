@@ -28,7 +28,7 @@ The signature evolves over time as the user completes quizzes (contribution even
 ## Related Artifacts
 
 - User stories: [US-view-signature](../user-stories/US-view-signature.md)
-- Requirements: _none yet_
+- Requirements: _to be derived when Signatur V3 engine is specified_
 - Constraints: [CON-no-esoteric-language](../constraints/CON-no-esoteric-language.md)
 - Related goal: [GOAL-mathematical-transparency](GOAL-mathematical-transparency.md) (signature shape must derive from documented formulas, not random)
 - Related goal: [GOAL-daily-personal-insight](GOAL-daily-personal-insight.md) (Day Pulse/Trace modes drive signature rendering)

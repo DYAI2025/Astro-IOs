@@ -16,4 +16,4 @@
 
 ## Derived Requirements
 
-- _none yet_
+- _covered by theme toggle implementation, no additional REQ needed_

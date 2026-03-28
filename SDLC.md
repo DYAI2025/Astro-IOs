@@ -45,7 +45,7 @@ Bazodiac targets users who do not follow esoteric belief systems but are looking
 
 ### Current State
 
-The project is in **active development (Code phase)** with Specification artifacts being retroactively formalized. Stakeholders defined (4); Constraints drafted (6); Goals drafted (6 Must-have, 1 Should-have); User Stories drafted (11, linked to goals). Gap analysis (2026-03-28): 3 Critical, 4 Important, 2 Minor (stale — C2 resolved, C1/C3 remain). Core UI, service layer, and data models are implemented. Remaining work: end-to-end BAFE API live testing, Supabase authentication, 10 additional quizzes, AVFoundation voice recording for companions, and App Store preparation.
+The project is in **active development (Code phase)** with Specification artifacts being retroactively formalized. Stakeholders defined (4); Constraints drafted (6); Goals drafted (7); User Stories drafted (14); Requirements drafted (13); Assumptions documented (3). Gap analysis (2026-03-28): 0 Critical, 0 Important, 2 Minor — ready for Design phase gate. Core UI, service layer, and data models are implemented. Remaining work: end-to-end BAFE API live testing, Supabase authentication, 10 additional quizzes, AVFoundation voice recording for companions, and App Store preparation.
 
 ---
 

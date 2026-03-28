@@ -117,6 +117,9 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 | [US-onboarding-flow](user-stories/US-onboarding-flow.md) | End User | Must-have | Draft | First-run splash → birth form → dashboard |
 | [US-switch-theme](user-stories/US-switch-theme.md) | End User | Should-have | Draft | Toggle dark/light theme |
 | [US-view-signature](user-stories/US-view-signature.md) | End User | Must-have | Draft | View personal dynamic signature on Signatur tab |
+| [US-offline-access](user-stories/US-offline-access.md) | End User | Must-have | Draft | Profile available offline after first calculation |
+| [US-language-switch](user-stories/US-language-switch.md) | End User | Must-have | Draft | Switch between DE and EN |
+| [US-verify-transparency](user-stories/US-verify-transparency.md) | End User | Must-have | Draft | Trust that reading is math-based, not random |
 
 ---
 
@@ -124,7 +127,19 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Type | Priority | Status | Summary |
 |------|------|----------|--------|---------|
-<!-- Add rows as requirements are created. File column: [REQ-CLASS-kebab-name](requirements/REQ-CLASS-kebab-name.md) -->
+| [REQ-SEC-no-keys-in-binary](requirements/REQ-SEC-no-keys-in-binary.md) | Security | Must-have | Draft | No secret keys in iOS binary |
+| [REQ-USA-no-astro-jargon](requirements/REQ-USA-no-astro-jargon.md) | Usability | Must-have | Draft | No astrological jargon in user-facing text |
+| [REQ-REL-bafe-fallback](requirements/REQ-REL-bafe-fallback.md) | Reliability | Must-have | Draft | Graceful BAFE failure with cached fallback |
+| [REQ-F-geocoding](requirements/REQ-F-geocoding.md) | Functional | Must-have | Draft | Birth place autocomplete + lat/lon/tz resolution |
+| [REQ-F-fusion-calculation](requirements/REQ-F-fusion-calculation.md) | Functional | Must-have | Draft | Parallel BAFE calls → CosmicProfile |
+| [REQ-F-day-mode-selection](requirements/REQ-F-day-mode-selection.md) | Functional | Must-have | Draft | Pulse/Trace via Harmony Index H |
+| [REQ-F-cosmic-weather](requirements/REQ-F-cosmic-weather.md) | Functional | Must-have | Draft | NOAA Kp-Index + moon phase integration |
+| [REQ-F-companion-websocket](requirements/REQ-F-companion-websocket.md) | Functional | Must-have | Draft | ElevenLabs WebSocket for Levi & Eve |
+| [REQ-F-quiz-scoring](requirements/REQ-F-quiz-scoring.md) | Functional | Should-have | Draft | Dimension scoring + profile matching |
+| [REQ-F-profile-persistence](requirements/REQ-F-profile-persistence.md) | Functional | Must-have | Draft | UserDefaults JSON persistence |
+| [REQ-F-bilingual](requirements/REQ-F-bilingual.md) | Functional | Must-have | Draft | DE/EN language support |
+| [REQ-F-detail-sheets](requirements/REQ-F-detail-sheets.md) | Functional | Must-have | Draft | Tappable detail sheets for Cosmic Triad |
+| [REQ-PERF-api-response](requirements/REQ-PERF-api-response.md) | Performance | Should-have | Draft | Full calculation within 5s |
 
 ---
 
@@ -132,7 +147,9 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Category | Status | Risk | Summary |
 |------|----------|--------|------|---------|
-<!-- Add rows as assumptions are created. File column: [ASM-kebab-name](assumptions/ASM-kebab-name.md) -->
+| [ASM-bafe-availability](assumptions/ASM-bafe-availability.md) | Technical | Unverified | High | BAFE API remains available with <3s latency |
+| [ASM-elevenlabs-pricing](assumptions/ASM-elevenlabs-pricing.md) | Business | Unverified | Medium | ElevenLabs per-minute pricing stays feasible |
+| [ASM-noaa-public-access](assumptions/ASM-noaa-public-access.md) | Technical | Unverified | Low | NOAA SWPC API stays public, no key needed |
 
 ---
 
