@@ -1,7 +1,7 @@
 # REQ-F-quiz-scoring: Quiz Scoring Engine
 
 **Type**: Functional
-**Status**: Draft
+**Status**: Approved
 **Priority**: Should-have
 **Source story**: [US-play-quiz](../user-stories/US-play-quiz.md)
 

@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to know that my reading is based on traceable mathematics rather than random generation, **so that** I trust the app as a mental model framework and not esoteric fortune-telling.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-mathematical-transparency](../goals/GOAL-mathematical-transparency.md)

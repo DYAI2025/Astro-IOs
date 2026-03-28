@@ -1,7 +1,7 @@
 # REQ-USA-no-astro-jargon: No Astrological Jargon in User-Facing Text
 
 **Type**: Usability
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source**: [CON-no-esoteric-language](../constraints/CON-no-esoteric-language.md)
 **Related story**: [US-see-daily-mode](../user-stories/US-see-daily-mode.md), [US-verify-transparency](../user-stories/US-verify-transparency.md)

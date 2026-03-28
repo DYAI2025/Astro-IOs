@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to tap on my sun sign tile and see my sun sign, moon sign, and ascendant explained, **so that** I understand the three pillars of my Western chart without astro jargon.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-fusion-reading](../goals/GOAL-fusion-reading.md)

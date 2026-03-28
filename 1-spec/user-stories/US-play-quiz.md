@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to play a personality quiz from start to finish and see my result, **so that** I discover something about myself in a fun, gamified way.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Should-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-self-discovery-quizzes](../goals/GOAL-self-discovery-quizzes.md)

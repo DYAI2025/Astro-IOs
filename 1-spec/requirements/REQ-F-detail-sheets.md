@@ -1,7 +1,7 @@
 # REQ-F-detail-sheets: Tappable Detail Sheets for Cosmic Triad
 
 **Type**: Functional
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source story**: [US-view-sun-sign-detail](../user-stories/US-view-sun-sign-detail.md), [US-view-year-animal-detail](../user-stories/US-view-year-animal-detail.md), [US-view-element-detail](../user-stories/US-view-element-detail.md)
 

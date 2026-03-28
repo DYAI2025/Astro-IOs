@@ -92,13 +92,13 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Priority | Status | Summary |
 |------|----------|--------|---------|
-| [GOAL-fusion-reading](goals/GOAL-fusion-reading.md) | Must-have | Draft | Unified Fusion Astrology reading from Western + BaZi + Wu-Xing |
-| [GOAL-daily-personal-insight](goals/GOAL-daily-personal-insight.md) | Must-have | Draft | Data-driven Day Pulse / Day Trace daily insight with cosmic weather |
-| [GOAL-ai-companions](goals/GOAL-ai-companions.md) | Must-have | Draft | Two AI companions (Levi & Eve) with natal chart context |
-| [GOAL-self-discovery-quizzes](goals/GOAL-self-discovery-quizzes.md) | Should-have | Draft | Personality quizzes feeding into dynamic Fusion profile |
-| [GOAL-app-store-launch](goals/GOAL-app-store-launch.md) | Must-have | Draft | Polished App Store-ready iOS app |
-| [GOAL-dynamic-signature](goals/GOAL-dynamic-signature.md) | Must-have | Draft | Personal dynamic visual signature driven by Fusion signal |
-| [GOAL-mathematical-transparency](goals/GOAL-mathematical-transparency.md) | Must-have | Draft | Every calculation traceable to documented formulas |
+| [GOAL-fusion-reading](goals/GOAL-fusion-reading.md) | Must-have | Approved | Unified Fusion Astrology reading from Western + BaZi + Wu-Xing |
+| [GOAL-daily-personal-insight](goals/GOAL-daily-personal-insight.md) | Must-have | Approved | Data-driven Day Pulse / Day Trace daily insight with cosmic weather |
+| [GOAL-ai-companions](goals/GOAL-ai-companions.md) | Must-have | Approved | Two AI companions (Levi & Eve) with natal chart context |
+| [GOAL-self-discovery-quizzes](goals/GOAL-self-discovery-quizzes.md) | Should-have | Approved | Personality quizzes feeding into dynamic Fusion profile |
+| [GOAL-app-store-launch](goals/GOAL-app-store-launch.md) | Must-have | Approved | Polished App Store-ready iOS app |
+| [GOAL-dynamic-signature](goals/GOAL-dynamic-signature.md) | Must-have | Approved | Personal dynamic visual signature driven by Fusion signal |
+| [GOAL-mathematical-transparency](goals/GOAL-mathematical-transparency.md) | Must-have | Approved | Every calculation traceable to documented formulas |
 
 ---
 
@@ -106,20 +106,20 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Role | Priority | Status | Summary |
 |------|------|----------|--------|---------|
-| [US-enter-birth-data](user-stories/US-enter-birth-data.md) | End User | Must-have | Draft | Enter birth data and receive Fusion profile |
-| [US-view-sun-sign-detail](user-stories/US-view-sun-sign-detail.md) | End User | Must-have | Draft | Tap sun sign → detail with moon + ascendant |
-| [US-view-year-animal-detail](user-stories/US-view-year-animal-detail.md) | End User | Must-have | Draft | Tap year animal → BaZi pillars detail |
-| [US-view-element-detail](user-stories/US-view-element-detail.md) | End User | Must-have | Draft | Tap element → Wu-Xing balance detail |
-| [US-see-daily-mode](user-stories/US-see-daily-mode.md) | End User | Must-have | Draft | See Day Pulse or Day Trace on app open |
-| [US-choose-companion](user-stories/US-choose-companion.md) | End User | Must-have | Draft | Choose between Levi and Eve |
-| [US-converse-with-companion](user-stories/US-converse-with-companion.md) | End User | Must-have | Draft | Chat with companion about chart and life |
-| [US-play-quiz](user-stories/US-play-quiz.md) | End User | Should-have | Draft | Play quiz and see result profile |
-| [US-onboarding-flow](user-stories/US-onboarding-flow.md) | End User | Must-have | Draft | First-run splash → birth form → dashboard |
-| [US-switch-theme](user-stories/US-switch-theme.md) | End User | Should-have | Draft | Toggle dark/light theme |
-| [US-view-signature](user-stories/US-view-signature.md) | End User | Must-have | Draft | View personal dynamic signature on Signatur tab |
-| [US-offline-access](user-stories/US-offline-access.md) | End User | Must-have | Draft | Profile available offline after first calculation |
-| [US-language-switch](user-stories/US-language-switch.md) | End User | Must-have | Draft | Switch between DE and EN |
-| [US-verify-transparency](user-stories/US-verify-transparency.md) | End User | Must-have | Draft | Trust that reading is math-based, not random |
+| [US-enter-birth-data](user-stories/US-enter-birth-data.md) | End User | Must-have | Approved | Enter birth data and receive Fusion profile |
+| [US-view-sun-sign-detail](user-stories/US-view-sun-sign-detail.md) | End User | Must-have | Approved | Tap sun sign → detail with moon + ascendant |
+| [US-view-year-animal-detail](user-stories/US-view-year-animal-detail.md) | End User | Must-have | Approved | Tap year animal → BaZi pillars detail |
+| [US-view-element-detail](user-stories/US-view-element-detail.md) | End User | Must-have | Approved | Tap element → Wu-Xing balance detail |
+| [US-see-daily-mode](user-stories/US-see-daily-mode.md) | End User | Must-have | Approved | See Day Pulse or Day Trace on app open |
+| [US-choose-companion](user-stories/US-choose-companion.md) | End User | Must-have | Approved | Choose between Levi and Eve |
+| [US-converse-with-companion](user-stories/US-converse-with-companion.md) | End User | Must-have | Approved | Chat with companion about chart and life |
+| [US-play-quiz](user-stories/US-play-quiz.md) | End User | Should-have | Approved | Play quiz and see result profile |
+| [US-onboarding-flow](user-stories/US-onboarding-flow.md) | End User | Must-have | Approved | First-run splash → birth form → dashboard |
+| [US-switch-theme](user-stories/US-switch-theme.md) | End User | Should-have | Approved | Toggle dark/light theme |
+| [US-view-signature](user-stories/US-view-signature.md) | End User | Must-have | Approved | View personal dynamic signature on Signatur tab |
+| [US-offline-access](user-stories/US-offline-access.md) | End User | Must-have | Approved | Profile available offline after first calculation |
+| [US-language-switch](user-stories/US-language-switch.md) | End User | Must-have | Approved | Switch between DE and EN |
+| [US-verify-transparency](user-stories/US-verify-transparency.md) | End User | Must-have | Approved | Trust that reading is math-based, not random |
 
 ---
 
@@ -127,19 +127,19 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Type | Priority | Status | Summary |
 |------|------|----------|--------|---------|
-| [REQ-SEC-no-keys-in-binary](requirements/REQ-SEC-no-keys-in-binary.md) | Security | Must-have | Draft | No secret keys in iOS binary |
-| [REQ-USA-no-astro-jargon](requirements/REQ-USA-no-astro-jargon.md) | Usability | Must-have | Draft | No astrological jargon in user-facing text |
-| [REQ-REL-bafe-fallback](requirements/REQ-REL-bafe-fallback.md) | Reliability | Must-have | Draft | Graceful BAFE failure with cached fallback |
-| [REQ-F-geocoding](requirements/REQ-F-geocoding.md) | Functional | Must-have | Draft | Birth place autocomplete + lat/lon/tz resolution |
-| [REQ-F-fusion-calculation](requirements/REQ-F-fusion-calculation.md) | Functional | Must-have | Draft | Parallel BAFE calls → CosmicProfile |
-| [REQ-F-day-mode-selection](requirements/REQ-F-day-mode-selection.md) | Functional | Must-have | Draft | Pulse/Trace via Harmony Index H |
-| [REQ-F-cosmic-weather](requirements/REQ-F-cosmic-weather.md) | Functional | Must-have | Draft | NOAA Kp-Index + moon phase integration |
-| [REQ-F-companion-websocket](requirements/REQ-F-companion-websocket.md) | Functional | Must-have | Draft | ElevenLabs WebSocket for Levi & Eve |
-| [REQ-F-quiz-scoring](requirements/REQ-F-quiz-scoring.md) | Functional | Should-have | Draft | Dimension scoring + profile matching |
-| [REQ-F-profile-persistence](requirements/REQ-F-profile-persistence.md) | Functional | Must-have | Draft | UserDefaults JSON persistence |
-| [REQ-F-bilingual](requirements/REQ-F-bilingual.md) | Functional | Must-have | Draft | DE/EN language support |
-| [REQ-F-detail-sheets](requirements/REQ-F-detail-sheets.md) | Functional | Must-have | Draft | Tappable detail sheets for Cosmic Triad |
-| [REQ-PERF-api-response](requirements/REQ-PERF-api-response.md) | Performance | Should-have | Draft | Full calculation within 5s |
+| [REQ-SEC-no-keys-in-binary](requirements/REQ-SEC-no-keys-in-binary.md) | Security | Must-have | Approved | No secret keys in iOS binary |
+| [REQ-USA-no-astro-jargon](requirements/REQ-USA-no-astro-jargon.md) | Usability | Must-have | Approved | No astrological jargon in user-facing text |
+| [REQ-REL-bafe-fallback](requirements/REQ-REL-bafe-fallback.md) | Reliability | Must-have | Approved | Graceful BAFE failure with cached fallback |
+| [REQ-F-geocoding](requirements/REQ-F-geocoding.md) | Functional | Must-have | Approved | Birth place autocomplete + lat/lon/tz resolution |
+| [REQ-F-fusion-calculation](requirements/REQ-F-fusion-calculation.md) | Functional | Must-have | Approved | Parallel BAFE calls → CosmicProfile |
+| [REQ-F-day-mode-selection](requirements/REQ-F-day-mode-selection.md) | Functional | Must-have | Approved | Pulse/Trace via Harmony Index H |
+| [REQ-F-cosmic-weather](requirements/REQ-F-cosmic-weather.md) | Functional | Must-have | Approved | NOAA Kp-Index + moon phase integration |
+| [REQ-F-companion-websocket](requirements/REQ-F-companion-websocket.md) | Functional | Must-have | Approved | ElevenLabs WebSocket for Levi & Eve |
+| [REQ-F-quiz-scoring](requirements/REQ-F-quiz-scoring.md) | Functional | Should-have | Approved | Dimension scoring + profile matching |
+| [REQ-F-profile-persistence](requirements/REQ-F-profile-persistence.md) | Functional | Must-have | Approved | UserDefaults JSON persistence |
+| [REQ-F-bilingual](requirements/REQ-F-bilingual.md) | Functional | Must-have | Approved | DE/EN language support |
+| [REQ-F-detail-sheets](requirements/REQ-F-detail-sheets.md) | Functional | Must-have | Approved | Tappable detail sheets for Cosmic Triad |
+| [REQ-PERF-api-response](requirements/REQ-PERF-api-response.md) | Performance | Should-have | Approved | Full calculation within 5s |
 
 ---
 

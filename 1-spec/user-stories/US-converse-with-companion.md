@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to chat with my chosen companion about my chart and life questions, **so that** I get personalized guidance in a conversational format.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-ai-companions](../goals/GOAL-ai-companions.md)

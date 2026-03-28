@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to enter my birth date, time, and place once, **so that** the app can calculate my complete Fusion Astrology profile.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-fusion-reading](../goals/GOAL-fusion-reading.md)

@@ -1,7 +1,7 @@
 # REQ-F-bilingual: Bilingual Support (DE/EN)
 
 **Type**: Functional
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source story**: [US-language-switch](../user-stories/US-language-switch.md)
 

@@ -2,7 +2,7 @@
 
 **Description**: Offer two AI voice companions — Levi (analytical, clear, profound) and Eve (direct, ironic, honest, close) — that converse with the user about their natal chart, daily energy, and life questions. Both share the same Fusion Astrology knowledge but differ in personality and communication style.
 
-**Status**: Draft
+**Status**: Approved
 
 **Priority**: Must-have
 

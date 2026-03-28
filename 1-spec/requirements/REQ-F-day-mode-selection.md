@@ -1,7 +1,7 @@
 # REQ-F-day-mode-selection: Day Mode Selection via Harmony Index
 
 **Type**: Functional
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source story**: [US-see-daily-mode](../user-stories/US-see-daily-mode.md)
 

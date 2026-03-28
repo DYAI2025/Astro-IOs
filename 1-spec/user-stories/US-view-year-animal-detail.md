@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to tap on my year animal tile and see my BaZi pillars explained, **so that** I understand my Chinese astrological identity.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-fusion-reading](../goals/GOAL-fusion-reading.md)

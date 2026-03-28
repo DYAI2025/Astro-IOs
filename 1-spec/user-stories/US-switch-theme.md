@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to toggle between dark and light theme, **so that** I can use the app comfortably in any lighting condition.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Should-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-app-store-launch](../goals/GOAL-app-store-launch.md)

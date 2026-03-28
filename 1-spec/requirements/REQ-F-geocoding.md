@@ -1,7 +1,7 @@
 # REQ-F-geocoding: Birth Place Geocoding with Autocomplete
 
 **Type**: Functional
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source story**: [US-enter-birth-data](../user-stories/US-enter-birth-data.md)
 

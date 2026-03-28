@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to choose between Levi and Eve on a companion selection screen, **so that** I can pick the personality that resonates with me today.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-ai-companions](../goals/GOAL-ai-companions.md)

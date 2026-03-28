@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to see exactly one daily insight (Pulse or Trace) when I open the app, **so that** I start my day with a personalized, data-driven reflection.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-daily-personal-insight](../goals/GOAL-daily-personal-insight.md)

@@ -2,7 +2,7 @@
 
 **Description**: Provide personality quizzes that help users explore aspects of themselves (love language, spirit animal, RPG identity, etc.) and feed results back into their dynamic Fusion profile. Quiz scoring uses dimension-based aggregation with profile matching — identical logic to the web app.
 
-**Status**: Draft
+**Status**: Approved
 
 **Priority**: Should-have
 

@@ -2,7 +2,7 @@
 
 **Description**: Provide a personalized daily insight every morning that fuses the user's natal chart with real-time cosmic weather (geomagnetic activity, moon phase). The insight is either a Day Pulse (calm, poetic, ~65-70% of days) or a Day Trace (charged, action-oriented, ~30-35% of days), determined by the Harmony Index — never both.
 
-**Status**: Draft
+**Status**: Approved
 
 **Priority**: Must-have
 

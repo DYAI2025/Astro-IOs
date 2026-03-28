@@ -2,7 +2,7 @@
 
 **Description**: Ship a polished iOS app to the Apple App Store that passes review, has proper metadata, and provides a complete first-run experience from splash screen to daily use.
 
-**Status**: Draft
+**Status**: Approved
 
 **Priority**: Must-have
 

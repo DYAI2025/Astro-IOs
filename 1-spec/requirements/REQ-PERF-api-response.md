@@ -1,7 +1,7 @@
 # REQ-PERF-api-response: API Response Time
 
 **Type**: Performance
-**Status**: Draft
+**Status**: Approved
 **Priority**: Should-have
 **Source story**: [US-enter-birth-data](../user-stories/US-enter-birth-data.md)
 

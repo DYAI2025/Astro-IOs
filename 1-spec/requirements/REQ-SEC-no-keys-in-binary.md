@@ -1,7 +1,7 @@
 # REQ-SEC-no-keys-in-binary: No Secret Keys in Client Binary
 
 **Type**: Security
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source**: [CON-no-api-key-client](../constraints/CON-no-api-key-client.md)
 **Related story**: [US-enter-birth-data](../user-stories/US-enter-birth-data.md)

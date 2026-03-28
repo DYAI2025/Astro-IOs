@@ -1,7 +1,7 @@
 # REQ-F-profile-persistence: Local Profile Persistence
 
 **Type**: Functional
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source story**: [US-offline-access](../user-stories/US-offline-access.md)
 

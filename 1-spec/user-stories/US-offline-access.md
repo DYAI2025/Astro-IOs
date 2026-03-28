@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** my Fusion profile to be available offline after the first calculation, **so that** I can view my chart, Day Pulse, and detail sheets without internet.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-fusion-reading](../goals/GOAL-fusion-reading.md)

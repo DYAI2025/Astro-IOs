@@ -1,7 +1,7 @@
 # REQ-REL-bafe-fallback: Graceful BAFE API Failure Handling
 
 **Type**: Reliability
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source**: [CON-bafe-dependency](../constraints/CON-bafe-dependency.md)
 **Related story**: [US-enter-birth-data](../user-stories/US-enter-birth-data.md), [US-offline-access](../user-stories/US-offline-access.md)

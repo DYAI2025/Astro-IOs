@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** to see my personal dynamic signature on the Signatur tab, **so that** I intuitively understand my Fusion profile as a living visual form instead of numbers and tables.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-dynamic-signature](../goals/GOAL-dynamic-signature.md)

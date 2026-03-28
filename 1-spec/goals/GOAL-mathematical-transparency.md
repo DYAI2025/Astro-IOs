@@ -2,7 +2,7 @@
 
 **Description**: Every astrological calculation and daily insight must be traceable to explicit formulas and data sources. Nothing is hallucinated or randomly generated. The Harmony Index, element vectors, Day Pulse/Trace selection, and profile scores all derive from documented mathematics. This is the philosophical core — "it works even though we disenchant it through mathematics."
 
-**Status**: Draft
+**Status**: Approved
 
 **Priority**: Must-have
 

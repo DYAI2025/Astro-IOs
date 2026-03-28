@@ -1,7 +1,7 @@
 # REQ-F-companion-websocket: AI Companion WebSocket Connection
 
 **Type**: Functional
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source story**: [US-converse-with-companion](../user-stories/US-converse-with-companion.md)
 

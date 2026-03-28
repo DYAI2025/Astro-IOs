@@ -2,7 +2,7 @@
 
 **As a** end user, **I want** a smooth first-run experience from splash to my first reading, **so that** I understand the app's value within 2 minutes.
 
-**Status**: Draft
+**Status**: Approved
 **Priority**: Must-have
 **Source stakeholder**: [STK-end-user](../stakeholders.md)
 **Related goal**: [GOAL-app-store-launch](../goals/GOAL-app-store-launch.md)
