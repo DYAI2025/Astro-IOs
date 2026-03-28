@@ -12,6 +12,7 @@ Everyone with a stake in the system: those who use it, fund it, maintain it, or 
 
 | ID | Role | Description | Interests | Influence |
 |----|------|-------------|-----------|-----------|
-| STK-placeholder | Placeholder Role | Replace with your first stakeholder | What they care about | High / Medium / Low |
-<!-- Replace the placeholder row with your actual stakeholders. -->
-<!-- ID format: STK-kebab-name (e.g., STK-end-user, STK-product-owner) -->
+| STK-end-user | End User | Non-esoteric self-explorers seeking mental models for self-interpretation through astrology as a framework, not a belief system | Intuitive, beautiful, daily-relevant readings; no astro jargon; privacy; mathematical transparency | High |
+| STK-product-owner | Product Owner (Ben) | Founder, vision holder, final decision maker on product direction and priorities | Fusion Astrology vision; mathematical transparency; market differentiation; App Store launch | High |
+| STK-ai-companion | AI Companion Agents (Levi & Eve) | ElevenLabs-powered voice agents that consume user natal chart data to deliver personalized guidance | Access to natal chart data; conversation context persistence; distinct personality consistency | Medium |
+| STK-developer | Developer / AI Agent | AI-first development with Claude Code as primary implementer; human supervises and steers | Clean architecture; traceable decisions; maintainable codebase; efficient context window usage | Medium |

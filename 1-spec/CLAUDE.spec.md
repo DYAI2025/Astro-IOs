@@ -92,7 +92,12 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Priority | Status | Summary |
 |------|----------|--------|---------|
-<!-- Add rows as goals are created. File column: [GOAL-kebab-name](goals/GOAL-kebab-name.md) -->
+| [GOAL-fusion-reading](goals/GOAL-fusion-reading.md) | Must-have | Draft | Unified Fusion Astrology reading from Western + BaZi + Wu-Xing |
+| [GOAL-daily-personal-insight](goals/GOAL-daily-personal-insight.md) | Must-have | Draft | Data-driven Day Pulse / Day Trace daily insight with cosmic weather |
+| [GOAL-ai-companions](goals/GOAL-ai-companions.md) | Must-have | Draft | Two AI companions (Levi & Eve) with natal chart context |
+| [GOAL-self-discovery-quizzes](goals/GOAL-self-discovery-quizzes.md) | Should-have | Draft | Personality quizzes feeding into dynamic Fusion profile |
+| [GOAL-app-store-launch](goals/GOAL-app-store-launch.md) | Must-have | Draft | Polished App Store-ready iOS app |
+| [GOAL-mathematical-transparency](goals/GOAL-mathematical-transparency.md) | Must-have | Draft | Every calculation traceable to documented formulas |
 
 ---
 
@@ -124,4 +129,9 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Category | Status | Summary |
 |------|----------|--------|---------|
-<!-- Add rows as constraints are created. File column: [CON-kebab-name](constraints/CON-kebab-name.md) -->
+| [CON-ios-only](constraints/CON-ios-only.md) | Technical | Active | MVP targets iOS 26.2+ only; no Android/web parity for launch |
+| [CON-no-api-key-client](constraints/CON-no-api-key-client.md) | Technical | Active | No API keys in client binary; all sensitive calls proxied through server |
+| [CON-bafe-dependency](constraints/CON-bafe-dependency.md) | Technical | Active | All astrology calculations depend on external BAFE API; no local fallback |
+| [CON-solo-founder](constraints/CON-solo-founder.md) | Business | Active | Single founder; AI agents do bulk of implementation |
+| [CON-free-tier-infra](constraints/CON-free-tier-infra.md) | Business | Active | Infrastructure must run on free/low-cost tiers until revenue |
+| [CON-no-esoteric-language](constraints/CON-no-esoteric-language.md) | Operational | Active | No astro jargon in user-facing text; poetic realism only |

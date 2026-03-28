@@ -45,7 +45,7 @@ Bazodiac targets users who do not follow esoteric belief systems but are looking
 
 ### Current State
 
-The project is in **active development (Code phase)**. Core UI, service layer, and data models are implemented. Remaining work: end-to-end BAFE API live testing, Supabase authentication, 10 additional quizzes, AVFoundation voice recording for companions, and App Store preparation.
+The project is in **active development (Code phase)** with Specification artifacts being retroactively formalized. Stakeholders defined; Constraints drafted; Goals drafted (4 Must-have, 1 Should-have). Core UI, service layer, and data models are implemented. Remaining work: end-to-end BAFE API live testing, Supabase authentication, 10 additional quizzes, AVFoundation voice recording for companions, and App Store preparation.
 
 ---
 
