@@ -20,6 +20,6 @@
 
 ## Related Artifacts
 
-- User stories: _none yet_
+- User stories: [US-choose-companion](../user-stories/US-choose-companion.md), [US-converse-with-companion](../user-stories/US-converse-with-companion.md)
 - Requirements: _none yet_
 - Constraints: [CON-no-api-key-client](../constraints/CON-no-api-key-client.md), [CON-no-esoteric-language](../constraints/CON-no-esoteric-language.md)

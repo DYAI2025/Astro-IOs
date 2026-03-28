@@ -105,7 +105,16 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 
 | File | Role | Priority | Status | Summary |
 |------|------|----------|--------|---------|
-<!-- Add rows as user stories are created. File column: [US-kebab-name](user-stories/US-kebab-name.md) -->
+| [US-enter-birth-data](user-stories/US-enter-birth-data.md) | End User | Must-have | Draft | Enter birth data and receive Fusion profile |
+| [US-view-sun-sign-detail](user-stories/US-view-sun-sign-detail.md) | End User | Must-have | Draft | Tap sun sign → detail with moon + ascendant |
+| [US-view-year-animal-detail](user-stories/US-view-year-animal-detail.md) | End User | Must-have | Draft | Tap year animal → BaZi pillars detail |
+| [US-view-element-detail](user-stories/US-view-element-detail.md) | End User | Must-have | Draft | Tap element → Wu-Xing balance detail |
+| [US-see-daily-mode](user-stories/US-see-daily-mode.md) | End User | Must-have | Draft | See Day Pulse or Day Trace on app open |
+| [US-choose-companion](user-stories/US-choose-companion.md) | End User | Must-have | Draft | Choose between Levi and Eve |
+| [US-converse-with-companion](user-stories/US-converse-with-companion.md) | End User | Must-have | Draft | Chat with companion about chart and life |
+| [US-play-quiz](user-stories/US-play-quiz.md) | End User | Should-have | Draft | Play quiz and see result profile |
+| [US-onboarding-flow](user-stories/US-onboarding-flow.md) | End User | Must-have | Draft | First-run splash → birth form → dashboard |
+| [US-switch-theme](user-stories/US-switch-theme.md) | End User | Should-have | Draft | Toggle dark/light theme |
 
 ---
 

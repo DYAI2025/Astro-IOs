@@ -19,5 +19,5 @@
 
 ## Related Artifacts
 
-- User stories: _none yet_
+- User stories: [US-play-quiz](../user-stories/US-play-quiz.md)
 - Requirements: _none yet_

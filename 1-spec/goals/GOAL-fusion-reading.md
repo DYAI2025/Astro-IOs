@@ -18,6 +18,6 @@
 
 ## Related Artifacts
 
-- User stories: _none yet_
+- User stories: [US-enter-birth-data](../user-stories/US-enter-birth-data.md), [US-view-sun-sign-detail](../user-stories/US-view-sun-sign-detail.md), [US-view-year-animal-detail](../user-stories/US-view-year-animal-detail.md), [US-view-element-detail](../user-stories/US-view-element-detail.md)
 - Requirements: _none yet_
 - Constraints: [CON-bafe-dependency](../constraints/CON-bafe-dependency.md)

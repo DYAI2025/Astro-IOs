@@ -20,6 +20,6 @@
 
 ## Related Artifacts
 
-- User stories: _none yet_
+- User stories: [US-onboarding-flow](../user-stories/US-onboarding-flow.md), [US-switch-theme](../user-stories/US-switch-theme.md)
 - Requirements: _none yet_
 - Constraints: [CON-ios-only](../constraints/CON-ios-only.md), [CON-solo-founder](../constraints/CON-solo-founder.md)

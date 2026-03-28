@@ -20,6 +20,6 @@
 
 ## Related Artifacts
 
-- User stories: _none yet_
+- User stories: [US-see-daily-mode](../user-stories/US-see-daily-mode.md)
 - Requirements: _none yet_
 - Constraints: [CON-no-esoteric-language](../constraints/CON-no-esoteric-language.md)
