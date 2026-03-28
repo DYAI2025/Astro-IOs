@@ -28,7 +28,7 @@ struct MainTabView: View {
         switch store.selectedTab {
         case .home:    HomeView()
         case .chart:   WesternChartView()
-        case .bazi:    BaZiView()
+        case .bazi:    SignaturV3View()
         case .quizzes: QuizzesView()
         case .agents:  AgentsView()
         }

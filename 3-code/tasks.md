@@ -38,9 +38,9 @@
 | TASK-verify-day-mode-live | DayHarmonicEngine confirmed: H computed from live BAFE, Trace mode selected | P1 | Done | [REQ-F-day-mode-selection](../1-spec/requirements/REQ-F-day-mode-selection.md) | TASK-fix-bafe-mapping | 2026-03-28 | |
 | TASK-extract-remaining-quizzes | Extracted questions from emotionale-intelligenz, karriere-dna, celebrity-soulmate HTML + generated aura, charm | P2 | Done | [REQ-F-quiz-scoring](../1-spec/requirements/REQ-F-quiz-scoring.md) | - | 2026-03-28 | |
 | TASK-add-quizzes-to-quizdata | Added 5 new quizzes to QuizDataExtra.swift (EI, Karriere, Celebrity, Aura, Charm) — total 11 | P2 | Done | [REQ-F-quiz-scoring](../1-spec/requirements/REQ-F-quiz-scoring.md) | TASK-extract-remaining-quizzes | 2026-03-28 | |
-| TASK-signatur-v3-engine | Port bipolar-engine.ts to Swift: Pulse rings + Trace Lissajous driven by DayHarmonicState | P1 | Todo | - | TASK-verify-day-mode-live | 2026-03-28 | GOAL-dynamic-signature |
-| TASK-signatur-v3-view | Create SignaturV3View with animated Canvas, weather modulation, quiz shift | P1 | Todo | - | TASK-signatur-v3-engine | 2026-03-28 | GOAL-dynamic-signature |
-| TASK-wire-signatur-tab | Connect Signatur tab to SignaturV3View (currently shows BaZiView) | P1 | Todo | - | TASK-signatur-v3-view | 2026-03-28 | |
+| TASK-signatur-v3-engine | Ported bipolar-engine.ts: 6 dims, 12 poles, Lissajous blend, Cousto Hz, solar modulation | P1 | Done | - | TASK-verify-day-mode-live | 2026-03-28 | GOAL-dynamic-signature |
+| TASK-signatur-v3-view | SignaturV3View: animated Canvas, trail rendering, dimension legend, day mode badge | P1 | Done | - | TASK-signatur-v3-engine | 2026-03-28 | GOAL-dynamic-signature |
+| TASK-wire-signatur-tab | Signatur tab → SignaturV3View (was BaZiView) | P1 | Done | - | TASK-signatur-v3-view | 2026-03-28 | |
 | TASK-avfoundation-mic | Add AVAudioRecorder, NSMicrophoneUsageDescription in Info.plist | P1 | Todo | [REQ-F-companion-websocket](../1-spec/requirements/REQ-F-companion-websocket.md) | - | 2026-03-28 | |
 | TASK-voice-to-websocket | Send recorded audio chunks to ElevenLabs WebSocket as user_audio_chunk | P1 | Todo | [REQ-F-companion-websocket](../1-spec/requirements/REQ-F-companion-websocket.md) | TASK-avfoundation-mic | 2026-03-28 | |
 | TASK-supabase-swift-package | Add supabase-swift SPM dependency, configure URL + anon key | P2 | Todo | - | - | 2026-03-28 | |
