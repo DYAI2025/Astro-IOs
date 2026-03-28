@@ -97,6 +97,7 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 | [GOAL-ai-companions](goals/GOAL-ai-companions.md) | Must-have | Draft | Two AI companions (Levi & Eve) with natal chart context |
 | [GOAL-self-discovery-quizzes](goals/GOAL-self-discovery-quizzes.md) | Should-have | Draft | Personality quizzes feeding into dynamic Fusion profile |
 | [GOAL-app-store-launch](goals/GOAL-app-store-launch.md) | Must-have | Draft | Polished App Store-ready iOS app |
+| [GOAL-dynamic-signature](goals/GOAL-dynamic-signature.md) | Must-have | Draft | Personal dynamic visual signature driven by Fusion signal |
 | [GOAL-mathematical-transparency](goals/GOAL-mathematical-transparency.md) | Must-have | Draft | Every calculation traceable to documented formulas |
 
 ---
@@ -115,6 +116,7 @@ When an artifact (goal, user story, requirement) is no longer relevant:
 | [US-play-quiz](user-stories/US-play-quiz.md) | End User | Should-have | Draft | Play quiz and see result profile |
 | [US-onboarding-flow](user-stories/US-onboarding-flow.md) | End User | Must-have | Draft | First-run splash → birth form → dashboard |
 | [US-switch-theme](user-stories/US-switch-theme.md) | End User | Should-have | Draft | Toggle dark/light theme |
+| [US-view-signature](user-stories/US-view-signature.md) | End User | Must-have | Draft | View personal dynamic signature on Signatur tab |
 
 ---
 
