@@ -46,7 +46,7 @@ struct HomeView: View {
             // ── Day Mode — Pulse ODER Trace (nie beides) ─────────────
             DayModeCard()
 
-            BigThreeBadges()
+            CosmicTriad()
 
             GoldLine().padding(.vertical, 4)
             SectionNavigationGrid()
@@ -125,71 +125,116 @@ private struct CosmicHeader: View {
 
 // MARK: - Big Three Badges (Sun / Moon / Ascendant)
 
-private struct BigThreeBadges: View {
+// MARK: - Drei Kacheln: Sonnenzeichen · Jahrestier · Dominantes Element
+
+private struct CosmicTriad: View {
     @Environment(CosmicStore.self) private var store
     @Environment(\.cosmicTheme) private var theme
 
+    @State private var showSunDetail = false
+    @State private var showAnimalDetail = false
+    @State private var showElementDetail = false
+
     var body: some View {
         HStack(spacing: 12) {
-            if let w = store.profile?.westernData {
-                BigThreeBadge(
-                    title: "Sonne",
+            if let p = store.profile {
+                // 1. Sonnenzeichen
+                TriadTile(
+                    label: store.language == .german ? "Sonne" : "Sun",
+                    value: p.westernData.sunSign.germanName,
                     sfSymbol: "sun.max.fill",
-                    sign: w.sunSign,
-                    degree: w.sunDegree
-                )
-                BigThreeBadge(
-                    title: "Mond",
-                    sfSymbol: "moon.fill",
-                    sign: w.moonSign,
-                    degree: w.moonDegree
-                )
-                BigThreeBadge(
-                    title: "Aszendent",
-                    sfSymbol: "arrow.up.circle",
-                    sign: w.ascendant,
-                    degree: w.ascendantDegree
-                )
+                    color: p.westernData.sunSign.element.color
+                ) { showSunDetail = true }
+
+                // 2. Jahrestier (BaZi)
+                TriadTile(
+                    label: store.language == .german ? "Jahrestier" : "Year Animal",
+                    value: p.baziData.year.branch.animal,
+                    sfSymbol: "leaf.fill",
+                    color: p.baziData.year.branch.element.color
+                ) { showAnimalDetail = true }
+
+                // 3. Dominantes Element (Wu Xing)
+                TriadTile(
+                    label: store.language == .german ? "Element" : "Element",
+                    value: p.wuxingData.dominant.germanName,
+                    sfSymbol: p.wuxingData.dominant.symbol,
+                    color: p.wuxingData.dominant.color
+                ) { showElementDetail = true }
+            }
+        }
+        .sheet(isPresented: $showSunDetail) {
+            if let p = store.profile {
+                SunSignDetailSheet(profile: p, language: store.language)
+                    .environment(\.cosmicTheme, theme)
+                    .presentationDetents([.fraction(0.75)])
+                    .presentationBackground(theme.surfaceElevated)
+            }
+        }
+        .sheet(isPresented: $showAnimalDetail) {
+            if let p = store.profile {
+                YearAnimalDetailSheet(profile: p, language: store.language)
+                    .environment(\.cosmicTheme, theme)
+                    .presentationDetents([.fraction(0.75)])
+                    .presentationBackground(theme.surfaceElevated)
+            }
+        }
+        .sheet(isPresented: $showElementDetail) {
+            if let p = store.profile {
+                WuXingDetailSheet(profile: p, language: store.language)
+                    .environment(\.cosmicTheme, theme)
+                    .presentationDetents([.fraction(0.75)])
+                    .presentationBackground(theme.surfaceElevated)
             }
         }
     }
 }
 
-private struct BigThreeBadge: View {
+private struct TriadTile: View {
     @Environment(\.cosmicTheme) private var theme
-    let title: String
+    let label: String
+    let value: String
     let sfSymbol: String
-    let sign: ZodiacSign
-    let degree: Double
+    let color: Color
+    let onTap: () -> Void
+    @State private var pressed = false
 
     var body: some View {
-        VStack(spacing: 8) {
-            // Element color dot with SF Symbol
-            Circle()
-                .fill(sign.element.color.opacity(0.25))
-                .frame(width: 44, height: 44)
-                .overlay {
-                    Circle()
-                        .strokeBorder(sign.element.color.opacity(0.4), lineWidth: 0.75)
-                    Image(systemName: sfSymbol)
-                        .font(.system(size: 16, weight: .thin))
-                        .foregroundStyle(sign.element.color)
-                }
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            onTap()
+        }) {
+            VStack(spacing: 8) {
+                Circle()
+                    .fill(color.opacity(0.2))
+                    .frame(width: 44, height: 44)
+                    .overlay {
+                        Circle().strokeBorder(color.opacity(0.4), lineWidth: 0.75)
+                        Image(systemName: sfSymbol)
+                            .font(.system(size: 16, weight: .thin))
+                            .foregroundStyle(color)
+                    }
 
-            VStack(spacing: 2) {
-                Text(title)
-                    .goldLabel(0.4)
-                Text(sign.germanName)
-                    .font(CosmicFont.heading(13, weight: .light))
-                    .foregroundStyle(theme.textPrimary.opacity(0.85))
-                Text(String(format: "%.1f°", degree))
-                    .font(CosmicFont.mono(10))
-                    .foregroundStyle(theme.textTertiary)
+                VStack(spacing: 2) {
+                    Text(label)
+                        .goldLabel(0.4)
+                    Text(value)
+                        .font(CosmicFont.heading(13, weight: .light))
+                        .foregroundStyle(theme.textPrimary.opacity(0.85))
+                        .lineLimit(1)
+                }
             }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .cosmicCard(cornerRadius: 14)
+            .scaleEffect(pressed ? 0.96 : 1.0)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .cosmicCard(cornerRadius: 14)
+        .buttonStyle(.plain)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in withAnimation(.easeOut(duration: 0.1)) { pressed = true } }
+                .onEnded   { _ in withAnimation(.spring(duration: 0.3)) { pressed = false } }
+        )
     }
 }
 

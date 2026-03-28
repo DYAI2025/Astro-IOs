@@ -332,8 +332,8 @@ private struct EveCard: View {
 
                 // ── Beschreibung ──────────────────────────────────────
                 Text(store.language == .german
-                     ? "Sanft, intuitiv und warmherzig — Eve spürt die Zwischentöne deines Kosmos und spricht die Sprache deiner Seele."
-                     : "Gentle, intuitive and warm — Eve senses the subtleties of your cosmos and speaks the language of your soul.")
+                     ? "Direkt, ironisch und ehrlich — Eve sagt dir, was Sache ist. Keine Umwege, kein Zucker. Nah dran an dem, was du wirklich brauchst."
+                     : "Direct, ironic and honest — Eve tells you how it is. No detours, no sugar. Close to what you actually need.")
                     .font(CosmicFont.bodySerif(13))
                     .foregroundStyle(silver.opacity(0.4))
                     .lineSpacing(4)
@@ -386,8 +386,8 @@ private struct EveCard: View {
 
     private var eveTraits: [String] {
         store.language == .german
-            ? ["SANFT", "INTUITIV", "WARMHERZIG"]
-            : ["GENTLE", "INTUITIVE", "WARM"]
+            ? ["DIREKT", "IRONISCH", "EHRLICH", "NAH"]
+            : ["DIRECT", "IRONIC", "HONEST", "CLOSE"]
     }
 }
 
