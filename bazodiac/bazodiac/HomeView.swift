@@ -43,8 +43,8 @@ struct HomeView: View {
 
     private var contentStack: some View {
         VStack(spacing: 20) {
-            // ── Day Pulse — prominente Tages-Energie ──────────────────
-            DayPulseCard()
+            // ── Day Mode — Pulse ODER Trace (nie beides) ─────────────
+            DayModeCard()
 
             BigThreeBadges()
 
@@ -193,110 +193,86 @@ private struct BigThreeBadge: View {
     }
 }
 
-// MARK: - Day Pulse Card
+// MARK: - Day Mode Card (Pulse ODER Trace — nie beides)
+//
+// H ≥ 0.50 → TRACE (Pole kreuzen sich, direkt, geladen, handlungsorientiert)
+// H <  0.50 → PULSE (symmetrisch, poetischer Realismus, atmosphärisch)
+// Kein Astro-Vokabular. Kein "weil". 2–3 Sätze.
 
-private struct DayPulseCard: View {
+private struct DayModeCard: View {
     @Environment(CosmicStore.self) private var store
     @Environment(\.cosmicTheme) private var theme
-    @State private var pulse: DayPulse = .empty
+    @State private var harmonic: DayHarmonicState = .neutral
+    @State private var weather: CosmicWeather?
+    @State private var text: String = ""
     @State private var appeared = false
 
-    // Intensitätsfarbe: grün (ruhig) → gold (mittel) → rot (Sturm)
-    private var intensityColor: Color {
-        if pulse.kpIndex < 2 { return Color(hex: "#52A853") }
-        if pulse.kpIndex < 4 { return Color(hex: "#D4AF37") }
-        if pulse.kpIndex < 6 { return Color(hex: "#FF9800") }
-        return Color(hex: "#EA4335")
+    private var isTrace: Bool { harmonic.mode == .trace }
+
+    // Trace: Gold · Pulse: Silber-Blau
+    private var modeColor: Color {
+        isTrace ? Color(hex: "#D4AF37") : Color(hex: "#A0B4CC")
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // ── Header: Day Pulse Label + Mond ──────────────────
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(store.language == .german ? "TAGES-PULS" : "DAY PULSE")
-                        .font(CosmicFont.label(9))
-                        .tracking(5)
-                        .foregroundStyle(intensityColor.opacity(0.8))
+        VStack(alignment: .center, spacing: 0) {
 
-                    // Datum
-                    Text(Date(), format: .dateTime.day().month(.wide).year())
-                        .font(CosmicFont.mono(11))
-                        .foregroundStyle(theme.textTertiary)
-                }
+            // ── Mode Label ──────────────────────────────────────
+            Text(isTrace ? "DAY-TRACE" : "DAY-PULSE")
+                .font(CosmicFont.display(26))
+                .foregroundStyle(modeColor)
+                .tracking(4)
+                .padding(.bottom, 2)
 
-                Spacer()
-
-                // Mond-Phase-Indikator
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(theme.gold.opacity(pulse.moonIllumination * 0.35))
-                            .frame(width: 36, height: 36)
-                        Circle()
-                            .strokeBorder(theme.gold.opacity(0.3), lineWidth: 0.75)
-                            .frame(width: 36, height: 36)
-                        Image(systemName: pulse.moonPhase.icon)
-                            .font(.system(size: 16, weight: .thin))
-                            .foregroundStyle(theme.gold.opacity(0.8))
-                    }
-                    Text(store.language == .german
-                         ? pulse.moonPhase.germanName
-                         : pulse.moonPhase.englishName)
-                        .font(CosmicFont.label(7))
-                        .tracking(1.5)
-                        .foregroundStyle(theme.textTertiary)
-                }
-            }
-            .padding(.bottom, 14)
-
-            // ── Kp Intensitäts-Bar ──────────────────────────────
-            HStack(spacing: 8) {
-                // Intensitätspunkte (5 Dots)
-                HStack(spacing: 4) {
-                    ForEach(0..<5) { i in
-                        Circle()
-                            .fill(Double(i) < pulse.kpIndex / 2
-                                  ? intensityColor
-                                  : theme.goldFaint)
-                            .frame(width: 6, height: 6)
-                    }
-                }
-
-                Text(pulse.subtext)
-                    .font(CosmicFont.mono(9))
-                    .foregroundStyle(theme.textTertiary)
-
-                Spacer()
-            }
-            .padding(.bottom, 16)
-
-            // ── Divider ─────────────────────────────────────────
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [.clear, intensityColor.opacity(0.3), .clear],
-                        startPoint: .leading, endPoint: .trailing
-                    )
-                )
-                .frame(height: 0.5)
+            Text(Date(), format: .dateTime.day().month(.wide))
+                .font(CosmicFont.mono(11))
+                .foregroundStyle(theme.textTertiary)
                 .padding(.bottom, 16)
 
-            // ── Hauptspruch ─────────────────────────────────────
-            Text(pulse.headline)
+            // ── Visual Snapshot ──────────────────────────────────
+            ModeVisual(mode: harmonic.mode, intensity: harmonic.intensity, color: modeColor)
+                .frame(width: 120, height: 120)
+                .padding(.bottom, 20)
+
+            // ── Text: 2–3 Sätze ─────────────────────────────────
+            Text(text)
                 .font(CosmicFont.bodySerif(15))
                 .foregroundStyle(theme.textPrimary.opacity(0.85))
-                .lineSpacing(6)
+                .multilineTextAlignment(.center)
+                .lineSpacing(7)
+                .italic(harmonic.mode == .pulse)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 8)
+
+            // ── Subtext: Mond + Kp (nur wenn geladen) ───────────
+            if let w = weather {
+                HStack(spacing: 6) {
+                    Image(systemName: w.moonPhase.icon)
+                        .font(.system(size: 10, weight: .thin))
+                        .foregroundStyle(theme.textTertiary)
+                    Text(store.language == .german ? w.moonPhase.germanName : w.moonPhase.englishName)
+                        .font(CosmicFont.mono(9))
+                        .foregroundStyle(theme.textTertiary)
+
+                    if w.kpIndex >= 5 {
+                        Text("· ⚡ Kp \(String(format: "%.0f", w.kpIndex))")
+                            .font(CosmicFont.mono(9))
+                            .foregroundStyle(Color(hex: "#EA4335").opacity(0.7))
+                    }
+                }
+                .padding(.top, 14)
+            }
         }
-        .padding(20)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 24)
+        .frame(maxWidth: .infinity)
         .background {
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 20)
                 .fill(theme.cardBackground)
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 20)
                 .strokeBorder(
                     LinearGradient(
-                        colors: [intensityColor.opacity(0.3), theme.goldBorder],
+                        colors: [modeColor.opacity(0.3), theme.goldBorder],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     ),
                     lineWidth: 0.75
@@ -307,20 +283,105 @@ private struct DayPulseCard: View {
         .animation(.spring(duration: 0.8).delay(0.1), value: appeared)
         .onAppear {
             appeared = true
-            loadPulse()
+            loadDayMode()
         }
     }
 
-    private func loadPulse() {
+    private func loadDayMode() {
         guard let profile = store.profile else { return }
+
+        // 1. Berechne H
+        harmonic = DayHarmonicEngine.fromProfile(profile)
+
+        // 2. Lade Wetter (async)
         Task {
-            let weather = await CosmicWeatherService.shared.fetch()
-            pulse = DayPulseGenerator.generate(
+            let w = await CosmicWeatherService.shared.fetch()
+            weather = w
+
+            // 3. Generiere Text
+            text = DayModeTextGenerator.generate(
+                mode: harmonic.mode,
+                intensity: harmonic.intensity,
                 profile: profile,
-                weather: weather,
+                weather: w,
                 language: store.language
             )
         }
+    }
+}
+
+// MARK: - Mode Visual (Canvas: Pulse = Ringe, Trace = Lissajous)
+
+private struct ModeVisual: View {
+    let mode: DayMode
+    let intensity: Double
+    let color: Color
+
+    var body: some View {
+        Canvas { ctx, size in
+            let cx = size.width / 2
+            let cy = size.height / 2
+            let r = min(cx, cy) * 0.85
+
+            if mode == .pulse {
+                // Konzentrische Ringe — ruhig, symmetrisch
+                let rings = 3 + Int(intensity * 2)
+                for i in 0..<rings {
+                    let t = Double(i) / Double(max(rings - 1, 1))
+                    let ringR = r * (0.3 + t * 0.7)
+                    let alpha = (1 - t) * (0.35 + intensity * 0.25)
+                    let rect = CGRect(x: cx - ringR, y: cy - ringR, width: ringR * 2, height: ringR * 2)
+                    ctx.stroke(Path(ellipseIn: rect),
+                               with: .color(color.opacity(alpha)),
+                               lineWidth: 0.8 + intensity * 0.5)
+                }
+                // Zentrumspunkt
+                let dotR: CGFloat = 3
+                ctx.fill(Path(ellipseIn: CGRect(x: cx - dotR, y: cy - dotR, width: dotR * 2, height: dotR * 2)),
+                         with: .color(color.opacity(0.6)))
+            } else {
+                // Lissajous-Kreuzungskurven — geladen, dynamisch
+                let steps = 600
+                let freqRatio = 1.0 + intensity * 1.5
+                let gold = color
+                let cyan = Color(hex: "#00D2FF")
+
+                // Kurve A (Gold)
+                var pathA = Path()
+                for s in 0...steps {
+                    let t = Double(s) / Double(steps) * .pi * 2
+                    let x = cx + cos(t) * r
+                    let y = cy + sin(t * freqRatio) * r * 0.8
+                    if s == 0 { pathA.move(to: CGPoint(x: x, y: y)) }
+                    else { pathA.addLine(to: CGPoint(x: x, y: y)) }
+                }
+                ctx.stroke(pathA, with: .color(gold.opacity(0.5 + intensity * 0.3)), lineWidth: 0.8)
+
+                // Kurve B (Cyan)
+                var pathB = Path()
+                for s in 0...steps {
+                    let t = Double(s) / Double(steps) * .pi * 2
+                    let x = cx + cos(t + .pi * 0.3) * r
+                    let y = cy + sin(t * freqRatio + .pi * 0.5) * r * 0.8
+                    if s == 0 { pathB.move(to: CGPoint(x: x, y: y)) }
+                    else { pathB.addLine(to: CGPoint(x: x, y: y)) }
+                }
+                ctx.stroke(pathB, with: .color(cyan.opacity(0.3 + intensity * 0.2)), lineWidth: 0.8)
+
+                // Kreuzungspunkt-Glow
+                let glowR = 10.0 + intensity * 8.0
+                let glowRect = CGRect(x: cx - glowR, y: cy - glowR, width: glowR * 2, height: glowR * 2)
+                ctx.fill(Path(ellipseIn: glowRect), with: .color(gold.opacity(0.3 + intensity * 0.2)))
+                let innerR = glowR * 0.3
+                ctx.fill(Path(ellipseIn: CGRect(x: cx - innerR, y: cy - innerR, width: innerR * 2, height: innerR * 2)),
+                         with: .color(gold.opacity(0.6)))
+            }
+        }
+        .clipShape(Circle())
+        .background(
+            Circle()
+                .fill(Color(hex: "#050308"))
+        )
     }
 }
 
