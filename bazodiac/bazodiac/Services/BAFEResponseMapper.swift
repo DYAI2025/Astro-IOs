@@ -91,15 +91,16 @@ enum BAFEResponseMapper {
     private static func mapPillar(_ raw: BAFERawPillar, type: BaZiPillar.PillarType) -> BaZiPillar {
         let stemChar   = raw.resolvedStem
         let branchChar = raw.resolvedBranch
-        let animalEN   = raw.resolvedAnimal
+        let animalName = raw.resolvedAnimal
 
-        // Himmels-Stamm auflösen
+        // Himmels-Stamm: Chinese char OR Pinyin
         let stem = HeavenlyStemDatabase.stem(forChar: stemChar)
-            ?? HeavenlyStem(char: stemChar, pinyin: "", english: stemChar, element: .earth, isYang: true)
+            ?? HeavenlyStem(char: stemChar, pinyin: stemChar, english: stemChar, element: .earth, isYang: true)
 
-        // Erd-Zweig auflösen
+        // Erd-Zweig: Chinese char OR Pinyin OR via animal name (DE/EN)
         let branch = EarthlyBranchDatabase.branch(forChar: branchChar)
-            ?? EarthlyBranch(char: branchChar, animal: animalEN, animalEmoji: "🌙", element: .earth)
+            ?? EarthlyBranchDatabase.branch(forAnimal: animalName)
+            ?? EarthlyBranch(char: branchChar, animal: animalName, animalEmoji: "🌙", element: .earth)
 
         return BaZiPillar(type: type, stem: stem, branch: branch, hiddenStems: [])
     }
@@ -221,8 +222,30 @@ enum HeavenlyStemDatabase {
     ]
 
     static func stem(forChar char: String) -> HeavenlyStem? {
+        // Match by Chinese character OR Pinyin (BAFE returns Pinyin: "Ji", "Gui", etc.)
         all.first { $0.char == char }
+        ?? all.first { $0.pinyin.lowercased().replacingOccurrences(of: "ǐ", with: "i")
+            .replacingOccurrences(of: "ǐ", with: "i")
+            .replacingOccurrences(of: "ī", with: "i")
+            .replacingOccurrences(of: "ǐ", with: "i")
+            .replacingOccurrences(of: "ù", with: "u")
+            .replacingOccurrences(of: "ēng", with: "eng")
+            .replacingOccurrences(of: "īn", with: "in")
+            .replacingOccurrences(of: "én", with: "en")
+            == char.lowercased()
+        }
+        ?? stemByPinyinMap[char.lowercased().trimmingCharacters(in: .whitespaces)]
     }
+
+    /// Direct Pinyin → Stem mapping (ASCII, no diacritics)
+    private static let stemByPinyinMap: [String: HeavenlyStem] = {
+        var map: [String: HeavenlyStem] = [:]
+        let pinyinASCII = ["jia","yi","bing","ding","wu","ji","geng","xin","ren","gui"]
+        for (i, p) in pinyinASCII.enumerated() where i < all.count {
+            map[p] = all[i]
+        }
+        return map
+    }()
 }
 
 // MARK: - Erd-Zweig Datenbank (alle 12 Zweige)
@@ -245,7 +268,18 @@ enum EarthlyBranchDatabase {
 
     static func branch(forChar char: String) -> EarthlyBranch? {
         all.first { $0.char == char }
+        ?? branchByPinyinMap[char.lowercased().trimmingCharacters(in: .whitespaces)]
     }
+
+    /// Direct Pinyin → Branch mapping (ASCII)
+    private static let branchByPinyinMap: [String: EarthlyBranch] = {
+        var map: [String: EarthlyBranch] = [:]
+        let pinyinASCII = ["zi","chou","yin","mao","chen","si","wu","wei","shen","you","xu","hai"]
+        for (i, p) in pinyinASCII.enumerated() where i < all.count {
+            map[p] = all[i]
+        }
+        return map
+    }()
 
     /// Mapping: BAFE-Tiername (DE/EN) → EarthlyBranch
     static func branch(forAnimal animal: String) -> EarthlyBranch? {

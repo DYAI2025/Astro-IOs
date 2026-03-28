@@ -134,7 +134,8 @@ final class BAFEService {
     // MARK: - Privat: HTTP POST
 
     private func fetch<T: Decodable>(_ endpoint: String, payload: BAFERequest, type: T.Type) async throws -> T {
-        let url = AppConfig.bafeBaseURL.appendingPathComponent("/api/calculate/\(endpoint)")
+        // BAFE direkt (kein Proxy, kein Auth nötig): /calculate/<endpoint>
+        let url = AppConfig.bafeBaseURL.appendingPathComponent("/calculate/\(endpoint)")
         var request = URLRequest(url: url, timeoutInterval: 20)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

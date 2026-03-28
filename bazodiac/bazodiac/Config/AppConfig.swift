@@ -10,24 +10,26 @@ enum AppConfig {
 
     // MARK: - BAFE (Astrologische Berechnungs-Engine)
 
-    /// Basis-URL des BAFE-Proxy-Servers.
-    /// Dev: lokaler Vite-Proxy auf :3000
-    /// Prod: Railway-Server (server.mjs)
+    /// BAFE API direkt (keine Auth nötig, kein Proxy)
     static var bafeBaseURL: URL {
-        // Aus Info.plist laden wenn gesetzt, sonst Produktion
         if let override = Bundle.main.object(forInfoDictionaryKey: "BAFE_BASE_URL") as? String,
            let url = URL(string: override) {
             return url
         }
-        return URL(string: "https://bazodiac.up.railway.app")!
+        return URL(string: "https://bafe-production.up.railway.app")!
+    }
+
+    /// Railway Proxy Server (für Gemini/Auth-geschützte Endpunkte)
+    static var proxyBaseURL: URL {
+        return URL(string: "https://astro-noctum-production.up.railway.app")!
     }
 
     // MARK: - Gemini / Interpretation
 
-    /// Gemini-Interpretation läuft server-seitig über den Proxy.
-    /// Der iOS-Client ruft niemals direkt die Gemini-API auf.
+    /// Gemini-Interpretation läuft server-seitig über den Railway Proxy.
+    /// Erfordert Supabase Auth — bis Auth implementiert, nutze Template-Fallback.
     static var interpretURL: URL {
-        bafeBaseURL.appendingPathComponent("/api/interpret")
+        proxyBaseURL.appendingPathComponent("/api/interpret")
     }
 
     // MARK: - ElevenLabs (Levi Voice AI)

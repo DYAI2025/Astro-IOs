@@ -27,14 +27,14 @@
 
 | ID | Task | Priority | Status | Req | Dependencies | Updated | Notes |
 |----|------|----------|--------|-----|--------------|---------|-------|
-| TASK-deploy-railway-proxy | Deploy server.mjs to Railway, verify /api/calculate/* and /api/interpret endpoints respond | P0 | Todo | [REQ-SEC-no-keys-in-binary](../1-spec/requirements/REQ-SEC-no-keys-in-binary.md) | - | 2026-03-28 | |
+| TASK-deploy-railway-proxy | Deploy server.mjs to Railway, verify /api/calculate/* and /api/interpret endpoints respond | P0 | Done | [REQ-SEC-no-keys-in-binary](../1-spec/requirements/REQ-SEC-no-keys-in-binary.md) | - | 2026-03-28 | |
 
 ### iOS App
 
 | ID | Task | Priority | Status | Req | Dependencies | Updated | Notes |
 |----|------|----------|--------|-----|--------------|---------|-------|
-| TASK-e2e-birth-submit | Test full flow: enter "München" → geocode → submit → BAFE responds → profile renders | P1 | Todo | [REQ-F-fusion-calculation](../1-spec/requirements/REQ-F-fusion-calculation.md) | TASK-deploy-railway-proxy | 2026-03-28 | |
-| TASK-fix-bafe-mapping | Fix BAFEResponseMapper issues from E2E (field mismatches, JSON decode errors) | P1 | Todo | [REQ-F-fusion-calculation](../1-spec/requirements/REQ-F-fusion-calculation.md) | TASK-e2e-birth-submit | 2026-03-28 | |
+| TASK-e2e-birth-submit | Test full flow: enter "München" → geocode → submit → BAFE responds → profile renders | P1 | In Progress | [REQ-F-fusion-calculation](../1-spec/requirements/REQ-F-fusion-calculation.md) | TASK-deploy-railway-proxy | 2026-03-28 | |
+| TASK-fix-bafe-mapping | Fix BAFEResponseMapper issues from E2E (Pinyin stems, German animals, direct BAFE URL) | P1 | Done | [REQ-F-fusion-calculation](../1-spec/requirements/REQ-F-fusion-calculation.md) | TASK-e2e-birth-submit | 2026-03-28 | |
 | TASK-verify-day-mode-live | Verify DayHarmonicEngine produces correct H from real BAFE data, confirm Pulse/Trace | P1 | Todo | [REQ-F-day-mode-selection](../1-spec/requirements/REQ-F-day-mode-selection.md) | TASK-fix-bafe-mapping | 2026-03-28 | |
 | TASK-extract-remaining-quizzes | Extract questions + profiles from 10 remaining web app HTML/JSON quiz files | P2 | Todo | [REQ-F-quiz-scoring](../1-spec/requirements/REQ-F-quiz-scoring.md) | - | 2026-03-28 | |
 | TASK-add-quizzes-to-quizdata | Add 10 quizzes to QuizData.swift (Aura, Celebrity, Karriere, etc.) | P2 | Todo | [REQ-F-quiz-scoring](../1-spec/requirements/REQ-F-quiz-scoring.md) | TASK-extract-remaining-quizzes | 2026-03-28 | |
