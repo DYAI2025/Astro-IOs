@@ -826,7 +826,7 @@ let allQuizzes: [FullQuiz] = [
     energiesteinQuiz,
     partyQuiz,
     blumenwesenQuiz,
-]
+] + extraQuizzes
 
 // Scoring Engine
 struct QuizEngine {
