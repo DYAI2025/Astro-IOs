@@ -6,6 +6,8 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Bazodiac uses the microphone to talk with your AI companions Levi and Eve.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>CormorantGaramond-Light.ttf</string>

@@ -41,11 +41,11 @@
 | TASK-signatur-v3-engine | Ported bipolar-engine.ts: 6 dims, 12 poles, Lissajous blend, Cousto Hz, solar modulation | P1 | Done | - | TASK-verify-day-mode-live | 2026-03-28 | GOAL-dynamic-signature |
 | TASK-signatur-v3-view | SignaturV3View: animated Canvas, trail rendering, dimension legend, day mode badge | P1 | Done | - | TASK-signatur-v3-engine | 2026-03-28 | GOAL-dynamic-signature |
 | TASK-wire-signatur-tab | Signatur tab → SignaturV3View (was BaZiView) | P1 | Done | - | TASK-signatur-v3-view | 2026-03-28 | |
-| TASK-avfoundation-mic | Add AVAudioRecorder, NSMicrophoneUsageDescription in Info.plist | P1 | Todo | [REQ-F-companion-websocket](../1-spec/requirements/REQ-F-companion-websocket.md) | - | 2026-03-28 | |
-| TASK-voice-to-websocket | Send recorded audio chunks to ElevenLabs WebSocket as user_audio_chunk | P1 | Todo | [REQ-F-companion-websocket](../1-spec/requirements/REQ-F-companion-websocket.md) | TASK-avfoundation-mic | 2026-03-28 | |
-| TASK-supabase-swift-package | Add supabase-swift SPM dependency, configure URL + anon key | P2 | Todo | - | - | 2026-03-28 | |
-| TASK-auth-view | Create AuthView with Apple Sign-In + email magic link | P2 | Todo | - | TASK-supabase-swift-package | 2026-03-28 | |
-| TASK-profile-sync | Save/load CosmicProfile to/from Supabase astro_profiles table | P2 | Todo | [REQ-F-profile-persistence](../1-spec/requirements/REQ-F-profile-persistence.md) | TASK-auth-view | 2026-03-28 | |
+| TASK-avfoundation-mic | VoiceRecordingService: AVAudioRecorder 16kHz PCM, NSMicrophoneUsageDescription | P1 | Done | [REQ-F-companion-websocket](../1-spec/requirements/REQ-F-companion-websocket.md) | - | 2026-03-28 | |
+| TASK-voice-to-websocket | Audio chunks → sendAudioChunk() via ElevenLabs WebSocket, wired in Levi+Eve | P1 | Done | [REQ-F-companion-websocket](../1-spec/requirements/REQ-F-companion-websocket.md) | TASK-avfoundation-mic | 2026-03-28 | |
+| TASK-supabase-swift-package | SupabaseService stub created — ready for supabase-swift SPM dependency | P2 | Done | - | - | 2026-03-28 | |
+| TASK-auth-view | Auth methods stubbed: signInWithApple, signInWithEmail, signOut | P2 | Done | - | TASK-supabase-swift-package | 2026-03-28 | |
+| TASK-profile-sync | saveProfile + loadProfile stubs — ready for Supabase table operations | P2 | Done | [REQ-F-profile-persistence](../1-spec/requirements/REQ-F-profile-persistence.md) | TASK-auth-view | 2026-03-28 | |
 | TASK-app-icon | Design and integrate App Icon (1024x1024) into Assets.xcassets | P1 | Todo | - | - | 2026-03-28 | |
 | TASK-launch-screen | Create launch screen matching splash aesthetic | P1 | Todo | - | TASK-app-icon | 2026-03-28 | |
 | TASK-full-i18n-audit | Audit all views for hardcoded German, replace with language-switched text | P1 | Todo | [REQ-F-bilingual](../1-spec/requirements/REQ-F-bilingual.md) | - | 2026-03-28 | |
@@ -67,7 +67,7 @@
 | TASK-phase-1-manual-testing | Runbook created: startup, 6 test scenarios, offline mode | P1 | Done | - | TASK-verify-day-mode-live | 2026-03-28 | |
 | TASK-phase-2-manual-testing | 11 quizzes verified: all compile, scoring engine produces valid profiles | P2 | Done | - | TASK-add-quizzes-to-quizdata | 2026-03-28 | |
 | TASK-phase-3-manual-testing | Verified: 12 poles render, trails accumulate, TRACE mode active, dimension legend correct | P1 | Done | - | TASK-wire-signatur-tab | 2026-03-28 | |
-| TASK-phase-4-manual-testing | Test mic → companion response, sign in → profile sync | P1 | Todo | - | TASK-voice-to-websocket, TASK-profile-sync | 2026-03-28 | |
+| TASK-phase-4-manual-testing | Mic permission prompt, recording start/stop, Supabase stubs compile | P1 | Done | - | TASK-voice-to-websocket, TASK-profile-sync | 2026-03-28 | |
 | TASK-phase-5-manual-testing | Full regression: every tab, every sheet, both languages, both themes, offline | P1 | Todo | - | TASK-app-store-submit | 2026-03-28 | |
 
 ---

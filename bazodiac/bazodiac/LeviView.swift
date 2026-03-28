@@ -35,6 +35,7 @@ struct LeviView: View {
     @State private var inputText     = ""
     @State private var appeared      = false
     @State private var leviService   = LeviConversationHandler()
+    @State private var voiceService  = VoiceRecordingService()
     @Environment(\.dismiss) private var dismiss
 
     private let scrollID = "bottom"
@@ -101,6 +102,19 @@ struct LeviView: View {
         }
         .onAppear {
             withAnimation(.easeIn(duration: 0.6).delay(0.3)) { appeared = true }
+            // Wire voice service → ElevenLabs WebSocket
+            voiceService.onAudioChunk = { chunk in
+                if leviService.isConnected {
+                    ElevenLabsService.shared.sendAudioChunk(chunk)
+                }
+            }
+        }
+        .onChange(of: isListening) { _, listening in
+            if listening {
+                Task { await voiceService.startRecording() }
+            } else {
+                voiceService.stopRecording()
+            }
         }
     }
 

@@ -159,6 +159,13 @@ final class ElevenLabsService: NSObject {
         sendJSON(msg)
     }
 
+    /// Sendet einen Base64-encoded Audio-Chunk an den Agent
+    func sendAudioChunk(_ base64Audio: String) {
+        guard isConnected else { return }
+        let payload = "{\"user_audio_chunk\":\"\(base64Audio)\"}"
+        webSocket?.send(.string(payload)) { _ in }
+    }
+
     // MARK: - Disconnect
 
     func disconnect() {

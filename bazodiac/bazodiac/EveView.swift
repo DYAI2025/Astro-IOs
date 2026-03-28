@@ -33,6 +33,7 @@ struct EveView: View {
     @State private var sessionActive = false
     @State private var inputText     = ""
     @State private var eveService     = EveConversationHandler()
+    @State private var voiceService   = VoiceRecordingService()
     @Environment(\.dismiss) private var dismiss
 
     private let scrollID = "eve-bottom"
@@ -104,6 +105,20 @@ struct EveView: View {
                     onSend: sendMessage
                 )
                 .padding(.bottom, max(100, 88))
+            }
+        }
+        .onAppear {
+            voiceService.onAudioChunk = { chunk in
+                if eveService.isConnected {
+                    ElevenLabsService.shared.sendAudioChunk(chunk)
+                }
+            }
+        }
+        .onChange(of: isListening) { _, listening in
+            if listening {
+                Task { await voiceService.startRecording() }
+            } else {
+                voiceService.stopRecording()
             }
         }
     }
