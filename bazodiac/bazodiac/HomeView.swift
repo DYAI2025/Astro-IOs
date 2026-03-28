@@ -10,6 +10,7 @@ import UIKit
 struct HomeView: View {
     @Environment(CosmicStore.self) private var store
     @Environment(\.cosmicTheme) private var theme
+    @State private var showSettings = false
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -34,10 +35,26 @@ struct HomeView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
 
-            // Theme-Toggle oben rechts
-            ThemeToggleButton { store.toggleTheme() }
-                .padding(.top, 58)
-                .padding(.trailing, 20)
+            // Settings-Button oben rechts
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                showSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 16, weight: .thin))
+                    .foregroundStyle(theme.gold.opacity(0.6))
+                    .frame(width: 36, height: 36)
+                    .background(theme.goldFaint, in: Circle())
+                    .overlay(Circle().strokeBorder(theme.goldBorder, lineWidth: 0.5))
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 58)
+            .padding(.trailing, 20)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsSheet()
+                .environment(store)
+                .environment(\.cosmicTheme, theme)
         }
     }
 
