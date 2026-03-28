@@ -12,7 +12,7 @@ Bazodiac (Astro-Noctum) — a fusion astrology platform combining Western astrol
 |-----------|------|-------|
 | Root (`/`) | Web app (primary) | React 19 SPA, Vite, Tailwind v4, Three.js |
 | `apps/mobile/` | Mobile app | Expo 53, React Native 0.79, React Navigation |
-| `bazodiac/` | Native iOS scaffold | SwiftUI + SwiftData (Xcode project) |
+| `bazodiac/` | Native iOS app | SwiftUI, @Observable, iOS 26+ deployment target |
 | `packages/shared/` | Shared library | TypeScript — Fusion Ring math, i18n keys, transit state, quiz modules |
 | `features/plan/` | Design/planning artefacts only — **not part of any build** |
 | `docs/` | Detailed reference docs (BAZODIAC.md, API_REFERENCE.md, FRONTEND_INTERNALS.md, DATABASE_SCHEMA.md, STRUCTURE.md) |
@@ -169,7 +169,32 @@ Expo 53 React Native app with React Navigation (native stack + bottom tabs). Sha
 
 ### Native iOS (`bazodiac/`)
 
-Bare SwiftUI + SwiftData Xcode project scaffold. Currently minimal (default template). Open `bazodiac/bazodiac.xcodeproj` in Xcode.
+Full SwiftUI app targeting **iOS 26+** (Liquid Glass APIs always available). Open `bazodiac/bazodiac.xcodeproj` in Xcode.
+
+**State Management**: Single `@Observable @MainActor CosmicStore` class injected at root via `.environment()`. Uses Swift Observation framework (iOS 17+), NOT `ObservableObject`. Navigation driven by `AppPhase` enum: `.splash → .birthForm → .dashboard`.
+
+**Tabs** (5, in `MainTabView.swift`): `home`, `chart` (WesternChartView), `signatur` (SignaturV3), `quizzes`, `agents`.
+
+**Design System** (`DesignSystem.swift`): All colors via `Color.cosmicGold`/`Color.cosmicObsidian`. Theme via `@Environment(\.cosmicTheme)` — use this, not hardcoded colors. Fonts via `CosmicFont.label(_:)` etc.
+
+**Services** (`bazodiac/bazodiac/Services/`):
+
+| File | Purpose |
+|------|---------|
+| `BAFEService.swift` | URLSession client for all 5 BAFE endpoints |
+| `BAFEResponseMapper.swift` | BAFE JSON → `CosmicProfile` iOS models |
+| `GeminiService.swift` | Gemini interpretation + daily quote |
+| `PersistenceService.swift` | UserDefaults JSON codec for profile/theme/birthData |
+| `PlaceSearchService.swift` | MKLocalSearch + CLGeocoder for birth place autocomplete |
+| `ElevenLabsService.swift` | Levi Voice AI REST calls |
+| `SupabaseService.swift` | Supabase profile sync (stub, Phase 6) |
+| `VoiceRecordingService.swift` | AVFoundation microphone recording |
+
+**Config** (`Config/AppConfig.swift`): API base URLs and keys from Bundle/Info.plist.
+
+**Placeholder tracking**: `bazodiac/PLACEHOLDERS.md` documents all mocks/stubs with implementation status. Check it before working on any feature — many were already completed in Phases 1–5. Remaining open: **PH-5** (Supabase Auth, Phase 6).
+
+**BAFE mapping on iOS** mirrors the web app gotcha: BAFE returns German keys (`stamm/zweig/tier`) and 0-based zodiac indices — `BAFEResponseMapper` translates these to iOS model types. If BAFE schema changes, update `BAFEResponseMapper.swift` (parallel to updating `src/services/api.ts` in the web app).
 
 ### `features/plan/` Directory
 

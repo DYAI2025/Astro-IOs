@@ -81,7 +81,7 @@ final class CosmicStore {
     enum Tab: String, CaseIterable {
         case home    = "home"
         case chart   = "chart"
-        case bazi    = "bazi"
+        case signatur = "signatur"
         case quizzes = "quizzes"
         case agents  = "agents"
 
@@ -89,7 +89,7 @@ final class CosmicStore {
             switch self {
             case .home:    return "Atlas"
             case .chart:   return "Charts"
-            case .bazi:    return "Signatur"
+            case .signatur: return "Signatur"
             case .quizzes: return "Quizzes"
             case .agents:  return "Companions"
             }
@@ -99,7 +99,7 @@ final class CosmicStore {
             switch self {
             case .home:    return "moon.stars.fill"
             case .chart:   return "scope"
-            case .bazi:    return "rectangle.grid.2x2.fill"
+            case .signatur: return "waveform.path.ecg"
             case .quizzes: return "square.grid.2x2.fill"
             case .agents:  return "person.2.fill"
             }

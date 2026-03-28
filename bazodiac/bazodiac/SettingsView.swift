@@ -125,7 +125,7 @@ struct SettingsSheet: View {
                     .environment(\.cosmicTheme, theme)
             }
             .sheet(isPresented: $showFAQ) {
-                FAQView()
+                FAQView(isDE: isDE)
                     .environment(\.cosmicTheme, theme)
             }
             .sheet(isPresented: $showSupport) {
@@ -364,19 +364,35 @@ struct SubscriptionView: View {
 struct FAQView: View {
     @Environment(\.cosmicTheme) private var theme
     @Environment(\.dismiss) private var dismiss
+    var isDE: Bool = true
 
-    private let faqs: [(q: String, a: String)] = [
-        ("Was ist Fusion Astrology?",
-         "Bazodiac verbindet westliche Astrologie, chinesisches BaZi und Wu-Xing mathematisch zu einem einzigen Profil. Kein Raten — jede Berechnung ist nachvollziehbar."),
-        ("Was ist der Day Pulse / Day Trace?",
-         "Dein täglicher Impuls, berechnet aus dem Harmony Index (Kosinus-Ähnlichkeit deiner astrologischen Vektoren). Pulse = ruhiger Tag, Trace = es passiert etwas."),
-        ("Wer sind Levi und Eve?",
-         "Zwei KI-Begleiter mit dem gleichen Wissen über dein Profil, aber unterschiedlichem Charakter. Levi ist analytisch und klar, Eve ist direkt und ehrlich."),
-        ("Sind meine Daten sicher?",
-         "Deine Daten bleiben lokal auf deinem Gerät. Keine API-Schlüssel im App-Binary. Berechnungen laufen über verschlüsselte Server-Proxys."),
-        ("Muss ich an Astrologie glauben?",
-         "Nein. Bazodiac ist ein Denkmodell für Selbstreflexion — ein Placebo für die Seele. Es wirkt, obwohl wir es durch Mathematik entzaubern."),
-    ]
+    private var faqs: [(q: String, a: String)] {
+        isDE ? [
+            ("Was ist Fusion Astrology?",
+             "Bazodiac verbindet westliche Astrologie, chinesisches BaZi und Wu-Xing mathematisch zu einem einzigen Profil. Kein Raten — jede Berechnung ist nachvollziehbar."),
+            ("Was ist der Day Pulse / Day Trace?",
+             "Dein täglicher Impuls, berechnet aus dem Harmony Index (Kosinus-Ähnlichkeit deiner astrologischen Vektoren). Pulse = ruhiger Tag, Trace = es passiert etwas."),
+            ("Wer sind Levi und Eve?",
+             "Zwei KI-Begleiter mit dem gleichen Wissen über dein Profil, aber unterschiedlichem Charakter. Levi ist analytisch und klar, Eve ist direkt und ehrlich."),
+            ("Sind meine Daten sicher?",
+             "Deine Daten bleiben lokal auf deinem Gerät. Keine API-Schlüssel im App-Binary. Berechnungen laufen über verschlüsselte Server-Proxys."),
+            ("Muss ich an Astrologie glauben?",
+             "Nein. Bazodiac ist ein Denkmodell für Selbstreflexion — ein Placebo für die Seele. Es wirkt, obwohl wir es durch Mathematik entzaubern."),
+        ] : [
+            ("What is Fusion Astrology?",
+             "Bazodiac mathematically fuses Western Astrology, Chinese BaZi, and Wu-Xing into a single profile. No guessing — every calculation is traceable."),
+            ("What is Day Pulse / Day Trace?",
+             "Your daily insight, computed from the Harmony Index (cosine similarity of your astrological vectors). Pulse = calm day, Trace = something is happening."),
+            ("Who are Levi and Eve?",
+             "Two AI companions with the same knowledge about your profile but different personalities. Levi is analytical and clear, Eve is direct and honest."),
+            ("Is my data safe?",
+             "Your data stays locally on your device. No API keys in the app binary. Calculations run through encrypted server proxies."),
+            ("Do I need to believe in astrology?",
+             "No. Bazodiac is a mental model for self-reflection — a placebo for the soul. It works even though we disenchant it through mathematics."),
+        ]
+    }
+
+
 
     var body: some View {
         NavigationStack {

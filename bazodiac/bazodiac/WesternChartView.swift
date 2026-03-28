@@ -16,6 +16,8 @@ struct WesternChartView: View {
     @Environment(CosmicStore.self) private var store
     @Environment(\.cosmicTheme) private var theme
     @State private var selectedPlanet: PlanetPosition? = nil
+    @State private var showBaZi = false
+    @State private var showWuXing = false
 
     var body: some View {
         ZStack {
@@ -46,7 +48,52 @@ struct WesternChartView: View {
                         // Planet list
                         PlanetList(data: data, selectedPlanet: $selectedPlanet)
                             .padding(.horizontal, 20)
-                            .padding(.bottom, 120)
+                            .padding(.bottom, 20)
+
+                        GoldLine()
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 8)
+
+                        // Deep-dive links to BaZi + WuXing
+                        VStack(spacing: 12) {
+                            Button { showBaZi = true } label: {
+                                HStack {
+                                    Image(systemName: "rectangle.grid.2x2.fill")
+                                        .font(.system(size: 16, weight: .thin))
+                                        .foregroundStyle(theme.gold.opacity(0.6))
+                                    Text(store.language == .german ? "BaZi Vier Säulen" : "BaZi Four Pillars")
+                                        .font(CosmicFont.heading(14, weight: .light))
+                                        .foregroundStyle(theme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 11, weight: .thin))
+                                        .foregroundStyle(theme.textTertiary)
+                                }
+                                .padding(16)
+                                .cosmicCard(cornerRadius: 12)
+                            }
+                            .buttonStyle(.plain)
+
+                            Button { showWuXing = true } label: {
+                                HStack {
+                                    Image(systemName: "pentagon.fill")
+                                        .font(.system(size: 16, weight: .thin))
+                                        .foregroundStyle(theme.gold.opacity(0.6))
+                                    Text(store.language == .german ? "Wu-Xing Fünf Elemente" : "Wu-Xing Five Elements")
+                                        .font(CosmicFont.heading(14, weight: .light))
+                                        .foregroundStyle(theme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 11, weight: .thin))
+                                        .foregroundStyle(theme.textTertiary)
+                                }
+                                .padding(16)
+                                .cosmicCard(cornerRadius: 12)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 120)
                     }
                 }
             }
@@ -55,6 +102,38 @@ struct WesternChartView: View {
             PlanetDetailSheet(position: planet)
                 .presentationDetents([.fraction(0.42)])
                 .presentationBackground(theme.surfaceElevated)
+        }
+        .fullScreenCover(isPresented: $showBaZi) {
+            NavigationStack {
+                BaZiView()
+                    .environment(store)
+                    .environment(\.cosmicTheme, theme)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { showBaZi = false } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 14, weight: .light))
+                                    .foregroundStyle(theme.textTertiary)
+                            }
+                        }
+                    }
+            }
+        }
+        .fullScreenCover(isPresented: $showWuXing) {
+            NavigationStack {
+                WuXingView()
+                    .environment(store)
+                    .environment(\.cosmicTheme, theme)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { showWuXing = false } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 14, weight: .light))
+                                    .foregroundStyle(theme.textTertiary)
+                            }
+                        }
+                    }
+            }
         }
     }
 
