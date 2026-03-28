@@ -8,7 +8,17 @@ This phase contains the **implementation**. Focus on clean, tested, maintainable
 
 ## Components
 
-<!-- Add an entry for each component/codebase -->
+### iOS App
+
+- **Directory**: [`ios-app/`](ios-app/)
+- **Technology**: Swift 5.9+ / SwiftUI / iOS 26.2+
+- **Responsibility**: Native client — UI, state, persistence, quiz engine, companion chat
+
+### Server Proxy
+
+- **Directory**: [`server-proxy/`](server-proxy/)
+- **Technology**: Node.js / Express (`server.mjs`)
+- **Responsibility**: API key proxy for BAFE/Gemini, space weather, ElevenLabs webhooks
 
 ---
 
