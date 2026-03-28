@@ -6,31 +6,46 @@
 
 ## Project Overview
 
-**Bazodiac iOS** — Native SwiftUI astrology app combining Western Astrology, Chinese BaZi (Four Pillars), and Wu-Xing (Five Elements) into a unified Fusion reading. Built for iOS 26+ with Liquid Glass, Cormorant Garamond typography, and a dark/light "Astro Luxury" theme.
+**Bazodiac** is the only astrology app that mathematically fuses Western Astrology, Chinese BaZi (Four Pillars of Destiny), and Wu-Xing (Five Elements) into a single, transparent Fusion Astrology system.
+
+### What problem it solves
+
+Traditional astrology apps offer isolated readings — a horoscope here, a zodiac profile there. Bazodiac starts with a multi-dimensional astrological model and refines it through real-time cosmic weather events (geomagnetic storms, lunar phases, planetary transits), where each user reacts differently based on their unique natal constellation. Instead of explaining this complexity through numbers and tables, the app communicates it intuitively through a personal, dynamic visual signature that evolves over time.
+
+### Who it is for
+
+Bazodiac targets users who do not follow esoteric belief systems but are looking for **mental models to interpret their own thinking and behavioral patterns**. It functions like a systemic constellation with archetypes and planets — or simply a placebo for the soul. It works even though we disenchant it through mathematics, and that is precisely where the magic lies.
+
+### Core differentiators
+
+1. **Fusion Astrology** — the only system that computes a unified signal from Western zodiac, BaZi pillars, and Wu-Xing element vectors using cosine similarity and weighted composition
+2. **Mathematical transparency** — every calculation is traceable; the Harmony Index H, Day Pulse/Trace modes, and element balances are derived from explicit formulas, not hallucinated
+3. **Dynamic personalization** — the user's profile evolves through quiz contributions, real-time cosmic weather (NOAA Kp-Index), and conversation data from AI companions
+4. **Intuitive communication** — no astro jargon in user-facing text; poetic realism instead of planetary mechanics
 
 ### Tech Stack
-- **Language:** Swift 5.9+ / SwiftUI
-- **Target:** iOS 26.2+ (iPhone, iPad)
-- **Backend:** BAFE API (astrology calculations), Gemini (AI interpretation), ElevenLabs (voice AI)
-- **Persistence:** UserDefaults (local), Supabase (cloud — planned)
-- **Architecture:** @Observable, MVVM, Environment injection
 
-### Key Features (Implemented)
-- Splash → BirthForm → Dashboard flow
-- Day Pulse / Day Trace (datengetrieben, Harmony Index H)
-- Cosmic Triad: Sonnenzeichen · Jahrestier · Dominantes Element (tappbar → Detail-Sheets)
-- Western Birth Chart (Canvas zodiac wheel)
-- BaZi Four Pillars View
-- Wu-Xing Pentagon + Balance Bars
-- 6 Quizzes with Scoring Engine (62 Fragen, 29 Profile)
-- Levi & Eve AI Companions (ElevenLabs WebSocket)
-- Geocoding (MKLocalSearch)
-- Light/Dark Mode mit Theme Toggle
-- Cormorant Garamond font integration
+- **Platform:** iOS 26.2+ (SwiftUI, Swift 5.9+)
+- **Backend:** BAFE API (astrology engine), Gemini (AI interpretation), ElevenLabs (voice AI)
+- **Data:** UserDefaults (local), Supabase (cloud — planned)
+- **Architecture:** @Observable, MVVM, Environment-based theming
+
+### Implemented Features
+
+- Cinematic Splash → BirthForm (with geocoding) → Dashboard
+- Day Pulse / Day Trace (data-driven via Harmony Index H, cosine similarity)
+- Cosmic Triad tiles: Sun Sign · Year Animal · Dominant Element (tappable → detail sheets)
+- Western Birth Chart (Canvas zodiac wheel with planets)
+- BaZi Four Pillars with Day Master highlight
+- Wu-Xing Pentagon with element balance bars
+- 6 personality quizzes with scoring engine (62 questions, 29 profiles)
+- Levi & Eve AI Companions (ElevenLabs WebSocket, agent cards with distinct personalities)
+- Light/Dark "Astro Luxury" theme with Cormorant Garamond typography
+- Live cosmic weather integration (NOAA SWPC Kp-Index, computed moon phases)
 
 ### Current State
 
-The project is in **active development (Code phase)**. Core UI and service layer are implemented. Remaining work includes: end-to-end BAFE API testing, Supabase Auth, remaining 10 quizzes, AVFoundation voice recording, and App Store preparation.
+The project is in **active development (Code phase)**. Core UI, service layer, and data models are implemented. Remaining work: end-to-end BAFE API live testing, Supabase authentication, 10 additional quizzes, AVFoundation voice recording for companions, and App Store preparation.
 
 ---
 
