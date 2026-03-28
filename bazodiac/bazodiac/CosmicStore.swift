@@ -71,7 +71,7 @@ final class CosmicStore {
             appPhase  = .dashboard
         }
 
-        // Tages-Zitat aus Cache
+                // Tages-Zitat aus Cache
         if let quote = PersistenceService.loadTodayQuote() {
             dailyQuote = quote
         }

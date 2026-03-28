@@ -33,9 +33,9 @@
 
 | ID | Task | Priority | Status | Req | Dependencies | Updated | Notes |
 |----|------|----------|--------|-----|--------------|---------|-------|
-| TASK-e2e-birth-submit | Test full flow: enter "München" → geocode → submit → BAFE responds → profile renders | P1 | In Progress | [REQ-F-fusion-calculation](../1-spec/requirements/REQ-F-fusion-calculation.md) | TASK-deploy-railway-proxy | 2026-03-28 | |
+| TASK-e2e-birth-submit | Test full flow: München → BAFE → dashboard with real data | P1 | Done | [REQ-F-fusion-calculation](../1-spec/requirements/REQ-F-fusion-calculation.md) | TASK-deploy-railway-proxy | 2026-03-28 | |
 | TASK-fix-bafe-mapping | Fix BAFEResponseMapper issues from E2E (Pinyin stems, German animals, direct BAFE URL) | P1 | Done | [REQ-F-fusion-calculation](../1-spec/requirements/REQ-F-fusion-calculation.md) | TASK-e2e-birth-submit | 2026-03-28 | |
-| TASK-verify-day-mode-live | Verify DayHarmonicEngine produces correct H from real BAFE data, confirm Pulse/Trace | P1 | Todo | [REQ-F-day-mode-selection](../1-spec/requirements/REQ-F-day-mode-selection.md) | TASK-fix-bafe-mapping | 2026-03-28 | |
+| TASK-verify-day-mode-live | DayHarmonicEngine confirmed: H computed from live BAFE, Trace mode selected | P1 | Done | [REQ-F-day-mode-selection](../1-spec/requirements/REQ-F-day-mode-selection.md) | TASK-fix-bafe-mapping | 2026-03-28 | |
 | TASK-extract-remaining-quizzes | Extract questions + profiles from 10 remaining web app HTML/JSON quiz files | P2 | Todo | [REQ-F-quiz-scoring](../1-spec/requirements/REQ-F-quiz-scoring.md) | - | 2026-03-28 | |
 | TASK-add-quizzes-to-quizdata | Add 10 quizzes to QuizData.swift (Aura, Celebrity, Karriere, etc.) | P2 | Todo | [REQ-F-quiz-scoring](../1-spec/requirements/REQ-F-quiz-scoring.md) | TASK-extract-remaining-quizzes | 2026-03-28 | |
 | TASK-signatur-v3-engine | Port bipolar-engine.ts to Swift: Pulse rings + Trace Lissajous driven by DayHarmonicState | P1 | Todo | - | TASK-verify-day-mode-live | 2026-03-28 | GOAL-dynamic-signature |
