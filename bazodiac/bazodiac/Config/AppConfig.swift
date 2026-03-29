@@ -34,10 +34,14 @@ enum AppConfig {
 
     // MARK: - ElevenLabs (Levi Voice AI)
 
-    /// ElevenLabs Conversational AI Agent-ID.
-    /// Wird in Info.plist als ELEVENLABS_AGENT_ID eingetragen.
-    static var elevenLabsAgentID: String {
-        Bundle.main.object(forInfoDictionaryKey: "ELEVENLABS_AGENT_ID") as? String ?? ""
+    /// ElevenLabs Conversational AI Agent-IDs.
+    /// Konfiguriert in Info.plist als ELEVENLABS_LEVI_AGENT_ID / ELEVENLABS_EVE_AGENT_ID.
+    static var elevenLabsLeviAgentID: String {
+        Bundle.main.object(forInfoDictionaryKey: "ELEVENLABS_LEVI_AGENT_ID") as? String ?? ""
+    }
+
+    static var elevenLabsEveAgentID: String {
+        Bundle.main.object(forInfoDictionaryKey: "ELEVENLABS_EVE_AGENT_ID") as? String ?? ""
     }
 
     static let elevenLabsBaseURL = URL(string: "https://api.elevenlabs.io/v1")!
@@ -66,6 +70,6 @@ enum AppConfig {
 
     /// Wenn true: ElevenLabs-Integration aktiv.
     static var leviEnabled: Bool {
-        !elevenLabsAgentID.isEmpty
+        !elevenLabsLeviAgentID.isEmpty
     }
 }

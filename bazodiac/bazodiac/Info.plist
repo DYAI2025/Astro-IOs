@@ -8,6 +8,10 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Bazodiac uses the microphone to talk with your AI companions Levi and Eve.</string>
+	<key>ELEVENLABS_LEVI_AGENT_ID</key>
+	<string>agent_1801kje0zqc8e4b89swbt7wekawv</string>
+	<key>ELEVENLABS_EVE_AGENT_ID</key>
+	<string>agent_9101kmntjynwfz6t2ep687a6qb09</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>CormorantGaramond-Light.ttf</string>

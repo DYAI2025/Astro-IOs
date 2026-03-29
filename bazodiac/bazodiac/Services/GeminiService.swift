@@ -19,6 +19,11 @@ struct GeminiDailyQuoteResponse: Decodable {
     let quote: String
 }
 
+struct GeminiResult {
+    let text: String
+    let warning: String?  // non-nil when fallback was used
+}
+
 // MARK: - Gemini Service
 
 @MainActor
@@ -31,7 +36,7 @@ final class GeminiService {
 
     // MARK: - Vollständige Profil-Interpretation (einmalig nach Berechnung)
 
-    func interpretProfile(results: BAFEAllResults, birthData: BirthData, lang: CosmicStore.Language) async -> String {
+    func interpretProfile(results: BAFEAllResults, birthData: BirthData, lang: CosmicStore.Language) async -> GeminiResult {
         let langCode = lang == .german ? "de" : "en"
 
         // Payload aufbauen — in Teile aufgeteilt wegen Swift Type-Checker Limit
@@ -74,10 +79,13 @@ final class GeminiService {
             }
 
             let decoded = try JSONDecoder().decode(GeminiInterpretationResponse.self, from: responseData)
-            return decoded.interpretation
+            return GeminiResult(text: decoded.interpretation, warning: nil)
         } catch {
-            print("⚠️ GeminiService: Interpretation fehlgeschlagen (\(error)) — Template-Fallback")
-            return templateInterpretation(results: results, birthData: birthData, lang: lang)
+            let fallback = templateInterpretation(results: results, birthData: birthData, lang: lang)
+            let warning = lang == .german
+                ? "KI-Interpretation nicht verfügbar — Template wird angezeigt."
+                : "AI interpretation unavailable — showing template."
+            return GeminiResult(text: fallback, warning: warning)
         }
     }
 

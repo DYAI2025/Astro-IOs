@@ -147,11 +147,14 @@ final class CosmicStore {
             let results = try await BAFEService.shared.calculateAll(birthData: birthData)
 
             // 2. KI-Interpretation generieren
-            let interpretation = await GeminiService.shared.interpretProfile(
+            let geminiResult = await GeminiService.shared.interpretProfile(
                 results: results,
                 birthData: birthData,
                 lang: language
             )
+            if let warning = geminiResult.warning {
+                self.error = warning
+            }
 
             // 3. Tages-Zitat
             let quote = await GeminiService.shared.generateDailyQuote(
@@ -166,7 +169,7 @@ final class CosmicStore {
             let newProfile = BAFEResponseMapper.buildProfile(
                 from: results,
                 birthData: birthData,
-                interpretation: interpretation,
+                interpretation: geminiResult.text,
                 dailyQuote: quote
             )
 
@@ -198,15 +201,18 @@ final class CosmicStore {
 
         do {
             let results = try await BAFEService.shared.calculateAll(birthData: birthData)
-            let interpretation = await GeminiService.shared.interpretProfile(
+            let geminiResult = await GeminiService.shared.interpretProfile(
                 results: results,
                 birthData: birthData,
                 lang: language
             )
+            if let warning = geminiResult.warning {
+                self.error = warning
+            }
             let updated = BAFEResponseMapper.buildProfile(
                 from: results,
                 birthData: birthData,
-                interpretation: interpretation,
+                interpretation: geminiResult.text,
                 dailyQuote: profile?.dailyQuote ?? ""
             )
             profile = updated

@@ -502,7 +502,7 @@ private struct SectionNavigationGrid: View {
 
     private let sections: [(tab: CosmicStore.Tab, title: String, sub: String, icon: String)] = [
         (.chart,   "Geburts-Chart",  "Western Astrologie",  "scope"),
-        (.bazi,    "BaZi Säulen",    "Vier Pfeiler",         "rectangle.grid.2x2.fill"),
+        (.signatur, "Signatur",       "Dein kosmischer Trail", "waveform.path.ecg"),
         (.quizzes, "Quizzes",        "Kosmische Muster",     "square.grid.2x2.fill"),
         (.agents,  "Levi & Eve",     "KI-Begleiter",         "person.2.fill"),
     ]

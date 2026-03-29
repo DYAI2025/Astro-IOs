@@ -18,8 +18,8 @@ enum ConvaiAgent {
 
     var agentId: String {
         switch self {
-        case .levi: return "agent_1801kje0zqc8e4b89swbt7wekawv"
-        case .eve:  return "agent_9101kmntjynwfz6t2ep687a6qb09"
+        case .levi: return AppConfig.elevenLabsLeviAgentID
+        case .eve:  return AppConfig.elevenLabsEveAgentID
         }
     }
 
